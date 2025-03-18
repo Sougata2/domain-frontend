@@ -5,6 +5,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { useNavigate } from "react-router";
+import CryptoJS from "crypto-js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -25,10 +26,23 @@ export default function Login() {
 
   async function onSubmit(e) {
     e.preventDefault();
+
+    // encrypt the password for security.
+    const SECRET_KEY = CryptoJS.enc.Utf8.parse(
+      import.meta.env.VITE_AES_SECRET_KEY
+    );
+
+    console.log(import.meta.env.VITE_AES_SECRET_KEY);
+
+    const encryptedPassword = CryptoJS.AES.encrypt(data.password, SECRET_KEY, {
+      mode: CryptoJS.mode.ECB,
+      padding: CryptoJS.pad.Pkcs7,
+    }).toString();
+
     try {
       const response = await axios.post(
         "http://localhost:8080/domain/auth/login",
-        data
+        { ...data, password: encryptedPassword }
       );
       Cookies.set("Authorization", `Bearer ${response.data.token}`);
       navigate("/home");
