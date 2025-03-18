@@ -12,6 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import Cookies from "js-cookie";
 
 export default function DeleteUser() {
   const { t } = useTranslation();
@@ -19,8 +20,12 @@ export default function DeleteUser() {
   const navigate = useNavigate();
 
   async function onDelete() {
-    await axios.delete(`http://localhost:8080/domain/user/${id}`);
-    navigate("/");
+    await axios.delete(`http://localhost:8080/domain/user/${id}`, {
+      headers: {
+        Authorization: Cookies.get("Authorization"),
+      },
+    });
+    navigate("/home");
   }
 
   return (

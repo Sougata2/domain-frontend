@@ -42,7 +42,7 @@ export default function AddUser() {
           }
         );
         console.log(response);
-        navigate("/");
+        navigate("/home");
       } catch (e) {
         setError(e.response.data);
       }
