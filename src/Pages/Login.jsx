@@ -150,7 +150,6 @@ export default function Login() {
     const scope =
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
-    console.log(oauthConfig.web);
     const oauthUrl = `${oauthConfig.web.auth_uri}?client_id=${
       import.meta.env.VITE_GOOGLE_CLIENT_ID
     }&redirect_uri=${
@@ -159,6 +158,8 @@ export default function Login() {
       scope
     )}&include_granted_scopes=true`;
 
+    // had to do this fetch was giving cors error and there is no way
+    // change that
     window.location.href = oauthUrl;
   }
 
