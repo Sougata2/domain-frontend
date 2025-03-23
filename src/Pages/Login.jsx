@@ -152,7 +152,7 @@ export default function Login() {
 
     console.log(oauthConfig.web);
     const oauthUrl = `${oauthConfig.web.auth_uri}?client_id=${
-      oauthConfig.web.client_id
+      import.meta.env.VITE_GOOGLE_CLIENT_ID
     }&redirect_uri=${
       oauthConfig.web.redirect_uris[0]
     }&response_type=code&scope=${encodeURIComponent(
