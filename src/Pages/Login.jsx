@@ -19,7 +19,7 @@ export default function Login() {
   useEffect(() => {
     const code = searchParams.get("code");
     if (code) {
-      console.log("Authrization Code: ", code);
+      console.log("Authorization Code: ", code);
       // exchangedCodeForToken(code);
       (async () => {
         try {
@@ -126,8 +126,6 @@ export default function Login() {
       import.meta.env.VITE_AES_SECRET_KEY
     );
 
-    console.log(import.meta.env.VITE_AES_SECRET_KEY);
-
     const encryptedPassword = CryptoJS.AES.encrypt(data.password, SECRET_KEY, {
       mode: CryptoJS.mode.ECB,
       padding: CryptoJS.pad.Pkcs7,
@@ -146,7 +144,7 @@ export default function Login() {
   }
 
   async function handleGoogleAuthRequest() {
-    // initial request to access the code from google.
+    // initial request to access the code from Google.
     const scope =
       "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email";
 
