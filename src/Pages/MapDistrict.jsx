@@ -91,18 +91,22 @@ function MapDistrict() {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get("http://localhost:8080/domain/city");
-        const options = response.data.map((c) => {
-          return { label: c.cityName, value: c };
-        });
-        setCities(options);
-      } catch (e) {
-        setAlert({ type: "error", message: e.message });
-      }
-    })();
-  }, []);
+    if (selectedDistrict.id) {
+      (async () => {
+        try {
+          const response = await axios.get(
+            `http://localhost:8080/domain/city/not-mapped-to-dist?dist=${selectedDistrict.id}`
+          );
+          const options = response.data.map((c) => {
+            return { label: c.cityName, value: c };
+          });
+          setCities(options);
+        } catch (e) {
+          setAlert({ type: "error", message: e.message });
+        }
+      })();
+    }
+  }, [selectedDistrict.id]);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -145,6 +149,7 @@ function MapDistrict() {
             onChange={(selectedOption) => setSelectedCities(selectedOption)}
             isMulti
             options={cities}
+            isDisabled={selectedDistrict.id == null}
           />
         </div>
         <Button>Submit</Button>
