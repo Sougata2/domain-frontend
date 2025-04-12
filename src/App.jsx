@@ -10,6 +10,7 @@ import Login from "./Pages/Login";
 import AddDistrict from "@/Pages/AddDistrict.jsx";
 import AddCity from "@/Pages/AddCity.jsx";
 import AddState from "@/Pages/AddState.jsx";
+import MapDistrict from "@/Pages/MapDistrict.jsx";
 
 function App() {
     const {t, i18n} = useTranslation();
@@ -43,6 +44,7 @@ function App() {
                     <Route path={"add-district"} element={<AddDistrict/>}/>
                     <Route path={"add-city"} element={<AddCity/>}/>
                     <Route path={"add-state"} element={<AddState/>}/>
+                    <Route path={"/map-district"} element={<MapDistrict/>}/>
                 </Routes>
             </BrowserRouter>
         </div>
