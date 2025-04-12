@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
-import { DomainAlert } from "@/DomainComponents/DomainAlert.jsx";
 import axios from "axios";
 import Select from "react-select";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/DomainComponents/DataTable";
 import { ArrowUpDown } from "lucide-react";
+import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
 
 function MapDistrict() {
-  const initialErrorValues = {
-    type: "",
-    message: "",
-  };
   const columns = [
     {
       accessorKey: "distName",
@@ -52,7 +49,6 @@ function MapDistrict() {
   ];
 
   const [districts, setDistricts] = useState([]);
-  const [alert, setAlert] = useState(initialErrorValues);
   const [cities, setCities] = useState([]);
   const [selectedCities, setSelectedCities] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState({});
@@ -66,10 +62,10 @@ function MapDistrict() {
         );
         setTableData(response.data);
       } catch (e) {
-        setAlert({ type: "error", message: e.message });
+        toast.error("Error", e.message);
       }
     })();
-  }, []);
+  }, [selectedDistrict?.id]);
 
   useEffect(() => {
     (async () => {
@@ -84,8 +80,8 @@ function MapDistrict() {
           };
         });
         setDistricts(data);
-      } catch (error) {
-        setAlert({ type: "error", message: error.message });
+      } catch (e) {
+        toast.error("Error", e.message);
       }
     })();
   }, []);
@@ -102,7 +98,7 @@ function MapDistrict() {
           });
           setCities(options);
         } catch (e) {
-          setAlert({ type: "error", message: e.message });
+          toast.error("Error", e.message);
         }
       })();
     }
@@ -115,27 +111,20 @@ function MapDistrict() {
         ...selectedDistrict,
         cities: selectedCities.map((sc) => sc.value),
       };
-      const response = await axios.post(
-        "http://localhost:8080/domain/district/map",
-        payload
-      );
-      console.log(response);
+      await axios.post("http://localhost:8080/domain/district/map", payload);
+      setSelectedCities([]);
+      setSelectedDistrict({});
+      toast.success("Success", { description: "Mapped Successfully" });
     } catch (e) {
-      setAlert({ type: "error", message: e.message });
+      toast.error("Error", e.message);
     }
   }
 
   return (
     <div className={"p-5 flex flex-col items-center justify-center"}>
-      <div>
-        {
-          <div className="me-auto">
-            {alert.type && <DomainAlert {...alert} />}
-          </div>
-        }
-      </div>
       <form onSubmit={onSubmit} className={"flex flex-col gap-2.5"}>
         <div className={"d-flex flex-column gap-3.5 w-[380px]"}>
+          <Label>District</Label>
           <Select
             options={districts}
             onChange={(so) => setSelectedDistrict(so.value)}

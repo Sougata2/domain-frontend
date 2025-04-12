@@ -2,18 +2,14 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input.jsx";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.jsx";
-import { DomainAlert } from "@/DomainComponents/DomainAlert.jsx";
 import axios from "axios";
 import DataTable from "@/DomainComponents/DataTable";
 import { ArrowUpDown } from "lucide-react";
+import { toast } from "sonner";
 
 function AddDistrict() {
   const initialValues = {
     distName: "",
-  };
-  const initialErrorValues = {
-    type: "",
-    message: "",
   };
 
   const columns = [
@@ -61,13 +57,18 @@ function AddDistrict() {
   ];
 
   const [formData, setFormData] = useState(initialValues);
-  const [alert, setAlert] = useState(initialErrorValues);
   const [districts, setDistricts] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get("http://localhost:8080/domain/district");
-      setDistricts(response.data);
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/domain/district"
+        );
+        setDistricts(response.data);
+      } catch (e) {
+        toast.error("Error", { description: e.message });
+      }
     })();
   }, []);
 
@@ -89,16 +90,15 @@ function AddDistrict() {
         formData
       );
       setDistricts((prevState) => [...prevState, response.data]);
-      setAlert({ type: "success", message: "District Add Successfully" });
+      toast.success("Success", { description: "District Added!" });
       setFormData(initialValues);
     } catch (err) {
-      setAlert({ type: "error", message: err.message });
+      toast.success("Error", { description: err.message });
     }
   }
 
   return (
     <div className={"container w-1/3 mx-auto"}>
-      <div className="me-auto">{alert.type && <DomainAlert {...alert} />}</div>
       <form className={"flex flex-col gap-2"} onSubmit={handleOnSubmit}>
         <div className={"form-group"}>
           <Label htmlFor={"distName"}>District Name</Label>

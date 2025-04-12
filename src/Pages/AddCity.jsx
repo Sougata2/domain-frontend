@@ -2,18 +2,14 @@ import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input.jsx";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button.jsx";
-import { DomainAlert } from "@/DomainComponents/DomainAlert.jsx";
 import axios from "axios";
 import DataTable from "@/DomainComponents/DataTable";
 import { ArrowUpDown } from "lucide-react";
+import { toast } from "sonner";
 
 function AddCity() {
   const initialValues = {
     cityName: "",
-  };
-  const initialErrorValues = {
-    type: "",
-    message: "",
   };
 
   const columns = [
@@ -61,13 +57,16 @@ function AddCity() {
   ];
 
   const [formData, setFormData] = useState(initialValues);
-  const [alert, setAlert] = useState(initialErrorValues);
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
     (async () => {
-      const response = await axios.get("http://localhost:8080/domain/city");
-      setCities(response.data);
+      try {
+        const response = await axios.get("http://localhost:8080/domain/city");
+        setCities(response.data);
+      } catch (error) {
+        toast.error("Error", { description: error.message });
+      }
     })();
   }, []);
 
@@ -89,16 +88,15 @@ function AddCity() {
         formData
       );
       setCities((prevState) => [...prevState, response.data]);
-      setAlert({ type: "success", message: "City Add Successfully" });
+      toast.success("Success", { description: "City Added!" });
       setFormData(initialValues);
     } catch (err) {
-      setAlert({ type: "error", message: err.message });
+      toast.error("Error", { description: err.message });
     }
   }
 
   return (
     <div className={"container w-1/3 mx-auto"}>
-      <div className="me-auto">{alert.type && <DomainAlert {...alert} />}</div>
       <form className={"flex flex-col gap-2"} onSubmit={handleOnSubmit}>
         <div className={"form-group"}>
           <Label htmlFor={"cityName"}>City Name</Label>
