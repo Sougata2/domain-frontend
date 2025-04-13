@@ -1,157 +1,162 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Select from "react-select";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/DomainComponents/DataTable";
 import { ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
-import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function MapDistrict() {
+  const initialValues = {
+    district: {},
+    cities: [],
+  };
   const columns = [
     {
-      accessorKey: "distName",
+      accessorKey: "cityName",
       header: ({ column }) => {
         return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              District
-              <ArrowUpDown />
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            City
+            <ArrowUpDown />
+          </Button>
         );
       },
-      cell: ({ row }) => {
-        return <div className={"capitalize"}>{row.getValue("distName")}</div>;
-      },
+      cell: ({ row }) => (
+        <div className="lowercase">{row.getValue("cityName")}</div>
+      ),
     },
     {
-      accessorKey: "cities",
-      header: () => {
-        return <div>Cities</div>;
-      },
+      accessorKey: "id",
+      header: () => <div>Actions</div>,
       cell: ({ row }) => {
         return (
           <div>
-            {row
-              .getValue("cities")
-              .map((c) => c.cityName)
-              .join(", ")}
+            {/* <input type="checkbox" name="" id="" onChange={() => {}} /> */}
+            <Checkbox
+              checked={mappedCities[row.getValue("id")]}
+              onCheckedChange={(e) => {
+                setMappedCities((prevState) => {
+                  return {
+                    ...prevState,
+                    [row.getValue("id")]: e,
+                  };
+                });
+              }}
+            />
           </div>
         );
       },
     },
   ];
-
   const [districts, setDistricts] = useState([]);
   const [cities, setCities] = useState([]);
-  const [selectedCities, setSelectedCities] = useState([]);
-  const [selectedDistrict, setSelectedDistrict] = useState({});
-  const [tableData, setTableData] = useState([]);
+  const [formData, setFormData] = useState(initialValues);
+  const [mappedCities, setMappedCities] = useState({});
+
+  async function fetchDistricts() {
+    try {
+      const response = await axios.get("http://localhost:8080/domain/district");
+      setDistricts(response.data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/domain/district/mapped"
-        );
-        setTableData(response.data);
-      } catch (e) {
-        toast.error("Error", e.message);
-      }
-    })();
-  }, [selectedDistrict?.id]);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:8080/domain/district"
-        );
-        const data = response.data.map((d) => {
-          return {
-            label: d.distName,
-            value: d,
-          };
-        });
-        setDistricts(data);
-      } catch (e) {
-        toast.error("Error", e.message);
-      }
-    })();
+    fetchDistricts();
   }, []);
 
   useEffect(() => {
-    if (selectedDistrict.id) {
+    if (Object.keys(formData.district).includes("id")) {
       (async () => {
         try {
-          const response = await axios.get(
-            `http://localhost:8080/domain/city/not-mapped-to-dist?dist=${selectedDistrict.id}`
-          );
-          const options = response.data.map((c) => {
-            return { label: c.cityName, value: c };
+          const response = await axios.get("http://localhost:8080/domain/city");
+          formData.district.cities.forEach((c) => {
+            setMappedCities((prevState) => {
+              return {
+                ...prevState,
+                [c.id]: true,
+              };
+            });
           });
-          setCities(options);
-        } catch (e) {
-          toast.error("Error", e.message);
+          setCities(response.data);
+        } catch (error) {
+          toast.error("Error", { description: error.message });
         }
       })();
     }
-  }, [selectedDistrict.id]);
+  }, [formData.district]);
 
   async function onSubmit(e) {
     e.preventDefault();
     try {
+      // get the district;
+      const includedCities = cities.filter((c) => mappedCities[c.id]);
       const payload = {
-        ...selectedDistrict,
-        cities: selectedCities.map((sc) => sc.value),
+        ...formData.district,
+        cities: includedCities,
       };
-      await axios.post("http://localhost:8080/domain/district/map", payload);
-      setSelectedCities([]);
-      setSelectedDistrict({});
-      toast.success("Success", { description: "Mapped Successfully" });
-    } catch (e) {
-      toast.error("Error", e.message);
+      console.log(payload);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
     }
   }
 
   return (
     <div className={"p-5 flex flex-col items-center justify-center"}>
-      <form onSubmit={onSubmit} className={"flex flex-col gap-2.5"}>
-        <div className={"d-flex flex-column gap-3.5 w-[380px]"}>
-          <Label>District</Label>
-          <Select
-            options={districts}
-            onChange={(so) => setSelectedDistrict(so.value)}
-          />
-        </div>
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col gap-3.5 items-center justify-center"
+      >
+        <select
+          className={"w-md py-1 px-1 border rounded"}
+          name={"district"}
+          onChange={(e) => {
+            setFormData((prevState) => {
+              return {
+                ...prevState,
+                district: JSON.parse(e.target.value),
+              };
+            });
+            // clearing the previous mapped cities.
+            setMappedCities({});
+          }}
+        >
+          <option value="" className={"text-sm text-slate-500"}>
+            Select Districts
+          </option>
+          {districts.map((d) => {
+            return (
+              <option
+                value={JSON.stringify(d)}
+                key={d.id}
+                className={"text-left"}
+              >
+                {d.distName}
+              </option>
+            );
+          })}
+        </select>
 
-        <div className={"mt-4"}>
-          <Select
-            closeMenuOnSelect={false}
-            value={selectedCities}
-            onChange={(selectedOption) => setSelectedCities(selectedOption)}
-            isMulti
-            options={cities}
-            isDisabled={selectedDistrict.id == null}
-          />
-        </div>
-        <Button>Submit</Button>
+        {formData.district?.id && (
+          <div className="w-4xl mt-3.5">
+            <DataTable
+              data={cities}
+              columns={columns}
+              options={{ searchField: "cityName" }}
+            />
+          </div>
+        )}
+        {formData.district?.id && (
+          <div className="flex justify-end w-full mt-4">
+            <Button className={"w-2xs"}>Save</Button>
+          </div>
+        )}
       </form>
-
-      <div className={"mt-5 w-full px-28"}>
-        <h1>Mapped Districts</h1>
-        <DataTable
-          data={tableData}
-          columns={columns}
-          options={{ searchField: "distName" }}
-        />
-      </div>
     </div>
   );
 }
