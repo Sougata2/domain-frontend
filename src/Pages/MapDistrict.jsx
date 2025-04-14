@@ -36,7 +36,6 @@ function MapDistrict() {
       cell: ({ row }) => {
         return (
           <div>
-            {/* <input type="checkbox" name="" id="" onChange={() => {}} /> */}
             <Checkbox
               checked={mappedCities[row.getValue("id")]}
               onCheckedChange={(e) => {
