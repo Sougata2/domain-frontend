@@ -18,6 +18,7 @@ function MapDistrict() {
         return (
           <Button
             variant="ghost"
+            type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
             City
@@ -100,7 +101,17 @@ function MapDistrict() {
         ...formData.district,
         cities: includedCities,
       };
-      console.log(payload);
+      const response = await axios.post(
+        "http://localhost:8080/domain/district/update",
+        payload
+      );
+      setFormData((prevState) => {
+        return {
+          ...prevState,
+          district: response.data,
+        };
+      });
+      toast.success("Success", { description: "update successfull!" });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
