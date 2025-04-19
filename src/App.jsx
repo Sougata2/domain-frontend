@@ -11,6 +11,7 @@ import AddState from "@/Pages/AddState.jsx";
 import MapDistrict from "@/Pages/MapDistrict.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import Layout from "./DomainComponents/Layout";
+import AddMenu from "./Pages/AddMenu";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path={"add-city"} element={<AddCity />} />
             <Route path={"add-state"} element={<AddState />} />
             <Route path={"/map-district"} element={<MapDistrict />} />
+            <Route path={"/add-menu"} element={<AddMenu />} />
           </Route>
         </Routes>
       </BrowserRouter>
