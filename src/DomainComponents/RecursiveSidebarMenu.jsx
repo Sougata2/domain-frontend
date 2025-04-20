@@ -12,14 +12,14 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { capitalize } from "@/utility/helpers";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, LinkIcon } from "lucide-react";
 import { Link } from "react-router";
 
 export default function RecursiveSidebarMenu({ menu }) {
   return (
     <SidebarGroupContent key={menu.id}>
       <SidebarMenu>
-        {menu.pageLink === null ? (
+        {menu.pageLink === null || menu.pageLink === "" ? (
           <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
@@ -43,7 +43,10 @@ export default function RecursiveSidebarMenu({ menu }) {
             </SidebarMenuItem>
           </Collapsible>
         ) : (
-          <Link to={menu.pageLink}>{capitalize(menu.menuItemName)}</Link>
+          <div className="flex gap-1 justify-start items-center py-1">
+            <LinkIcon size={15} className="text-blue-400" />
+            <Link to={menu.pageLink}>{capitalize(menu.menuItemName)}</Link>
+          </div>
         )}
       </SidebarMenu>
     </SidebarGroupContent>
