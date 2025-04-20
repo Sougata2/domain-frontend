@@ -6,12 +6,13 @@ import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
 import { ArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 export default function AddMenu() {
   const initialValue = {
     menuItemName: "",
-    pageLink: null,
+    pageLink: "",
   };
 
   const initialError = {
@@ -42,26 +43,15 @@ export default function AddMenu() {
       },
     },
     {
-      accessorKey: "pageLink",
-      header: ({ column }) => {
-        return (
-          <div>
-            <Button
-              variant="ghost"
-              onClick={() =>
-                column.toggleSorting(column.getIsSorted() === "asc")
-              }
-            >
-              Type
-              <ArrowUpDown />
-            </Button>
-          </div>
-        );
+      accessorKey: "type",
+      header: () => {
+        return <div>Type</div>;
       },
       cell: ({ row }) => {
         return (
           <div>
-            {row.getValue("pageLink") === null ? (
+            {row.getValue("pageLink") === null ||
+            row.getValue("pageLink") === "" ? (
               <span className="border-1.2 rounded-4xl bg-indigo-500 text-white shadow px-2.5 pb-0.5">
                 Menu
               </span>
@@ -89,18 +79,19 @@ export default function AddMenu() {
       },
     },
     {
-      accessorKey: "actions",
+      accessorKey: "id",
       header: () => {
         return <div className="text-center">Actions</div>;
       },
-      cell: () => {
+      cell: ({ row }) => {
         return (
           <div className={"flex justify-center gap-3.5"}>
-            <Button
-              className={"bg-emerald-400 hover:bg-emerald-500 text-emerald-700"}
+            <Link
+              className="rounded-[7px] px-4 flex text-[15px] font-medium justify-center items-center bg-emerald-400 hover:bg-emerald-500 text-emerald-700"
+              to={`/edit-menu/${row.getValue("id")}`}
             >
               Edit
-            </Button>
+            </Link>
             <Button className={"bg-red-400 hover:bg-red-500 text-red-700"}>
               Delete
             </Button>

@@ -12,6 +12,7 @@ import MapDistrict from "@/Pages/MapDistrict.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import Layout from "./DomainComponents/Layout";
 import AddMenu from "./Pages/AddMenu";
+import EditMenu from "./Pages/EditMenu";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path={"add-state"} element={<AddState />} />
             <Route path={"/map-district"} element={<MapDistrict />} />
             <Route path={"/add-menu"} element={<AddMenu />} />
+            <Route path={"/edit-menu/:id"} element={<EditMenu />} />
           </Route>
         </Routes>
       </BrowserRouter>
