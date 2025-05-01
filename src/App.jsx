@@ -13,6 +13,8 @@ import { Toaster } from "@/components/ui/sonner";
 import Layout from "./DomainComponents/Layout";
 import AddMenu from "./Pages/AddMenu";
 import EditMenu from "./Pages/EditMenu";
+import AddEmployee from "./Pages/AddEmployee";
+import EditEmployee from "./Pages/EditEmployee";
 
 function App() {
   return (
@@ -33,6 +35,8 @@ function App() {
             <Route path={"/map-district"} element={<MapDistrict />} />
             <Route path={"/add-menu"} element={<AddMenu />} />
             <Route path={"/edit-menu/:id"} element={<EditMenu />} />
+            <Route path="/add-employee" element={<AddEmployee />} />
+            <Route path={"/edit-employee/:id"} element={<EditEmployee />} />
           </Route>
         </Routes>
       </BrowserRouter>
