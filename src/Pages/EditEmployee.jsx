@@ -5,9 +5,12 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
+import {ArrowUpDown} from "lucide-react";
+import {Checkbox} from "@/components/ui/checkbox.jsx";
+import DataTable from "@/DomainComponents/DataTable.jsx";
 
 export default function EditEmployee() {
-  const intitialValues = {
+  const initialValues = {
     firstName: "",
     middleName: "",
     lastName: "",
@@ -18,103 +21,52 @@ export default function EditEmployee() {
 
   const { id } = useParams();
   const navigate = useNavigate();
-  const [formData, setFormData] = useState(intitialValues);
+  const [formData, setFormData] = useState(initialValues);
   const [mappedRoles, setMappedRoles] = useState({});
   const [roles, setRoles] = useState([]);
 
+  console.log(roles);
+
   const columns = [
     {
-      accessorKey: "firstName",
+      accessorKey: "roleName",
       header: ({ column }) => {
         return (
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            First Name
-            <ArrowUpDown />
-          </Button>
+            <Button
+                variant="ghost"
+                type="button"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+              Role Name
+              <ArrowUpDown />
+            </Button>
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("firstName")}</div>;
-      },
-    },
-    {
-      accessorKey: "middleName",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant={"ghost"}
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Middle Name
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("middleName")}</div>;
-      },
-    },
-    {
-      accessorKey: "lastName",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant={"ghost"}
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Last Name
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("lastName")}</div>;
-      },
-    },
-    {
-      accessorKey: "email",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant={"ghost"}
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Last Name
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("email")}</div>;
+        return <div>{row.getValue("roleName")}</div>;
       },
     },
     {
       accessorKey: "id",
       header: () => {
-        return <div>Actions</div>;
+        return <div>Assigned Roles</div>;
       },
       cell: ({ row }) => {
         return (
-          <div>
-            <Checkbox
-              checked={mappedRoles[row.getValue("id")]}
-              onCheckedChange={(e) => {
-                setMappedRoles((prevState) => {
-                  return {
-                    ...prevState,
-                    [row.getValue("id")]: e,
-                  };
-                });
-              }}
-            />
-          </div>
+            <div className="flex gap-2">
+              <Checkbox
+                  disabled={row.getValue("id") === id}
+                  checked={mappedRoles[row.getValue("id")]}
+                  onCheckedChange={(e) => {
+                    setMappedRoles((prevState) => {
+                      return {
+                        ...prevState,
+                        [row.getValue("id")]: e,
+                      };
+                    });
+                  }}
+              />
+            </div>
         );
       },
     },
@@ -124,7 +76,7 @@ export default function EditEmployee() {
     (async () => {
       await fetchRoles();
     })();
-  });
+  }, []);
 
   useEffect(() => {
     if (formData.roles.length > 0) {
@@ -185,14 +137,22 @@ export default function EditEmployee() {
   async function onSubmit(e) {
     e.preventDefault();
     try {
+      const selectedRoles = roles.filter((role) => mappedRoles[role.id]);
+      const payload = {
+        ...formData,
+        roles: selectedRoles
+      }
+
+      console.log(payload);
+
       const response = await axios.put(
         import.meta.env.VITE_SERVER_URL + "/employee",
-        formData
+        payload
       );
       const data = response.data;
       await fetchEmployee();
       toast.success("Success", {
-        description: "Employee " + data.email + " updated",
+        description: "Employee updated",
       });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -245,12 +205,12 @@ export default function EditEmployee() {
         <Button>Update Employee</Button>
       </form>
 
-      <div className="">
-        {/* <DataTable
-          data={employees}
+      <div className="w-xl">
+         <DataTable
+          data={roles}
           columns={columns}
-          options={{ searchField: "email" }}
-        /> */}
+          options={{ searchField: "roleName" }}
+        />
       </div>
     </div>
   );

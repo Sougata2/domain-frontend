@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export default function AddEmployee() {
   const navigate = useNavigate();
-  const intitialValues = {
+  const initialValues = {
     firstName: "",
     middleName: "",
     lastName: "",
@@ -120,7 +120,7 @@ export default function AddEmployee() {
     },
   ];
 
-  const [formData, setFormData] = useState(intitialValues);
+  const [formData, setFormData] = useState(initialValues);
   const [employees, setEmployees] = useState([]);
 
   const fetchEmployees = useCallback(async () => {
@@ -158,7 +158,7 @@ export default function AddEmployee() {
         formData
       );
       const data = response.data;
-      setFormData(intitialValues);
+      setFormData(initialValues);
       toast.success("Success", { description: "Employee Added" });
       await fetchEmployees();
     } catch (error) {

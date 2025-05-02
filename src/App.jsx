@@ -15,6 +15,7 @@ import AddMenu from "./Pages/AddMenu";
 import EditMenu from "./Pages/EditMenu";
 import AddEmployee from "./Pages/AddEmployee";
 import EditEmployee from "./Pages/EditEmployee";
+import AddRole from "@/Pages/AddRole.jsx";
 
 function App() {
   return (
@@ -37,6 +38,7 @@ function App() {
             <Route path={"/edit-menu/:id"} element={<EditMenu />} />
             <Route path="/add-employee" element={<AddEmployee />} />
             <Route path={"/edit-employee/:id"} element={<EditEmployee />} />
+            <Route path={"/add-role"} element={<AddRole/>} />
           </Route>
         </Routes>
       </BrowserRouter>

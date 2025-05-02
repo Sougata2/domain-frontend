@@ -89,7 +89,7 @@ export default function EditMenu() {
         return (
           <div>
             <Checkbox
-              disabled={row.getValue("id") == id}
+              disabled={row.getValue("id") === id}
               checked={mappedSubMenus[row.getValue("id")]}
               onCheckedChange={(e) => {
                 setMappedSubMenus((prevState) => {
@@ -110,7 +110,7 @@ export default function EditMenu() {
     (async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/domain/menu-item/" + id
+          import.meta.env.VITE_SERVER_URL +"/menu-item/" + id
         );
         setFormData(response.data);
         if (response.data.pageLink === null || response.data.pageLink === "") {
