@@ -5,9 +5,6 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
-import {ArrowUpDown} from "lucide-react";
-import {Checkbox} from "@/components/ui/checkbox.jsx";
-import DataTable from "@/DomainComponents/DataTable.jsx";
 
 export default function EditEmployee() {
   const initialValues = {
@@ -16,92 +13,13 @@ export default function EditEmployee() {
     lastName: "",
     email: "",
     password: "",
-    roles: [],
+    defaultRole: "",
+    employeeMappings: [],
   };
 
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState(initialValues);
-  const [mappedRoles, setMappedRoles] = useState({});
-  const [roles, setRoles] = useState([]);
-
-  console.log(roles);
-
-  const columns = [
-    {
-      accessorKey: "roleName",
-      header: ({ column }) => {
-        return (
-            <Button
-                variant="ghost"
-                type="button"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-              Role Name
-              <ArrowUpDown />
-            </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("roleName")}</div>;
-      },
-    },
-    {
-      accessorKey: "id",
-      header: () => {
-        return <div>Assigned Roles</div>;
-      },
-      cell: ({ row }) => {
-        return (
-            <div className="flex gap-2">
-              <Checkbox
-                  disabled={row.getValue("id") === id}
-                  checked={mappedRoles[row.getValue("id")]}
-                  onCheckedChange={(e) => {
-                    setMappedRoles((prevState) => {
-                      return {
-                        ...prevState,
-                        [row.getValue("id")]: e,
-                      };
-                    });
-                  }}
-              />
-            </div>
-        );
-      },
-    },
-  ];
-
-  useEffect(() => {
-    (async () => {
-      await fetchRoles();
-    })();
-  }, []);
-
-  useEffect(() => {
-    if (formData.roles.length > 0) {
-      formData.roles.forEach((role) => {
-        setMappedRoles((prevState) => {
-          return {
-            ...prevState,
-            [role.id]: true,
-          };
-        });
-      });
-    }
-  }, [formData.roles, formData.roles.length]);
-
-  const fetchRoles = async () => {
-    try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/role"
-      );
-      const data = response.data;
-      setRoles(data);
-    } catch (error) {
-      toast.error("Error", { description: error.message });
-    }
-  };
 
   const fetchEmployee = useCallback(async () => {
     try {
@@ -137,19 +55,15 @@ export default function EditEmployee() {
   async function onSubmit(e) {
     e.preventDefault();
     try {
-      const selectedRoles = roles.filter((role) => mappedRoles[role.id]);
       const payload = {
         ...formData,
-        roles: selectedRoles
-      }
-
-      console.log(payload);
+      };
 
       const response = await axios.put(
         import.meta.env.VITE_SERVER_URL + "/employee",
         payload
       );
-      const data = response.data;
+      const _ = response.data;
       await fetchEmployee();
       toast.success("Success", {
         description: "Employee updated",
@@ -204,14 +118,6 @@ export default function EditEmployee() {
         </div>
         <Button>Update Employee</Button>
       </form>
-
-      <div className="w-xl">
-         <DataTable
-          data={roles}
-          columns={columns}
-          options={{ searchField: "roleName" }}
-        />
-      </div>
     </div>
   );
 }
