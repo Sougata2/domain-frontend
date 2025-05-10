@@ -99,6 +99,9 @@ export default function AddEmployee() {
       cell: ({ row }) => {
         return (
           <div className="flex gap-2">
+            <Button className={"bg-blue-500 hover:bg-blue-600 "}>
+              Add role
+            </Button>
             <Button
               onClick={() => navigate(`/edit-employee/${row.getValue("id")}`)}
               className={
@@ -157,7 +160,7 @@ export default function AddEmployee() {
         import.meta.env.VITE_SERVER_URL + "/employee",
         formData
       );
-      const data = response.data;
+      const _ = response.data;
       setFormData(initialValues);
       toast.success("Success", { description: "Employee Added" });
       await fetchEmployees();
