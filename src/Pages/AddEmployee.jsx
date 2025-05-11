@@ -36,7 +36,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { Badge } from "@/components/ui/badge";
 
 const animatedComponents = makeAnimated();
 
