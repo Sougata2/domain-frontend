@@ -23,7 +23,7 @@ import {
   ShieldUser,
   Trash,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
@@ -282,6 +282,7 @@ const EmployeeActionsMenu = ({ id }) => {
 };
 
 const AddRoleDrawer = ({ employeeId }) => {
+  const addRoleRef = useRef(null);
   const [assignedRoles, setAssignedRoles] = useState([]);
   const [unAssignedRoles, setUnAssignedRoles] = useState([]);
   const [defaultRole, setDefaultRole] = useState({});
@@ -343,7 +344,26 @@ const AddRoleDrawer = ({ employeeId }) => {
       // reset the values
       await fetchAssignedRoles();
       await fetchUnAssignedRoles();
+      addRoleRef.current.clearValue();
       toast.success("Success", { description: "Roles assigned successfully" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  async function handleDelete(employeeId, roleId) {
+    console.log("EmployeeId", employeeId);
+    console.log("RoleId", roleId);
+
+    try {
+      const response = await axios.delete(
+        import.meta.env.VITE_SERVER_URL +
+          `/employee-role-map?employeeId=${employeeId}&roleId=${roleId}`
+      );
+      const _ = response.data;
+      toast.warning("Deleted", { description: "Employee Role Map Deleted" });
+      await fetchAssignedRoles();
+      await fetchUnAssignedRoles();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -360,7 +380,7 @@ const AddRoleDrawer = ({ employeeId }) => {
           <div>Manage Roles</div>
         </DropdownMenuItem>
       </DrawerTrigger>
-      <DrawerContent className="min-h-[60vh] max-h-[100vh]">
+      <DrawerContent className="min-h-[80vh] max-h-[100vh]">
         <div className="mx-auto w-full max-w-md">
           <DrawerHeader>
             <DrawerTitle>Manage Roles</DrawerTitle>
@@ -384,6 +404,7 @@ const AddRoleDrawer = ({ employeeId }) => {
                         <CircleX
                           size={"16px"}
                           className={"text-red-400 hover:text-red-500"}
+                          onClick={() => handleDelete(employeeId, r.value.id)}
                         />
                       </div>
                     ))}
@@ -393,6 +414,7 @@ const AddRoleDrawer = ({ employeeId }) => {
               <div className={"w-full flex flex-col gap-2.5"}>
                 <Label>Add Roles</Label>
                 <Select
+                  ref={addRoleRef}
                   className={"w-full"}
                   closeMenuOnSelect={false}
                   placeholder={"Add Roles"}
