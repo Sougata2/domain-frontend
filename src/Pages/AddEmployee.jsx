@@ -1,15 +1,46 @@
 import { Button } from "@/components/ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
-import { ArrowUpDown } from "lucide-react";
+import {
+  ArrowUpDown,
+  CircleX,
+  CrossIcon,
+  Ellipsis,
+  Minus,
+  PenLine,
+  ShieldUser,
+  Trash,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import { Badge } from "@/components/ui/badge";
+
+const animatedComponents = makeAnimated();
+
 export default function AddEmployee() {
-  const navigate = useNavigate();
   const initialValues = {
     firstName: "",
     middleName: "",
@@ -97,28 +128,7 @@ export default function AddEmployee() {
         return <div>Actions</div>;
       },
       cell: ({ row }) => {
-        return (
-          <div className="flex gap-2">
-            <Button className={"bg-blue-500 hover:bg-blue-600 "}>
-              Add role
-            </Button>
-            <Button
-              onClick={() => navigate(`/edit-employee/${row.getValue("id")}`)}
-              className={
-                "bg-emerald-400 hover:bg-emerald-500 text-emerald-700 hover:text-emerald-800"
-              }
-            >
-              Edit
-            </Button>
-            <Button
-              className={
-                "bg-red-400 hover:bg-red-500 text-red-700 hover:text-red-800"
-              }
-            >
-              Delete
-            </Button>
-          </div>
-        );
+        return <EmployeeActionsMenu id={row.getValue("id")} />;
       },
     },
   ];
@@ -225,7 +235,7 @@ export default function AddEmployee() {
         <Button>Add Employee</Button>
       </form>
 
-      <div className="">
+      <div className="w-3xl">
         <DataTable
           data={employees}
           columns={columns}
@@ -235,3 +245,183 @@ export default function AddEmployee() {
     </div>
   );
 }
+
+const EmployeeActionsMenu = ({ id }) => {
+  const navigate = useNavigate();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Ellipsis />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuGroup>
+          <AddRoleDrawer employeeId={id} />
+          <DropdownMenuItem>
+            <div
+              className={
+                "flex gap-2 justify-center items-center cursor-pointer"
+              }
+            >
+              <PenLine />
+              <div onClick={() => navigate(`/edit-employee/${id}`)}>Edit</div>
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <div
+              className={
+                "flex gap-2 justify-center items-center cursor-pointer"
+              }
+            >
+              <Trash />
+              <div>Delete</div>
+            </div>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
+const AddRoleDrawer = ({ employeeId }) => {
+  const [assignedRoles, setAssignedRoles] = useState([]);
+  const [unAssignedRoles, setUnAssignedRoles] = useState([]);
+  const [defaultRole, setDefaultRole] = useState({});
+  const [rolesToAssign, setRolesToAssign] = useState([]);
+
+  const fetchAssignedRoles = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        import.meta.env.VITE_SERVER_URL +
+          `/employee-role-map?employeeId=${employeeId}`
+      );
+      const data = response.data.map((d) => ({
+        label: d.role.roleName,
+        value: d.role,
+      }));
+      setAssignedRoles(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [employeeId]);
+
+  const fetchUnAssignedRoles = useCallback(async () => {
+    const response = await axios.get(
+      import.meta.env.VITE_SERVER_URL +
+        `/employee-role-map/not-assigned-roles/${employeeId}`
+    );
+
+    const data = response.data.map((d) => ({
+      label: d.roleName,
+      value: d,
+    }));
+    setUnAssignedRoles(data);
+  }, [employeeId]);
+
+  useEffect(() => {
+    if (employeeId) {
+      (async () => {
+        await fetchAssignedRoles();
+        await fetchUnAssignedRoles();
+      })();
+    }
+  }, [employeeId, fetchAssignedRoles, fetchUnAssignedRoles]);
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    try {
+      const payloadArray = rolesToAssign.map((rta) => ({
+        employee: { id: employeeId },
+        role: { id: rta.value.id },
+        isDefault: 0,
+      }));
+      console.log(payloadArray);
+      const response = await axios.post(
+        import.meta.env.VITE_SERVER_URL + "/employee-role-map/bulk",
+        payloadArray
+      );
+      const _ = response.data;
+
+      // reset the values
+      await fetchAssignedRoles();
+      await fetchUnAssignedRoles();
+      toast.success("Success", { description: "Roles assigned successfully" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <DropdownMenuItem
+          onSelect={(e) => e.preventDefault()} // prevents menu from closing
+          className="cursor-pointer flex items-center gap-2"
+        >
+          <ShieldUser />
+          <div>Manage Roles</div>
+        </DropdownMenuItem>
+      </DrawerTrigger>
+      <DrawerContent className="min-h-[60vh] max-h-[100vh]">
+        <div className="mx-auto w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>Manage Roles</DrawerTitle>
+            <DrawerDescription>Give access based on roles</DrawerDescription>
+          </DrawerHeader>
+          <form onSubmit={handleSubmit}>
+            <div className="flex flex-col items-center justify-center gap-3.5 my-5">
+              <div className={"w-full flex flex-col gap-2.5"}>
+                <Label>Assigned Roles</Label>
+                {assignedRoles.length === 0 && <div>No Roles assigned</div>}
+                {assignedRoles.length > 0 && (
+                  <div className={"flex gap-2 flex-wrap"}>
+                    {assignedRoles.map((r) => (
+                      <div
+                        className={
+                          "shadow bg-gray-100 flex gap-2.5 justify-between items-center px-2 rounded-2xl"
+                        }
+                        key={r.value.id}
+                      >
+                        {r.label}
+                        <CircleX
+                          size={"16px"}
+                          className={"text-red-400 hover:text-red-500"}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className={"w-full flex flex-col gap-2.5"}>
+                <Label>Add Roles</Label>
+                <Select
+                  className={"w-full"}
+                  closeMenuOnSelect={false}
+                  placeholder={"Add Roles"}
+                  components={animatedComponents}
+                  isMulti
+                  options={unAssignedRoles}
+                  onChange={(e) => setRolesToAssign([...e])}
+                  required
+                />
+              </div>
+              {/* <div className={"w-full flex flex-col gap-2.5"}>
+                <Label>Default Role</Label>
+                <Select
+                  className={"w-full"}
+                  placeholder={"Select Default Role"}
+                  options={assignedRoles}
+                />
+              </div> */}
+            </div>
+            <DrawerFooter>
+              <Button>Submit</Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </form>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
