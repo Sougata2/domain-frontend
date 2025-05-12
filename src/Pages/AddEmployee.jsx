@@ -283,10 +283,13 @@ const EmployeeActionsMenu = ({ id }) => {
 
 const AddRoleDrawer = ({ employeeId }) => {
   const addRoleRef = useRef(null);
+  const defaultRoleRef = useRef(null);
   const [assignedRoles, setAssignedRoles] = useState([]);
   const [unAssignedRoles, setUnAssignedRoles] = useState([]);
-  const [defaultRole, setDefaultRole] = useState({});
+  const [defaultRole, setDefaultRole] = useState(null);
+  const [selectedDefaultRole, setSelectedDefaultRole] = useState(null);
   const [rolesToAssign, setRolesToAssign] = useState([]);
+  const [defaultRoleOptions, setDefaultRoleOptions] = useState([]);
 
   const fetchAssignedRoles = useCallback(async () => {
     try {
@@ -317,14 +320,37 @@ const AddRoleDrawer = ({ employeeId }) => {
     setUnAssignedRoles(data);
   }, [employeeId]);
 
+  const fetchDefaultRole = useCallback(async () => {
+    const response = await axios.get(
+      import.meta.env.VITE_SERVER_URL +
+        `/employee-role-map/default-role/${employeeId}`
+    );
+    if (response.status === 200) {
+      setDefaultRole({
+        label: response.data.roleName,
+        value: { ...response.data },
+      });
+    }
+  }, [employeeId]);
+
   useEffect(() => {
     if (employeeId) {
       (async () => {
         await fetchAssignedRoles();
         await fetchUnAssignedRoles();
+        await fetchDefaultRole();
       })();
     }
-  }, [employeeId, fetchAssignedRoles, fetchUnAssignedRoles]);
+  }, [employeeId, fetchAssignedRoles, fetchDefaultRole, fetchUnAssignedRoles]);
+
+  useEffect(() => {
+    setDefaultRoleOptions([...assignedRoles, ...rolesToAssign]);
+    if (defaultRoleRef.current) {
+      defaultRoleRef.current.clearValue();
+    }
+  }, [assignedRoles, rolesToAssign]);
+
+  useEffect(() => {}, []);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -332,9 +358,8 @@ const AddRoleDrawer = ({ employeeId }) => {
       const payloadArray = rolesToAssign.map((rta) => ({
         employee: { id: employeeId },
         role: { id: rta.value.id },
-        isDefault: 0,
+        isDefault: selectedDefaultRole.value.id === rta.value.id ? 1 : 0,
       }));
-      console.log(payloadArray);
       const response = await axios.post(
         import.meta.env.VITE_SERVER_URL + "/employee-role-map/bulk",
         payloadArray
@@ -344,6 +369,7 @@ const AddRoleDrawer = ({ employeeId }) => {
       // reset the values
       await fetchAssignedRoles();
       await fetchUnAssignedRoles();
+      await fetchDefaultRole();
       addRoleRef.current.clearValue();
       toast.success("Success", { description: "Roles assigned successfully" });
     } catch (error) {
@@ -352,9 +378,6 @@ const AddRoleDrawer = ({ employeeId }) => {
   }
 
   async function handleDelete(employeeId, roleId) {
-    console.log("EmployeeId", employeeId);
-    console.log("RoleId", roleId);
-
     try {
       const response = await axios.delete(
         import.meta.env.VITE_SERVER_URL +
@@ -388,6 +411,20 @@ const AddRoleDrawer = ({ employeeId }) => {
           </DrawerHeader>
           <form onSubmit={handleSubmit}>
             <div className="flex flex-col items-center justify-center gap-3.5 my-5">
+              {defaultRole && (
+                <div className={"w-full flex flex-col gap-2.5"}>
+                  <Label>Default Role</Label>
+                  <div className={"flex gap-2 flex-wrap"}>
+                    <div
+                      className={
+                        "shadow bg-gray-100 flex gap-2.5 justify-between items-center px-2 rounded-2xl"
+                      }
+                    >
+                      {defaultRole.label}
+                    </div>
+                  </div>
+                </div>
+              )}
               <div className={"w-full flex flex-col gap-2.5"}>
                 <Label>Assigned Roles</Label>
                 {assignedRoles.length === 0 && <div>No Roles assigned</div>}
@@ -401,11 +438,13 @@ const AddRoleDrawer = ({ employeeId }) => {
                         key={r.value.id}
                       >
                         {r.label}
-                        <CircleX
-                          size={"16px"}
-                          className={"text-red-400 hover:text-red-500"}
-                          onClick={() => handleDelete(employeeId, r.value.id)}
-                        />
+                        {r.value.id !== defaultRole?.value.id && (
+                          <CircleX
+                            size={"16px"}
+                            className={"text-red-400 hover:text-red-500"}
+                            onClick={() => handleDelete(employeeId, r.value.id)}
+                          />
+                        )}
                       </div>
                     ))}
                   </div>
@@ -421,18 +460,25 @@ const AddRoleDrawer = ({ employeeId }) => {
                   components={animatedComponents}
                   isMulti
                   options={unAssignedRoles}
-                  onChange={(e) => setRolesToAssign([...e])}
+                  onChange={(e) => {
+                    setRolesToAssign([...e]);
+                  }}
                   required
                 />
               </div>
-              {/* <div className={"w-full flex flex-col gap-2.5"}>
-                <Label>Default Role</Label>
-                <Select
-                  className={"w-full"}
-                  placeholder={"Select Default Role"}
-                  options={assignedRoles}
-                />
-              </div> */}
+              {!defaultRole && (
+                <div className={"w-full flex flex-col gap-2.5"}>
+                  <Label>Default Role</Label>
+                  <Select
+                    ref={defaultRoleRef}
+                    className={"w-full"}
+                    placeholder={"Select Default Role"}
+                    options={defaultRoleOptions}
+                    onChange={(e) => setSelectedDefaultRole(e)}
+                    defaultValue={defaultRole}
+                  />
+                </div>
+              )}
             </div>
             <DrawerFooter>
               <Button>Submit</Button>
