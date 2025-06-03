@@ -3,16 +3,17 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DataTable from "@/DomainComponents/DataTable";
+import useMenu from "@/hooks/use-menu";
 import axios from "axios";
 import { ArrowUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
 export default function AddMenu() {
   const initialValue = {
-    menuItemName: "",
-    pageLink: "",
+    name: "",
+    url: "",
   };
 
   const initialError = {
@@ -22,7 +23,7 @@ export default function AddMenu() {
 
   const columns = [
     {
-      accessorKey: "menuItemName",
+      accessorKey: "name",
       header: ({ column }) => {
         return (
           <div>
@@ -39,7 +40,7 @@ export default function AddMenu() {
         );
       },
       cell: ({ row }) => {
-        return <div className="capitalize">{row.getValue("menuItemName")}</div>;
+        return <div className="capitalize">{row.getValue("name")}</div>;
       },
     },
     {
@@ -50,8 +51,7 @@ export default function AddMenu() {
       cell: ({ row }) => {
         return (
           <div>
-            {row.getValue("pageLink") === null ||
-            row.getValue("pageLink") === "" ? (
+            {row.getValue("url") === null || row.getValue("url") === "" ? (
               <span className="border-1.2 rounded-4xl bg-indigo-500 text-white shadow px-2.5 pb-0.5">
                 Menu
               </span>
@@ -65,15 +65,15 @@ export default function AddMenu() {
       },
     },
     {
-      accessorKey: "pageLink",
+      accessorKey: "url",
       header: () => {
         return <div>Page Link</div>;
       },
       cell: ({ row }) => {
         return (
           <div className="text-blue-400 text-[17px]">
-            {row.getValue("pageLink") && "/"}
-            {row.getValue("pageLink")}
+            {row.getValue("url") && "/"}
+            {row.getValue("url")}
           </div>
         );
       },
@@ -105,29 +105,14 @@ export default function AddMenu() {
   const [formError, setFormError] = useState(initialError);
   const [isSubItem, setIsSubItem] = useState(false);
 
-  const [menus, setMenus] = useState([]);
-
-  useEffect(() => {
-    getAllActiveMenuItemOrSubMenuItem();
-  }, []);
-
-  async function getAllActiveMenuItemOrSubMenuItem() {
-    try {
-      const response = await axios.get(
-        "http://localhost:8080/domain/menu-item/all"
-      );
-      setMenus(response.data);
-    } catch (error) {
-      toast.error("Error", { description: error.message });
-    }
-  }
+  const { data: menus } = useMenu(0);
 
   function validate() {
-    if (isSubItem && formData.pageLink === "") {
+    if (isSubItem && formData.url === "") {
       setFormError((prevState) => {
         return {
           ...prevState,
-          pageLink: "Field cannot be empty",
+          url: "Field cannot be empty",
         };
       });
       return false;
@@ -149,11 +134,10 @@ export default function AddMenu() {
     e.preventDefault();
     try {
       if (validate()) {
-        await axios.post("http://localhost:8080/domain/menu-item", formData);
+        await axios.post(import.meta.env.VITE_SERVER_URL + "/menu", formData);
         setFormData(initialValue);
         toast.success("Success", { description: "Menu Item Added!" });
         // for syncing data
-        getAllActiveMenuItemOrSubMenuItem();
       }
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -163,11 +147,11 @@ export default function AddMenu() {
     <div className="container">
       <form className="w-md mx-auto flex flex-col gap-3" onSubmit={onSubmit}>
         <div className={"form-group flex flex-col gap-2"}>
-          <Label htmlFor={"menuItemName"}>Menu Item Name</Label>
+          <Label htmlFor={"name"}>Menu Item Name</Label>
           <Input
             type={"text"}
-            name={"menuItemName"}
-            value={formData.menuItemName}
+            name={"name"}
+            value={formData.name}
             onChange={handleOnChange}
           />
         </div>
@@ -188,15 +172,15 @@ export default function AddMenu() {
 
         {isSubItem && (
           <div className="flex flex-col gap-2">
-            <Label htmlFor={"pageLink"}>Page Link</Label>
+            <Label htmlFor={"url"}>Url</Label>
             <Input
               type={"text"}
-              name={"pageLink"}
-              value={formData.pageLink}
+              name={"url"}
+              value={formData.url}
               onChange={handleOnChange}
             />
-            {formError.pageLink && (
-              <span className="text-sm text-red-400">{formError.pageLink}</span>
+            {formError.url && (
+              <span className="text-sm text-red-400">{formError.url}</span>
             )}
           </div>
         )}
@@ -208,7 +192,7 @@ export default function AddMenu() {
         <DataTable
           data={menus}
           columns={columns}
-          options={{ searchField: "menuItemName" }}
+          options={{ searchField: "name" }}
         />
       </div>
     </div>

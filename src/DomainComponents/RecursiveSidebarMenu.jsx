@@ -19,12 +19,12 @@ export default function RecursiveSidebarMenu({ menu }) {
   return (
     <SidebarGroupContent key={menu.id}>
       <SidebarMenu>
-        {menu.pageLink === null || menu.pageLink === "" ? (
+        {menu.url === null || menu.url === "" ? (
           <Collapsible>
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton className="group">
-                  <span>{capitalize(menu.menuItemName)}</span>
+                  <span>{capitalize(menu.name)}</span>
                   <ChevronDown
                     className="ms-auto transition-transform group-data-[state=closed]:rotate-270 group-data-[state=open]:rotate-360"
                     size={16}
@@ -34,7 +34,7 @@ export default function RecursiveSidebarMenu({ menu }) {
               <CollapsibleContent>
                 <SidebarMenuSub>
                   <SidebarMenuSubItem>
-                    {menu.menuItems.map((sm) => (
+                    {menu.subMenus.map((sm) => (
                       <RecursiveSidebarMenu key={sm.id} menu={sm} />
                     ))}
                   </SidebarMenuSubItem>
@@ -45,7 +45,7 @@ export default function RecursiveSidebarMenu({ menu }) {
         ) : (
           <div className="flex gap-1 justify-start items-center py-1">
             <LinkIcon size={15} className="text-blue-400" />
-            <Link to={menu.pageLink}>{capitalize(menu.menuItemName)}</Link>
+            <Link to={menu.pageLink}>{capitalize(menu.name)}</Link>
           </div>
         )}
       </SidebarMenu>

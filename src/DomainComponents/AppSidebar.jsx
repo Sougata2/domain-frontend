@@ -4,20 +4,11 @@ import {
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
-import axios from "axios";
 import RecursiveSidebarMenu from "./RecursiveSidebarMenu";
+import useMenu from "@/hooks/use-menu";
 
 export function AppSidebar() {
-  const [menus, setMenus] = useState([]);
-  useEffect(() => {
-    (async () => {
-      const response = await axios.get(
-        "http://localhost:8080/domain/menu-item"
-      );
-      setMenus(response.data);
-    })();
-  }, []);
+  const { data: menus } = useMenu(1);
 
   return (
     <Sidebar>

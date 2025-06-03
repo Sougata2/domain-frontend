@@ -17,6 +17,7 @@ import AddEmployee from "./Pages/AddEmployee";
 import EditEmployee from "./Pages/EditEmployee";
 import AddRole from "@/Pages/AddRole.jsx";
 import ManageEmployee from "./Pages/ManageEmployee";
+import MapMenuToRole from "./Pages/MapMenuToRole";
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path={"/edit-employee/:id"} element={<EditEmployee />} />
             <Route path={"/add-role"} element={<AddRole />} />
             <Route path={"/manage-employee"} element={<ManageEmployee />} />
+            <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
           </Route>
         </Routes>
       </BrowserRouter>

@@ -110,7 +110,7 @@ export default function EditMenu() {
     (async () => {
       try {
         const response = await axios.get(
-          import.meta.env.VITE_SERVER_URL +"/menu-item/" + id
+          import.meta.env.VITE_SERVER_URL + "/menu-item/" + id
         );
         setFormData(response.data);
         if (response.data.pageLink === null || response.data.pageLink === "") {
@@ -147,6 +147,8 @@ export default function EditMenu() {
       toast.error("Error", { description: error.message });
     }
   }
+
+  console.log(formData);
 
   async function onSubmit(e) {
     e.preventDefault();
