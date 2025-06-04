@@ -1,26 +1,30 @@
 import axios from "axios";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 function useMenu(topLevel = 0) {
   const [data, setData] = useState([]);
 
+  const refreshHandler = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        import.meta.env.VITE_SERVER_URL +
+          "/menu" +
+          `${topLevel === 1 ? "?top-level=1" : ""}`
+      );
+      setData(response.data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [topLevel]);
+
   useState(() => {
     (async () => {
-      try {
-        const response = await axios.get(
-          import.meta.env.VITE_SERVER_URL +
-            "/menu" +
-            `${topLevel === 1 ? "?top-level=1" : ""}`
-        );
-        setData(response.data);
-      } catch (error) {
-        toast.error("Error", { description: error.message });
-      }
+      await refreshHandler();
     })();
   }, []);
 
-  return { data };
+  return { data, refreshHandler };
 }
 
 export default useMenu;

@@ -105,7 +105,7 @@ export default function AddMenu() {
   const [formError, setFormError] = useState(initialError);
   const [isSubItem, setIsSubItem] = useState(false);
 
-  const { data: menus } = useMenu(0);
+  const { data: menus, refreshHandler: refreshMenu } = useMenu(0);
 
   function validate() {
     if (isSubItem && formData.url === "") {
@@ -138,6 +138,7 @@ export default function AddMenu() {
         setFormData(initialValue);
         toast.success("Success", { description: "Menu Item Added!" });
         // for syncing data
+        await refreshMenu();
       }
     } catch (error) {
       toast.error("Error", { description: error.message });
