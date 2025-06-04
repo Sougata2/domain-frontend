@@ -12,12 +12,10 @@ import { ArrowUpDown } from "lucide-react";
 export default function EditMenu() {
   const initialValue = {
     id: "",
-    menuItemName: "",
-    pageLink: "",
-    isValid: "",
-    logDate: "",
-    menuItems: [],
-    menuItem: "",
+    name: "",
+    url: "",
+    subMenus: null,
+    menu: null,
   };
   const { id } = useParams();
   const [formData, setFormData] = useState(initialValue);
@@ -27,7 +25,7 @@ export default function EditMenu() {
 
   const columns = [
     {
-      accessorKey: "menuItemName",
+      accessorKey: "name",
       header: ({ column }) => {
         return (
           <Button
@@ -41,7 +39,7 @@ export default function EditMenu() {
         );
       },
       cell: ({ row }) => {
-        return <div className="lowercase">{row.getValue("menuItemName")}</div>;
+        return <div className="lowercase">{row.getValue("name")}</div>;
       },
     },
     {
@@ -52,8 +50,7 @@ export default function EditMenu() {
       cell: ({ row }) => {
         return (
           <div>
-            {row.getValue("pageLink") === null ||
-            row.getValue("pageLink") === "" ? (
+            {row.getValue("url") === null || row.getValue("url") === "" ? (
               <span className="border-1.2 rounded-4xl bg-indigo-500 text-white shadow px-2.5 pb-0.5">
                 Menu
               </span>
@@ -67,15 +64,15 @@ export default function EditMenu() {
       },
     },
     {
-      accessorKey: "pageLink",
+      accessorKey: "url",
       header: () => {
-        return <div>Page Link</div>;
+        return <div>Url</div>;
       },
       cell: ({ row }) => {
         return (
           <div className="text-blue-400 text-[17px]">
-            {row.getValue("pageLink") && "/"}
-            {row.getValue("pageLink")}
+            {row.getValue("url") && "/"}
+            {row.getValue("url")}
           </div>
         );
       },
@@ -110,10 +107,10 @@ export default function EditMenu() {
     (async () => {
       try {
         const response = await axios.get(
-          import.meta.env.VITE_SERVER_URL + "/menu-item/" + id
+          import.meta.env.VITE_SERVER_URL + "/menu/" + id
         );
         setFormData(response.data);
-        if (response.data.pageLink === null || response.data.pageLink === "") {
+        if (response.data.url === null || response.data.url === "") {
           getAllAsSubMenus();
         } else {
           setIsSubMenu(true);
@@ -124,9 +121,11 @@ export default function EditMenu() {
     })();
   }, [id]);
 
+  console.log(formData);
+
   useEffect(() => {
     if (subMenus.length > 0) {
-      formData.menuItems.forEach((sm) => {
+      formData.subMenus.forEach((sm) => {
         setMappedSubMenus((prevState) => {
           return {
             ...prevState,
@@ -135,12 +134,14 @@ export default function EditMenu() {
         });
       });
     }
-  }, [formData.menuItems, subMenus]);
+  }, [formData.subMenus, subMenus]);
+
+  console.log(mappedSubMenus);
 
   async function getAllAsSubMenus() {
     try {
       const response = await axios.get(
-        "http://localhost:8080/domain/menu-item/all"
+        import.meta.env.VITE_SERVER_URL + "/menu"
       );
       setSubMenus(response.data);
     } catch (error) {
@@ -148,20 +149,20 @@ export default function EditMenu() {
     }
   }
 
-  console.log(formData);
-
   async function onSubmit(e) {
     e.preventDefault();
     try {
-      const includeMenusOrSubMenus = subMenus.filter(
-        (sm) => mappedSubMenus[sm.id]
-      );
-      const payload = { ...formData, menuItems: includeMenusOrSubMenus };
-      const response = await axios.put(
-        "http://localhost:8080/domain/menu-item",
-        payload
-      );
-      setFormData(response.data);
+      const includeMenusOrSubMenus = subMenus
+        .filter((sm) => mappedSubMenus[sm.id])
+        .map((fsm) => ({ id: fsm.id }));
+      console.log(includeMenusOrSubMenus);
+
+      // const payload = { ...formData, menuItems: includeMenusOrSubMenus };
+      // const response = await axios.put(
+      //   import.meta.env.VITE_SERVER_URL + "menu",
+      //   payload
+      // );
+      // setFormData(response.data);
       toast.success("Success", { description: "Menu Updated" });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -182,12 +183,12 @@ export default function EditMenu() {
     <div className={"flex flex-col gap-4 justify-center items-center py-12"}>
       <form className={"flex flex-col w-md gap-4.5"} onSubmit={onSubmit}>
         <div className={"flex flex-col gap-2.5"}>
-          <Label htmlFor={"menuItemName"}>Menu</Label>
+          <Label htmlFor={"name"}>Menu</Label>
           <Input
-            name="menuItemName"
-            placeholder={"Menu Item Name"}
-            value={formData.menuItemName}
-            id={"menuItemName"}
+            name="name"
+            placeholder={"Menu Name"}
+            value={formData.name}
+            id={"name"}
             onChange={onChange}
           />
         </div>
@@ -198,7 +199,7 @@ export default function EditMenu() {
             checked={isSubMenu}
             onCheckedChange={() => {
               setIsSubMenu((prevState) => !prevState);
-              formData.pageLink = "";
+              formData.url = "";
             }}
           />
           <label
@@ -211,12 +212,12 @@ export default function EditMenu() {
 
         {isSubMenu && (
           <div className={"flex flex-col gap-2.5"}>
-            <Label htmlFor={"pageLink"}>Page Link</Label>
+            <Label htmlFor={"url"}>Page Link</Label>
             <Input
-              name={"pageLink"}
-              placeholder={`Page Link`}
-              value={formData.pageLink === null ? "" : formData.pageLink}
-              id={"pageLink"}
+              name={"url"}
+              placeholder={`Url`}
+              value={formData.url === null ? "" : formData.url}
+              id={"url"}
               onChange={onChange}
             />
           </div>
@@ -229,7 +230,7 @@ export default function EditMenu() {
           <DataTable
             data={subMenus}
             columns={columns}
-            options={{ searchField: "menuItemName" }}
+            options={{ searchField: "name" }}
           />
         )}
       </div>
