@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sidebar";
 import { capitalize } from "@/utility/helpers";
 import { ChevronDown, LinkIcon } from "lucide-react";
-import { Link } from "react-router";
+import { Link, NavLink } from "react-router";
 
 export default function RecursiveSidebarMenu({ menu }) {
   return (
@@ -45,7 +45,7 @@ export default function RecursiveSidebarMenu({ menu }) {
         ) : (
           <div className="flex gap-1 justify-start items-center py-1">
             <LinkIcon size={15} className="text-blue-400" />
-            <Link to={menu.pageLink}>{capitalize(menu.name)}</Link>
+            <NavLink to={menu.url}>{capitalize(menu.name)}</NavLink>
           </div>
         )}
       </SidebarMenu>
