@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import axios from "axios";
@@ -103,25 +103,27 @@ export default function EditMenu() {
     },
   ];
 
-  useEffect(() => {
-    (async () => {
-      try {
-        const response = await axios.get(
-          import.meta.env.VITE_SERVER_URL + "/menu/" + id
-        );
-        setFormData(response.data);
-        if (response.data.url === null || response.data.url === "") {
-          getAllAsSubMenus();
-        } else {
-          setIsSubMenu(true);
-        }
-      } catch (e) {
-        toast.error("Error", { description: e.message });
+  const fetchMenuById = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        import.meta.env.VITE_SERVER_URL + "/menu/" + id
+      );
+      setFormData(response.data);
+      if (response.data.url === null || response.data.url === "") {
+        getAllAsSubMenus();
+      } else {
+        setIsSubMenu(true);
       }
-    })();
+    } catch (e) {
+      toast.error("Error", { description: e.message });
+    }
   }, [id]);
 
-  console.log(formData);
+  useEffect(() => {
+    (async () => {
+      await fetchMenuById();
+    })();
+  }, [fetchMenuById]);
 
   useEffect(() => {
     if (subMenus.length > 0) {
@@ -135,8 +137,6 @@ export default function EditMenu() {
       });
     }
   }, [formData.subMenus, subMenus]);
-
-  console.log(mappedSubMenus);
 
   async function getAllAsSubMenus() {
     try {
@@ -154,15 +154,15 @@ export default function EditMenu() {
     try {
       const includeMenusOrSubMenus = subMenus
         .filter((sm) => mappedSubMenus[sm.id])
-        .map((fsm) => ({ id: fsm.id }));
-      console.log(includeMenusOrSubMenus);
+        .map((fsm) => ({ ...fsm, subMenus: null, menu: { id: formData.id } }));
 
-      // const payload = { ...formData, menuItems: includeMenusOrSubMenus };
-      // const response = await axios.put(
-      //   import.meta.env.VITE_SERVER_URL + "menu",
-      //   payload
-      // );
-      // setFormData(response.data);
+      await axios.put(
+        import.meta.env.VITE_SERVER_URL + "/menu/bulk",
+        includeMenusOrSubMenus
+      );
+
+      await fetchMenuById();
+
       toast.success("Success", { description: "Menu Updated" });
     } catch (error) {
       toast.error("Error", { description: error.message });
