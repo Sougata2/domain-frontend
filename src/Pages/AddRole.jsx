@@ -18,7 +18,7 @@ function AddRole() {
   const [roles, setRoles] = useState([]);
   const columns = [
     {
-      accessorKey: "roleName",
+      accessorKey: "name",
       header: ({ column }) => {
         return (
           <Button
@@ -32,7 +32,7 @@ function AddRole() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("roleName")}</div>;
+        return <div>{row.getValue("name")}</div>;
       },
     },
     {
@@ -43,14 +43,14 @@ function AddRole() {
       cell: ({ row }) => {
         return (
           <div className="flex gap-2">
-            <Button
+            {/* <Button
               onClick={() => navigate(`/edit-role/${row.getValue("id")}`)}
               className={
                 "bg-emerald-400 hover:bg-emerald-500 text-emerald-700 hover:text-emerald-800"
               }
             >
               Edit
-            </Button>
+            </Button> */}
             <Button
               className={
                 "bg-red-400 hover:bg-red-500 text-red-700 hover:text-red-800"

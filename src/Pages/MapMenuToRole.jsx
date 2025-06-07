@@ -11,7 +11,7 @@ import axios from "axios";
 function MapMenuToRole() {
   const columns = [
     {
-      accessorKey: "menuItemName",
+      accessorKey: "name",
       header: ({ column }) => {
         return (
           <Button
@@ -25,7 +25,7 @@ function MapMenuToRole() {
         );
       },
       cell: ({ row }) => {
-        return <div className="lowercase">{row.getValue("menuItemName")}</div>;
+        return <div className="lowercase">{row.getValue("name")}</div>;
       },
     },
     {
@@ -36,8 +36,7 @@ function MapMenuToRole() {
       cell: ({ row }) => {
         return (
           <div>
-            {row.getValue("pageLink") === null ||
-            row.getValue("pageLink") === "" ? (
+            {row.getValue("url") === null || row.getValue("url") === "" ? (
               <span className="border-1.2 rounded-4xl bg-indigo-500 text-white shadow px-2.5 pb-0.5">
                 Menu
               </span>
@@ -51,15 +50,15 @@ function MapMenuToRole() {
       },
     },
     {
-      accessorKey: "pageLink",
+      accessorKey: "url",
       header: () => {
         return <div>Page Link</div>;
       },
       cell: ({ row }) => {
         return (
           <div className="text-blue-400 text-[17px]">
-            {row.getValue("pageLink") && "/"}
-            {row.getValue("pageLink")}
+            {row.getValue("url") && "/"}
+            {row.getValue("url")}
           </div>
         );
       },
@@ -90,7 +89,7 @@ function MapMenuToRole() {
       },
     },
   ];
-  const menus = useMenu();
+  const { data: menus } = useMenu();
 
   const roleOptionRef = useRef(null);
 
@@ -119,13 +118,13 @@ function MapMenuToRole() {
 
   useEffect(() => {
     if (roles) {
-      setRoleOptions(roles.map((r) => ({ label: r.roleName, value: r })));
+      setRoleOptions(roles.map((r) => ({ label: r.name, value: r })));
     }
   }, [roles]);
 
   useEffect(() => {
     if (selectedRole) {
-      selectedRole?.menuItems.forEach((m) => {
+      selectedRole?.value.menus.forEach((m) => {
         setMappedMenus((prevState) => {
           return {
             ...prevState,
@@ -140,7 +139,6 @@ function MapMenuToRole() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(Object.entries(mappedMenus));
 
     try {
       const selectedMenus = Object.entries(mappedMenus)
@@ -149,10 +147,12 @@ function MapMenuToRole() {
       //   console.log(selectedMenus);
 
       const payload = {
-        ...selectedRole,
-        menuItems: menus.filter((m) => selectedMenus.includes(m.id)),
+        ...selectedRole?.value,
+        menus: menus
+          .filter((m) => selectedMenus.includes(m.id))
+          .map((m) => ({ id: m.id })),
       };
-      //   console.log("Payload", payload);
+      console.log("Payload", payload);
 
       const response = await axios.put(
         import.meta.env.VITE_SERVER_URL + "/role",
@@ -171,8 +171,6 @@ function MapMenuToRole() {
     }
   }
 
-  console.log(selectedRole);
-
   return (
     <div className={"flex flex-col justify-center"}>
       <form className={"flex flex-col items-center"} onSubmit={handleSubmit}>
@@ -184,14 +182,20 @@ function MapMenuToRole() {
             isClearable
             isSearchable
             options={roleOptions}
-            onChange={(e) => setSelectedRole(e?.value)}
+            onChange={(e) =>
+              setSelectedRole((prevState) => {
+                if (prevState !== null && prevState !== undefined)
+                  if (prevState.label !== e?.label) setMappedMenus({});
+                return e;
+              })
+            }
           />
         </div>
         <div className={"mt-5 w-3xl mx-auto"}>
           <DataTable
             data={menus}
             columns={columns}
-            options={{ searchField: "menuItemName" }}
+            options={{ searchField: "name" }}
           />
         </div>
         <Button
