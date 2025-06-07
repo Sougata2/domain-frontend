@@ -10,8 +10,6 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
 import {
@@ -35,10 +33,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import { Label } from "@/components/ui/label";
 
 const animatedComponents = makeAnimated();
 
-export default function ManageEmployee() {
+export default function ManageUser() {
   const columns = [
     {
       accessorKey: "firstName",
@@ -56,24 +55,6 @@ export default function ManageEmployee() {
       },
       cell: ({ row }) => {
         return <div>{row.getValue("firstName")}</div>;
-      },
-    },
-    {
-      accessorKey: "middleName",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant={"ghost"}
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Middle Name
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("middleName")}</div>;
       },
     },
     {
@@ -118,19 +99,19 @@ export default function ManageEmployee() {
         return <div>Actions</div>;
       },
       cell: ({ row }) => {
-        return <EmployeeActionsMenu id={row.getValue("id")} />;
+        return <UserActionsMenu id={row.getValue("id")} />;
       },
     },
   ];
 
-  const [employees, setEmployees] = useState([]);
+  const [users, setUsers] = useState([]);
 
-  const fetchEmployees = useCallback(async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/employee"
+        import.meta.env.VITE_SERVER_URL + "/user"
       );
-      setEmployees(response.data);
+      setUsers(response.data);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -138,14 +119,14 @@ export default function ManageEmployee() {
 
   useEffect(() => {
     (async () => {
-      await fetchEmployees();
+      await fetchUsers();
     })();
-  }, [fetchEmployees]);
+  }, [fetchUsers]);
 
   return (
     <div className="flex flex-col gap-4 justify-center items-center py-12">
       <DataTable
-        data={employees}
+        data={users}
         columns={columns}
         options={{ searchField: "email" }}
       />
@@ -153,7 +134,7 @@ export default function ManageEmployee() {
   );
 }
 
-const EmployeeActionsMenu = ({ id }) => {
+const UserActionsMenu = ({ id }) => {
   const navigate = useNavigate();
   return (
     <DropdownMenu>
@@ -162,8 +143,8 @@ const EmployeeActionsMenu = ({ id }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
         <DropdownMenuGroup>
-          <AddRoleDrawer employeeId={id} />
-          <DefaultRoleChange employeeId={id} />
+          <AddRoleDrawer userId={id} />
+          <DefaultRoleChange userId={id} />
           <DropdownMenuItem>
             <div
               className={
@@ -171,7 +152,7 @@ const EmployeeActionsMenu = ({ id }) => {
               }
             >
               <PenLine />
-              <div onClick={() => navigate(`/edit-employee/${id}`)}>Edit</div>
+              <div onClick={() => navigate(`/edit-user/${id}`)}>Edit</div>
             </div>
           </DropdownMenuItem>
           <DropdownMenuItem>
@@ -190,7 +171,7 @@ const EmployeeActionsMenu = ({ id }) => {
   );
 };
 
-const AddRoleDrawer = ({ employeeId }) => {
+const AddRoleDrawer = ({ userId }) => {
   const addRoleRef = useRef(null);
   const defaultRoleRef = useRef(null);
   const [assignedRoles, setAssignedRoles] = useState([]);
@@ -199,58 +180,53 @@ const AddRoleDrawer = ({ employeeId }) => {
   const [selectedDefaultRole, setSelectedDefaultRole] = useState(null);
   const [rolesToAssign, setRolesToAssign] = useState([]);
   const [defaultRoleOptions, setDefaultRoleOptions] = useState([]);
+  const [user, setUser] = useState({});
 
-  const fetchAssignedRoles = useCallback(async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL +
-          `/employee-role-map?employeeId=${employeeId}`
+        import.meta.env.VITE_SERVER_URL + `/user/${userId}`
       );
-      const data = response.data.map((d) => ({
-        label: d.role.roleName,
-        value: d.role,
-      }));
-      setAssignedRoles(data);
+      setUser(response.data);
+
+      const assignedRolesTrack = response.data.roles.map((r) => r.id);
+
+      setAssignedRoles(
+        response.data.roles.map((role) => ({ label: role.name, value: role }))
+      );
+      const allRoles = await axios.get(
+        import.meta.env.VITE_SERVER_URL + `/role`
+      );
+      setUnAssignedRoles(
+        allRoles.data
+          .filter((r) => !assignedRolesTrack.includes(r.id))
+          .map((r) => ({ label: r.name, value: r }))
+      );
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [employeeId]);
-
-  const fetchUnAssignedRoles = useCallback(async () => {
-    const response = await axios.get(
-      import.meta.env.VITE_SERVER_URL +
-        `/employee-role-map/not-assigned-roles/${employeeId}`
-    );
-
-    const data = response.data.map((d) => ({
-      label: d.roleName,
-      value: d,
-    }));
-    setUnAssignedRoles(data);
-  }, [employeeId]);
+  }, [userId]);
 
   const fetchDefaultRole = useCallback(async () => {
-    const response = await axios.get(
-      import.meta.env.VITE_SERVER_URL +
-        `/employee-role-map/default-role/${employeeId}`
-    );
-    if (response.status === 200) {
-      setDefaultRole({
-        label: response.data.roleName,
-        value: { ...response.data },
-      });
+    try {
+      const response = await axios.get(
+        import.meta.env.VITE_SERVER_URL + `/user/default-role/${userId}`
+      );
+      setDefaultRole({ label: response.data.name, value: response.data });
+    } catch (error) {
+      if (error.status !== 404)
+        toast.error("Error", { description: error.message });
     }
-  }, [employeeId]);
+  }, [userId]);
 
   useEffect(() => {
-    if (employeeId) {
+    if (userId) {
       (async () => {
-        await fetchAssignedRoles();
-        await fetchUnAssignedRoles();
+        await fetchUser();
         await fetchDefaultRole();
       })();
     }
-  }, [employeeId, fetchAssignedRoles, fetchDefaultRole, fetchUnAssignedRoles]);
+  }, [userId, fetchDefaultRole, fetchUser]);
 
   useEffect(() => {
     setDefaultRoleOptions([...assignedRoles, ...rolesToAssign]);
@@ -259,25 +235,28 @@ const AddRoleDrawer = ({ employeeId }) => {
     }
   }, [assignedRoles, rolesToAssign]);
 
-  useEffect(() => {}, []);
-
   async function handleSubmit(e) {
     e.preventDefault();
     try {
-      const payloadArray = rolesToAssign.map((rta) => ({
-        employee: { id: employeeId },
-        role: { id: rta.value.id },
-        isDefault: selectedDefaultRole?.value.id === rta.value.id ? 1 : 0,
-      }));
-      const response = await axios.post(
-        import.meta.env.VITE_SERVER_URL + "/employee-role-map/bulk",
-        payloadArray
+      const roles = [
+        ...assignedRoles.map((r) => ({ id: r.value.id })),
+        ...rolesToAssign.map((r) => ({ id: r.value.id })),
+      ];
+      const payload = {
+        ...user,
+        roles,
+        defaultRole: selectedDefaultRole
+          ? { id: selectedDefaultRole.value.id }
+          : null,
+      };
+
+      const _ = await axios.put(
+        import.meta.env.VITE_SERVER_URL + "/user",
+        payload
       );
-      const _ = response.data;
 
       // reset the values
-      await fetchAssignedRoles();
-      await fetchUnAssignedRoles();
+      await fetchUser();
       await fetchDefaultRole();
       addRoleRef.current.clearValue();
       toast.success("Success", { description: "Roles assigned successfully" });
@@ -286,16 +265,15 @@ const AddRoleDrawer = ({ employeeId }) => {
     }
   }
 
-  async function handleDelete(employeeId, roleId) {
+  async function handleDelete(userId, roleId) {
     try {
       const response = await axios.delete(
         import.meta.env.VITE_SERVER_URL +
-          `/employee-role-map?employeeId=${employeeId}&roleId=${roleId}`
+          `/user-role-map?userId=${userId}&roleId=${roleId}`
       );
       const _ = response.data;
-      toast.warning("Deleted", { description: "Employee Role Map Deleted" });
-      await fetchAssignedRoles();
-      await fetchUnAssignedRoles();
+      await fetchUser();
+      toast.warning("Deleted", { description: "Removed Access" });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -351,7 +329,7 @@ const AddRoleDrawer = ({ employeeId }) => {
                           <CircleX
                             size={"16px"}
                             className={"text-red-400 hover:text-red-500"}
-                            onClick={() => handleDelete(employeeId, r.value.id)}
+                            onClick={() => handleDelete(userId, r.value.id)}
                           />
                         )}
                       </div>
@@ -402,7 +380,7 @@ const AddRoleDrawer = ({ employeeId }) => {
   );
 };
 
-const DefaultRoleChange = ({ employeeId }) => {
+const DefaultRoleChange = ({ userId }) => {
   const defaultRoleRef = useRef(null);
   const [defaultRole, setDefaultRole] = useState(null);
   const [assignedRoles, setAssignedRoles] = useState([]);
@@ -410,8 +388,7 @@ const DefaultRoleChange = ({ employeeId }) => {
 
   const fetchDefaultRole = useCallback(async () => {
     const response = await axios.get(
-      import.meta.env.VITE_SERVER_URL +
-        `/employee-role-map/default-role/${employeeId}`
+      import.meta.env.VITE_SERVER_URL + `/user-role-map/default-role/${userId}`
     );
     if (response.status === 200) {
       setDefaultRole({
@@ -419,13 +396,12 @@ const DefaultRoleChange = ({ employeeId }) => {
         value: { ...response.data },
       });
     }
-  }, [employeeId]);
+  }, [userId]);
 
   const fetchAssignedRoles = useCallback(async () => {
     try {
       const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL +
-          `/employee-role-map?employeeId=${employeeId}`
+        import.meta.env.VITE_SERVER_URL + `/user-role-map?userId=${userId}`
       );
       const data = response.data.map((d) => ({
         label: d.role.roleName,
@@ -435,7 +411,7 @@ const DefaultRoleChange = ({ employeeId }) => {
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [employeeId]);
+  }, [userId]);
 
   useEffect(() => {
     (async () => {
@@ -449,15 +425,13 @@ const DefaultRoleChange = ({ employeeId }) => {
 
     try {
       const payload = {
-        employeeId,
+        userId,
         newRoleId: newDefaultRole.value.id,
         oldRoleId: defaultRole.value.id,
       };
-      console.log(payload);
 
       const response = await axios.put(
-        import.meta.env.VITE_SERVER_URL +
-          "/employee-role-map/update-default-role",
+        import.meta.env.VITE_SERVER_URL + "/user-role-map/update-default-role",
         payload
       );
       const _ = response.data;
