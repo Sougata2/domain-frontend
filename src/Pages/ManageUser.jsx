@@ -388,12 +388,12 @@ const DefaultRoleChange = ({ userId }) => {
 
   const fetchDefaultRole = useCallback(async () => {
     const response = await axios.get(
-      import.meta.env.VITE_SERVER_URL + `/user-role-map/default-role/${userId}`
+      import.meta.env.VITE_SERVER_URL + `/user/default-role/${userId}`
     );
     if (response.status === 200) {
       setDefaultRole({
-        label: response.data.roleName,
-        value: { ...response.data },
+        label: response.data.name,
+        value: response.data,
       });
     }
   }, [userId]);
@@ -401,11 +401,11 @@ const DefaultRoleChange = ({ userId }) => {
   const fetchAssignedRoles = useCallback(async () => {
     try {
       const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/user-role-map?userId=${userId}`
+        import.meta.env.VITE_SERVER_URL + `/user/${userId}`
       );
-      const data = response.data.map((d) => ({
-        label: d.role.roleName,
-        value: d.role,
+      const data = response.data.roles.map((r) => ({
+        label: r.name,
+        value: r,
       }));
       setAssignedRoles(data);
     } catch (error) {
@@ -425,13 +425,12 @@ const DefaultRoleChange = ({ userId }) => {
 
     try {
       const payload = {
-        userId,
-        newRoleId: newDefaultRole.value.id,
-        oldRoleId: defaultRole.value.id,
+        id: userId,
+        defaultRole: { id: newDefaultRole.value.id },
       };
 
       const response = await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/user-role-map/update-default-role",
+        import.meta.env.VITE_SERVER_URL + "/user",
         payload
       );
       const _ = response.data;
