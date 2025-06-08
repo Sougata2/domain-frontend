@@ -89,7 +89,7 @@ function MapMenuToRole() {
       },
     },
   ];
-  const { data: menus } = useMenu();
+  const { data: menus } = useMenu(1);
 
   const roleOptionRef = useRef(null);
 
@@ -152,7 +152,6 @@ function MapMenuToRole() {
           .filter((m) => selectedMenus.includes(m.id))
           .map((m) => ({ id: m.id })),
       };
-      console.log("Payload", payload);
 
       const response = await axios.put(
         import.meta.env.VITE_SERVER_URL + "/role",
