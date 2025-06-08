@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { toast } from "sonner";
@@ -149,8 +147,16 @@ export default function ManageMenu() {
     e.preventDefault();
     try {
       const includeMenusOrSubMenus = subMenus
-        .filter((sm) => mappedSubMenus[sm.id])
-        .map((fsm) => ({ ...fsm, subMenus: null, menu: { id: formData.id } }));
+        .filter((fsm) =>
+          Object.keys(mappedSubMenus)
+            .map((k) => Number(k))
+            .includes(fsm.id)
+        )
+        .map((fsm) => ({
+          ...fsm,
+          subMenus: null,
+          menu: mappedSubMenus[fsm.id] ? { id: formData.id } : {},
+        }));
 
       await axios.put("/menu/bulk", includeMenusOrSubMenus);
 
@@ -162,62 +168,8 @@ export default function ManageMenu() {
     }
   }
 
-  function onChange(e) {
-    const { name, value } = e.target;
-    setFormData((prevState) => {
-      return {
-        ...prevState,
-        [name]: value,
-      };
-    });
-  }
-
   return (
-    <div className={"flex flex-col gap-4 justify-center items-center py-12"}>
-      <form className={"flex flex-col w-md gap-4.5"} onSubmit={onSubmit}>
-        <div className={"flex flex-col gap-2.5"}>
-          <Label htmlFor={"name"}>Menu</Label>
-          <Input
-            name="name"
-            placeholder={"Menu Name"}
-            value={formData.name}
-            id={"name"}
-            onChange={onChange}
-          />
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="isSubItem"
-            checked={isSubMenu}
-            onCheckedChange={() => {
-              setIsSubMenu((prevState) => !prevState);
-              formData.url = "";
-            }}
-          />
-          <label
-            htmlFor="isSubItem"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-          >
-            Sub Menu
-          </label>
-        </div>
-
-        {isSubMenu && (
-          <div className={"flex flex-col gap-2.5"}>
-            <Label htmlFor={"url"}>Page Link</Label>
-            <Input
-              name={"url"}
-              placeholder={`Url`}
-              value={formData.url === null ? "" : formData.url}
-              id={"url"}
-              onChange={onChange}
-            />
-          </div>
-        )}
-        <Button>Save Changes</Button>
-      </form>
-
+    <div className={"flex flex-col gap-4 justify-center items-center"}>
       <div className="w-2xl">
         {!isSubMenu && (
           <DataTable
@@ -227,6 +179,9 @@ export default function ManageMenu() {
           />
         )}
       </div>
+      <form className={"flex flex-col w-md gap-4.5"} onSubmit={onSubmit}>
+        <Button>Save Changes</Button>
+      </form>
     </div>
   );
 }

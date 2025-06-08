@@ -20,6 +20,7 @@ import MapMenuToRole from "./Pages/MapMenuToRole";
 import AddUserOld from "./Pages/AddUserOld";
 import { ThemeProvider } from "./components/theme-provider";
 import axios from "axios";
+import EditMenu from "./Pages/EditMenu";
 
 function App() {
   axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
@@ -41,6 +42,7 @@ function App() {
             <Route path={"/map-district"} element={<MapDistrict />} />
             <Route path={"/add-menu"} element={<AddMenu />} />
             <Route path={"/manage-menu/:id"} element={<ManageMenu />} />
+            <Route path={"/edit-menu/:id"} element={<EditMenu />} />
             <Route path="/add-user" element={<AddUser />} />
             <Route path={"/edit-user/:id"} element={<EditUser />} />
             <Route path={"/add-role"} element={<AddRole />} />

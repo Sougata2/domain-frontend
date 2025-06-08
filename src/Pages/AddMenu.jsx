@@ -1,14 +1,24 @@
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import DataTable from "@/DomainComponents/DataTable";
 import useMenu from "@/hooks/use-menu";
 import axios from "axios";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, Ellipsis } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";
+import { IoSettingsOutline } from "react-icons/io5";
+import { CiEdit } from "react-icons/ci";
+import { LuTrash } from "react-icons/lu";
 
 export default function AddMenu() {
   const initialValue = {
@@ -85,17 +95,31 @@ export default function AddMenu() {
       },
       cell: ({ row }) => {
         return (
-          <div className={"flex justify-center gap-3.5"}>
-            <Link
-              className="rounded-[7px] px-4 flex text-[15px] font-medium justify-center items-center bg-emerald-400 hover:bg-emerald-500 text-emerald-700"
-              to={`/edit-menu/${row.getValue("id")}`}
-            >
-              Edit
-            </Link>
-            <Button className={"bg-red-400 hover:bg-red-500 text-red-700"}>
-              Delete
-            </Button>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Ellipsis />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                {row.getValue("url") === "" && (
+                  <DropdownMenuItem>
+                    <IoSettingsOutline />
+                    <Link to={`/manage-menu/${row.getValue("id")}`}>
+                      Manage
+                    </Link>
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem>
+                  <CiEdit />
+                  <Link to={`/edit-menu/${row.getValue("id")}`}>Edit</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <LuTrash />
+                  <Link>Delete</Link>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         );
       },
     },
@@ -186,7 +210,7 @@ export default function AddMenu() {
           </div>
         )}
         <div className={"form-group"}>
-          <Button>Submit</Button>
+          <Button>Add Menu</Button>
         </div>
       </form>
       <div className={"mt-5 w-3xl mx-auto"}>
