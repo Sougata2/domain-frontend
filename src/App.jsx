@@ -18,10 +18,11 @@ import AddRole from "@/Pages/AddRole.jsx";
 import ManageUser from "./Pages/ManageUser";
 import MapMenuToRole from "./Pages/MapMenuToRole";
 import AddUserOld from "./Pages/AddUserOld";
+import { ThemeProvider } from "./components/theme-provider";
 
 function App() {
   return (
-    <div>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Toaster position="bottom-right" richColors />
       <BrowserRouter>
         <Routes>
@@ -46,7 +47,7 @@ function App() {
           </Route>
         </Routes>
       </BrowserRouter>
-    </div>
+    </ThemeProvider>
   );
 }
 

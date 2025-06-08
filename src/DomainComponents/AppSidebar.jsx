@@ -1,11 +1,13 @@
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
 import RecursiveSidebarMenu from "./RecursiveSidebarMenu";
 import useMenu from "@/hooks/use-menu";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export function AppSidebar() {
   const { data: menus } = useMenu(1);
@@ -20,6 +22,9 @@ export function AppSidebar() {
           ))}
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter>
+        <ModeToggle />
+      </SidebarFooter>
     </Sidebar>
   );
 }
