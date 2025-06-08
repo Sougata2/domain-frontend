@@ -134,7 +134,7 @@ export default function AddMenu() {
     e.preventDefault();
     try {
       if (validate()) {
-        await axios.post(import.meta.env.VITE_SERVER_URL + "/menu", formData);
+        await axios.post("/menu", formData);
         setFormData(initialValue);
         toast.success("Success", { description: "Menu Item Added!" });
         // for syncing data

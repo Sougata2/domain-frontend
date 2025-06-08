@@ -100,9 +100,7 @@ function MapMenuToRole() {
 
   const fetchRoles = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/role"
-      );
+      const response = await axios.get("/role");
       const data = response.data;
       setRoles(data);
     } catch (e) {
@@ -153,10 +151,7 @@ function MapMenuToRole() {
           .map((m) => ({ id: m.id })),
       };
 
-      const response = await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/role",
-        payload
-      );
+      const response = await axios.put("/role", payload);
 
       const _ = response.data;
 

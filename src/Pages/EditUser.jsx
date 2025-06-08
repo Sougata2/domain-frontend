@@ -20,9 +20,7 @@ export default function EditUser() {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/user/${id}`
-      );
+      const response = await axios.get(`/user/${id}`);
       setFormData(response.data);
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -56,10 +54,7 @@ export default function EditUser() {
         ...formData,
       };
 
-      const response = await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/user",
-        payload
-      );
+      const response = await axios.put("/user", payload);
       const _ = response.data;
       await fetchUser();
       toast.success("Success", {

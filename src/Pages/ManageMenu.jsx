@@ -9,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import DataTable from "@/DomainComponents/DataTable";
 import { ArrowUpDown } from "lucide-react";
 
-export default function EditMenu() {
+export default function ManageMenu() {
   const initialValue = {
     id: "",
     name: "",
@@ -105,9 +105,7 @@ export default function EditMenu() {
 
   const fetchMenuById = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/menu/" + id
-      );
+      const response = await axios.get("/menu/" + id);
       setFormData(response.data);
       if (response.data.url === null || response.data.url === "") {
         getAllAsSubMenus();
@@ -140,9 +138,7 @@ export default function EditMenu() {
 
   async function getAllAsSubMenus() {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/menu"
-      );
+      const response = await axios.get("/menu");
       setSubMenus(response.data);
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -156,10 +152,7 @@ export default function EditMenu() {
         .filter((sm) => mappedSubMenus[sm.id])
         .map((fsm) => ({ ...fsm, subMenus: null, menu: { id: formData.id } }));
 
-      await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/menu/bulk",
-        includeMenusOrSubMenus
-      );
+      await axios.put("/menu/bulk", includeMenusOrSubMenus);
 
       await fetchMenuById();
 

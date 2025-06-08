@@ -66,9 +66,7 @@ function AddRole() {
 
   const fetchRoles = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/role"
-      );
+      const response = await axios.get("/role");
       const data = response.data;
       setRoles(data);
     } catch (e) {
@@ -95,10 +93,10 @@ function AddRole() {
   async function onSubmit(e) {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        import.meta.env.VITE_SERVER_URL + `/role`,
-        { ...formData, roleName: formatRoleName(formData.roleName) }
-      );
+      const response = await axios.post(`/role`, {
+        ...formData,
+        roleName: formatRoleName(formData.roleName),
+      });
       const data = response.data;
       setFormData(initialValues);
       toast.success("Success", {

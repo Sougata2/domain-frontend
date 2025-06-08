@@ -149,7 +149,7 @@ export default function AddUser() {
   // const fetchUsers = useCallback(async () => {
   //   try {
   //     const response = await axios.get(
-  //       import.meta.env.VITE_SERVER_URL + "/user"
+  //       "/user"
   //     );
   //     setUsers(response.data);
   //   } catch (error) {
@@ -176,10 +176,7 @@ export default function AddUser() {
   async function onSubmit(e) {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        import.meta.env.VITE_SERVER_URL + "/user",
-        formData
-      );
+      const response = await axios.post("/user", formData);
       const _ = response.data;
       setFormData(initialValues);
       toast.success("Success", { description: "User Added" });
@@ -296,7 +293,7 @@ export default function AddUser() {
 //   const fetchAssignedRoles = useCallback(async () => {
 //     try {
 //       const response = await axios.get(
-//         import.meta.env.VITE_SERVER_URL +
+//
 //           `/user-role-map?userId=${userId}`
 //       );
 //       const data = response.data.map((d) => ({
@@ -311,7 +308,7 @@ export default function AddUser() {
 
 //   const fetchUnAssignedRoles = useCallback(async () => {
 //     const response = await axios.get(
-//       import.meta.env.VITE_SERVER_URL +
+//
 //         `/user-role-map/not-assigned-roles/${userId}`
 //     );
 
@@ -324,7 +321,7 @@ export default function AddUser() {
 
 //   const fetchDefaultRole = useCallback(async () => {
 //     const response = await axios.get(
-//       import.meta.env.VITE_SERVER_URL +
+//
 //         `/user-role-map/default-role/${userId}`
 //     );
 //     if (response.status === 200) {
@@ -363,7 +360,7 @@ export default function AddUser() {
 //         isDefault: selectedDefaultRole?.value.id === rta.value.id ? 1 : 0,
 //       }));
 //       const response = await axios.post(
-//         import.meta.env.VITE_SERVER_URL + "/user-role-map/bulk",
+//         "/user-role-map/bulk",
 //         payloadArray
 //       );
 //       const _ = response.data;
@@ -382,7 +379,7 @@ export default function AddUser() {
 //   async function handleDelete(userId, roleId) {
 //     try {
 //       const response = await axios.delete(
-//         import.meta.env.VITE_SERVER_URL +
+//
 //           `/user-role-map?userId=${userId}&roleId=${roleId}`
 //       );
 //       const _ = response.data;
@@ -503,7 +500,7 @@ export default function AddUser() {
 
 //   const fetchDefaultRole = useCallback(async () => {
 //     const response = await axios.get(
-//       import.meta.env.VITE_SERVER_URL +
+//
 //         `/user-role-map/default-role/${userId}`
 //     );
 //     if (response.status === 200) {
@@ -517,7 +514,7 @@ export default function AddUser() {
 //   const fetchAssignedRoles = useCallback(async () => {
 //     try {
 //       const response = await axios.get(
-//         import.meta.env.VITE_SERVER_URL +
+//
 //           `/user-role-map?userId=${userId}`
 //       );
 //       const data = response.data.map((d) => ({
@@ -549,7 +546,7 @@ export default function AddUser() {
 //       console.log(payload);
 
 //       const response = await axios.put(
-//         import.meta.env.VITE_SERVER_URL +
+//
 //           "/user-role-map/update-default-role",
 //         payload
 //       );

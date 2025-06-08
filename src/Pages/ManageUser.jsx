@@ -108,9 +108,7 @@ export default function ManageUser() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + "/user"
-      );
+      const response = await axios.get("/user");
       setUsers(response.data);
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -184,9 +182,7 @@ const AddRoleDrawer = ({ userId }) => {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/user/${userId}`
-      );
+      const response = await axios.get(`/user/${userId}`);
       setUser(response.data);
 
       const assignedRolesTrack = response.data.roles.map((r) => r.id);
@@ -194,9 +190,7 @@ const AddRoleDrawer = ({ userId }) => {
       setAssignedRoles(
         response.data.roles.map((role) => ({ label: role.name, value: role }))
       );
-      const allRoles = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/role`
-      );
+      const allRoles = await axios.get(`/role`);
       setUnAssignedRoles(
         allRoles.data
           .filter((r) => !assignedRolesTrack.includes(r.id))
@@ -209,9 +203,7 @@ const AddRoleDrawer = ({ userId }) => {
 
   const fetchDefaultRole = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/user/default-role/${userId}`
-      );
+      const response = await axios.get(`/user/default-role/${userId}`);
       setDefaultRole({ label: response.data.name, value: response.data });
     } catch (error) {
       if (error.status !== 404)
@@ -250,10 +242,7 @@ const AddRoleDrawer = ({ userId }) => {
           : null,
       };
 
-      const _ = await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/user",
-        payload
-      );
+      const _ = await axios.put("/user", payload);
 
       // reset the values
       await fetchUser();
@@ -268,8 +257,7 @@ const AddRoleDrawer = ({ userId }) => {
   async function handleDelete(userId, roleId) {
     try {
       const response = await axios.delete(
-        import.meta.env.VITE_SERVER_URL +
-          `/user-role-map?userId=${userId}&roleId=${roleId}`
+        `/user-role-map?userId=${userId}&roleId=${roleId}`
       );
       const _ = response.data;
       await fetchUser();
@@ -387,9 +375,7 @@ const DefaultRoleChange = ({ userId }) => {
   const [newDefaultRole, setNewDefaultRole] = useState(null);
 
   const fetchDefaultRole = useCallback(async () => {
-    const response = await axios.get(
-      import.meta.env.VITE_SERVER_URL + `/user/default-role/${userId}`
-    );
+    const response = await axios.get(`/user/default-role/${userId}`);
     if (response.status === 200) {
       setDefaultRole({
         label: response.data.name,
@@ -400,9 +386,7 @@ const DefaultRoleChange = ({ userId }) => {
 
   const fetchAssignedRoles = useCallback(async () => {
     try {
-      const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL + `/user/${userId}`
-      );
+      const response = await axios.get(`/user/${userId}`);
       const data = response.data.roles.map((r) => ({
         label: r.name,
         value: r,
@@ -429,10 +413,7 @@ const DefaultRoleChange = ({ userId }) => {
         defaultRole: { id: newDefaultRole.value.id },
       };
 
-      const response = await axios.put(
-        import.meta.env.VITE_SERVER_URL + "/user",
-        payload
-      );
+      const response = await axios.put("/user", payload);
       const _ = response.data;
       setNewDefaultRole(null);
       await fetchDefaultRole();

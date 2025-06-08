@@ -8,9 +8,7 @@ function useRoles() {
   useEffect(() => {
     (async () => {
       try {
-        const response = await axios.get(
-          import.meta.env.VITE_SERVER_URL + "/role"
-        );
+        const response = await axios.get("/role");
         const data = response.data;
         setData(data);
       } catch (e) {

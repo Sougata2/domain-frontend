@@ -11,7 +11,7 @@ import MapDistrict from "@/Pages/MapDistrict.jsx";
 import { Toaster } from "@/components/ui/sonner";
 import Layout from "./DomainComponents/Layout";
 import AddMenu from "./Pages/AddMenu";
-import EditMenu from "./Pages/EditMenu";
+import ManageMenu from "./Pages/ManageMenu";
 import AddUser from "./Pages/AddUser";
 import EditUser from "./Pages/EditUser";
 import AddRole from "@/Pages/AddRole.jsx";
@@ -19,8 +19,10 @@ import ManageUser from "./Pages/ManageUser";
 import MapMenuToRole from "./Pages/MapMenuToRole";
 import AddUserOld from "./Pages/AddUserOld";
 import { ThemeProvider } from "./components/theme-provider";
+import axios from "axios";
 
 function App() {
+  axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Toaster position="bottom-right" richColors />
@@ -38,7 +40,7 @@ function App() {
             <Route path={"add-state"} element={<AddState />} />
             <Route path={"/map-district"} element={<MapDistrict />} />
             <Route path={"/add-menu"} element={<AddMenu />} />
-            <Route path={"/edit-menu/:id"} element={<EditMenu />} />
+            <Route path={"/manage-menu/:id"} element={<ManageMenu />} />
             <Route path="/add-user" element={<AddUser />} />
             <Route path={"/edit-user/:id"} element={<EditUser />} />
             <Route path={"/add-role"} element={<AddRole />} />

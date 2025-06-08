@@ -8,9 +8,7 @@ function useMenu(topLevel = 0) {
   const refreshHandler = useCallback(async () => {
     try {
       const response = await axios.get(
-        import.meta.env.VITE_SERVER_URL +
-          "/menu" +
-          `${topLevel === 1 ? "?top-level=1" : ""}`
+        "/menu" + `${topLevel === 1 ? "?top-level=1" : ""}`
       );
       setData(response.data);
     } catch (error) {
