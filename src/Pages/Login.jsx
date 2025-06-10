@@ -172,7 +172,7 @@ export default function Login() {
           />
         </div>
         <div className={"flex flex-col gap-2.5"}>
-          <Label htmlFor={"email"} id={"email"}>
+          <Label htmlFor={"pasword"} id={"password"}>
             Password
           </Label>
           <Input
