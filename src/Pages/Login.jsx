@@ -12,7 +12,7 @@ export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [data, setData] = useState({
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -126,18 +126,14 @@ export default function Login() {
       import.meta.env.VITE_AES_SECRET_KEY
     );
 
-    const encryptedPassword = CryptoJS.AES.encrypt(data.password, SECRET_KEY, {
+    const _ = CryptoJS.AES.encrypt(data.password, SECRET_KEY, {
       mode: CryptoJS.mode.ECB,
       padding: CryptoJS.pad.Pkcs7,
     }).toString();
 
     try {
-      const response = await axios.post(
-        "http://localhost:8080/domain/auth/login",
-        { ...data, password: encryptedPassword }
-      );
+      const response = await axios.post("/auth/login", data);
       Cookies.set("Authorization", `Bearer ${response.data.token}`);
-      navigate("/home");
     } catch (error) {
       console.log(error);
     }
@@ -170,8 +166,8 @@ export default function Login() {
           </Label>
           <Input
             placeholder={"Email"}
-            name={"email"}
-            value={data.email}
+            name={"username"}
+            value={data.username}
             onChange={onChange}
           />
         </div>
