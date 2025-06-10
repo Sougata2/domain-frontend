@@ -158,7 +158,9 @@ export default function Login() {
   }
 
   return (
-    <div className={"flex flex-col gap-3.5 justify-center items-center"}>
+    <div
+      className={"flex flex-col gap-3.5 justify-center items-center h-screen"}
+    >
       <form className={"flex flex-col gap-2.5"} onSubmit={onSubmit}>
         <div className={"flex flex-col gap-2.5"}>
           <Label htmlFor={"email"} id={"email"}>

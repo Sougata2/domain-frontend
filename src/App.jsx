@@ -21,16 +21,21 @@ import AddUserOld from "./Pages/AddUserOld";
 import { ThemeProvider } from "./components/theme-provider";
 import axios from "axios";
 import EditMenu from "./Pages/EditMenu";
+import Cookies from "js-cookie";
+import { useEffect } from "react";
 
 function App() {
-  axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
+  useEffect(() => {
+    axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
+  }, []);
+
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Toaster position="bottom-right" richColors />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Login />} />
           <Route element={<Layout />}>
-            <Route path="/" element={<Login />} />
             <Route path="/home" element={<Home />} />
             <Route path="edit/:id" element={<EditUserOld />} />
             <Route path="user/:id" element={<ViewUser />} />
