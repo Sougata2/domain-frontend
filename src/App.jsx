@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import Home from "./Pages/Home";
 import EditUserOld from "./Pages/EditUserOld";
 import ViewUser from "./Pages/ViewUser";
@@ -21,20 +21,18 @@ import AddUserOld from "./Pages/AddUserOld";
 import { ThemeProvider } from "./components/theme-provider";
 import axios from "axios";
 import EditMenu from "./Pages/EditMenu";
-import Cookies from "js-cookie";
-import { useEffect } from "react";
+import "./axiosConfig";
 
 function App() {
-  useEffect(() => {
-    axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
-  }, []);
+  axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <Toaster position="bottom-right" richColors />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Navigate to={"/login"} />} />
+          <Route path="/login" element={<Login />} />
           <Route element={<Layout />}>
             <Route path="/home" element={<Home />} />
             <Route path="edit/:id" element={<EditUserOld />} />

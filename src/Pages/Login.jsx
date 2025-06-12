@@ -134,6 +134,7 @@ export default function Login() {
     try {
       const response = await axios.post("/auth/login", data);
       Cookies.set("Authorization", `Bearer ${response.data.token}`);
+      navigate("/home");
     } catch (error) {
       console.log(error);
     }
