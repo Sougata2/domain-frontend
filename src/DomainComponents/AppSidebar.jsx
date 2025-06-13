@@ -8,6 +8,7 @@ import {
 import RecursiveSidebarMenu from "./RecursiveSidebarMenu";
 import useMenu from "@/hooks/use-menu";
 import { ModeToggle } from "@/components/mode-toggle";
+import { NavUser } from "@/components/nav-user";
 
 export function AppSidebar() {
   const { data: menus } = useMenu(1);
@@ -24,6 +25,13 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <ModeToggle />
+        <NavUser
+          user={{
+            name: "john doe",
+            email: "john.doe@gmail.com",
+            avatar: "https://github.com/shadcn.png",
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );
