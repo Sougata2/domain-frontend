@@ -16,6 +16,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import CryptoJS from "crypto-js";
 import oauthConfig from "../../google_oauth.json";
+import { toast } from "sonner";
 
 export function LoginForm({ className, ...props }) {
   const navigate = useNavigate();
@@ -143,10 +144,12 @@ export function LoginForm({ className, ...props }) {
     try {
       const response = await axios.post("/auth/login", data);
       Cookies.set("Authorization", `Bearer ${response.data.token}`);
-      console.log(response);
+      toast.success("success", {
+        description: "Welcom Back " + response.data.username,
+      });
       navigate("/home");
     } catch (error) {
-      console.log(error);
+      toast.error("Error", { description: error.response.data.message });
     }
   }
 
