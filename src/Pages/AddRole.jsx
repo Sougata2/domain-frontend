@@ -10,8 +10,7 @@ import DataTable from "@/DomainComponents/DataTable.jsx";
 
 function AddRole() {
   const initialValues = {
-    roleName: "",
-    roleMappings: [],
+    name: "",
   };
   const [formData, setFormData] = useState(initialValues);
   const navigate = useNavigate();
@@ -95,12 +94,12 @@ function AddRole() {
     try {
       const response = await axios.post(`/role`, {
         ...formData,
-        roleName: formatRoleName(formData.roleName),
+        name: formatname(formData.name),
       });
       const data = response.data;
       setFormData(initialValues);
       toast.success("Success", {
-        description: `Role ${data.roleName} Added Successfully`,
+        description: `Role ${data.name} Added Successfully`,
       });
       await fetchRoles();
     } catch (e) {
@@ -108,20 +107,20 @@ function AddRole() {
     }
   }
 
-  function formatRoleName(roleName) {
-    return roleName.trim().split(/\s+/).join("_");
+  function formatname(name) {
+    return name.trim().split(/\s+/).join("_");
   }
 
   return (
     <div className={"flex flex-col gap-4 justify-center items-center py-12"}>
       <form className={"flex flex-col w-md gap-4.5"} onSubmit={onSubmit}>
         <div className={"flex flex-col gap-2.5"}>
-          <Label htmlFor={"roleName"}>Role Name</Label>
+          <Label htmlFor={"name"}>Role Name</Label>
           <Input
-            name="roleName"
+            name="name"
             placeholder={"Role Name"}
-            value={formData.roleName}
-            id={"roleName"}
+            value={formData.name}
+            id={"name"}
             onChange={onChange}
           />
         </div>
@@ -133,7 +132,7 @@ function AddRole() {
         <DataTable
           data={roles}
           columns={columns}
-          options={{ searchField: "roleName" }}
+          options={{ searchField: "name" }}
         />
       </div>
     </div>
