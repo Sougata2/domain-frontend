@@ -14,11 +14,19 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { NavUser } from "@/components/nav-user";
 import { Link } from "react-router";
 import { MdDomain } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { capitalize } from "@/utility/helpers";
+import { useEffect } from "react";
+import { fetchDefaultRole } from "@/state/userSlice";
 
 export function AppSidebar() {
-  const { name, username, menus } = useSelector((state) => state.user);
+  const { id, name, username, menus } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (id) {
+      dispatch(fetchDefaultRole(id));
+    }
+  }, [dispatch, id]);
 
   return (
     <Sidebar>

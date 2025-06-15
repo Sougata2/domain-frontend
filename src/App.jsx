@@ -1,10 +1,4 @@
-import {
-  BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-} from "react-router";
+import { Navigate, Route, Routes, useNavigate } from "react-router";
 import Home from "./Pages/Home";
 import EditUserOld from "./Pages/EditUserOld";
 import ViewUser from "./Pages/ViewUser";
@@ -14,7 +8,6 @@ import AddDistrict from "@/Pages/AddDistrict.jsx";
 import AddCity from "@/Pages/AddCity.jsx";
 import AddState from "@/Pages/AddState.jsx";
 import MapDistrict from "@/Pages/MapDistrict.jsx";
-import { Toaster } from "@/components/ui/sonner";
 import Layout from "./DomainComponents/Layout";
 import AddMenu from "./Pages/AddMenu";
 import ManageMenu from "./Pages/ManageMenu";
@@ -24,12 +17,11 @@ import AddRole from "@/Pages/AddRole.jsx";
 import ManageUser from "./Pages/ManageUser";
 import MapMenuToRole from "./Pages/MapMenuToRole";
 import AddUserOld from "./Pages/AddUserOld";
-import { ThemeProvider } from "./components/theme-provider";
 import EditMenu from "./Pages/EditMenu";
 import "./axiosConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
-import { fetchDefaultRole, validateToken } from "./state/userSlice";
+import { validateToken } from "./state/userSlice";
 import Cookies from "js-cookie";
 
 function App() {
@@ -42,8 +34,6 @@ function App() {
     if (token) {
       if (id === "") {
         dispatch(validateToken(token.split(" ")[1]));
-      } else {
-        dispatch(fetchDefaultRole(id));
       }
     } else {
       navigate("/login");
