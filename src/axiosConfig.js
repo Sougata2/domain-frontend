@@ -1,5 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
+axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 
 axios.interceptors.request.use(
   (config) => {

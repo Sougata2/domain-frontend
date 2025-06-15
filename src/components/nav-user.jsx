@@ -20,8 +20,11 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router";
 
 export function NavUser({ user }) {
+  const navigate = useNavigate();
   const { isMobile } = useSidebar();
 
   return (
@@ -82,7 +85,12 @@ export function NavUser({ user }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                Cookies.remove("Authorization");
+                navigate("/login");
+              }}
+            >
               <IoLogOutOutline />
               Log out
             </DropdownMenuItem>

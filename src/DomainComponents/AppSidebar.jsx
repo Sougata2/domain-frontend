@@ -10,14 +10,15 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import RecursiveSidebarMenu from "./RecursiveSidebarMenu";
-import useMenu from "@/hooks/use-menu";
 import { ModeToggle } from "@/components/mode-toggle";
 import { NavUser } from "@/components/nav-user";
 import { Link } from "react-router";
 import { MdDomain } from "react-icons/md";
+import { useSelector } from "react-redux";
+import { capitalize } from "@/utility/helpers";
 
 export function AppSidebar() {
-  const { data: menus } = useMenu(1);
+  const { name, username, menus } = useSelector((state) => state.user);
 
   return (
     <Sidebar>
@@ -48,8 +49,8 @@ export function AppSidebar() {
         <ModeToggle />
         <NavUser
           user={{
-            name: "john doe",
-            email: "john.doe@gmail.com",
+            name: capitalize(name),
+            email: username,
             avatar: "https://github.com/shadcn.png",
           }}
         />

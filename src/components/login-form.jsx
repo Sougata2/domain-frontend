@@ -17,8 +17,11 @@ import { useNavigate, useSearchParams } from "react-router";
 import CryptoJS from "crypto-js";
 import oauthConfig from "../../google_oauth.json";
 import { toast } from "sonner";
+import { useDispatch } from "react-redux";
+import { setId, setName, setUserName } from "@/state/userSlice";
 
 export function LoginForm({ className, ...props }) {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [data, setData] = useState({
@@ -144,8 +147,14 @@ export function LoginForm({ className, ...props }) {
     try {
       const response = await axios.post("/auth/login", data);
       Cookies.set("Authorization", `Bearer ${response.data.token}`);
+
+      // setting the user state.
+      dispatch(setUserName(response.data.username));
+      dispatch(setId(response.data.id));
+      dispatch(setName(response.data.name));
+
       toast.success("success", {
-        description: "Welcom Back " + response.data.username,
+        description: "Welcom Back " + response.data.name,
       });
       navigate("/home");
     } catch (error) {

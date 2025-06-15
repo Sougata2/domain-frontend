@@ -1,4 +1,10 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from "react-router";
 import Home from "./Pages/Home";
 import EditUserOld from "./Pages/EditUserOld";
 import ViewUser from "./Pages/ViewUser";
@@ -19,42 +25,57 @@ import ManageUser from "./Pages/ManageUser";
 import MapMenuToRole from "./Pages/MapMenuToRole";
 import AddUserOld from "./Pages/AddUserOld";
 import { ThemeProvider } from "./components/theme-provider";
-import axios from "axios";
 import EditMenu from "./Pages/EditMenu";
 import "./axiosConfig";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { fetchDefaultRole, validateToken } from "./state/userSlice";
+import Cookies from "js-cookie";
 
 function App() {
-  axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { id } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const token = Cookies.get("Authorization");
+    if (token) {
+      if (id === "") {
+        dispatch(validateToken(token.split(" ")[1]));
+      } else {
+        dispatch(fetchDefaultRole(id));
+      }
+    } else {
+      navigate("/login");
+    }
+  }, [id, dispatch, navigate]);
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <Toaster position="bottom-right" richColors />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate to={"/login"} />} />
-          <Route path="/login" element={<Login />} />
-          <Route element={<Layout />}>
-            <Route path="/home" element={<Home />} />
-            <Route path="edit/:id" element={<EditUserOld />} />
-            <Route path="user/:id" element={<ViewUser />} />
-            <Route path="add" element={<AddUserOld />} />
-            <Route path="delete/:id" element={<DeleteUser />} />
-            <Route path={"add-district"} element={<AddDistrict />} />
-            <Route path={"add-city"} element={<AddCity />} />
-            <Route path={"add-state"} element={<AddState />} />
-            <Route path={"/map-district"} element={<MapDistrict />} />
-            <Route path={"/add-menu"} element={<AddMenu />} />
-            <Route path={"/manage-menu/:id"} element={<ManageMenu />} />
-            <Route path={"/edit-menu/:id"} element={<EditMenu />} />
-            <Route path="/add-user" element={<AddUser />} />
-            <Route path={"/edit-user/:id"} element={<EditUser />} />
-            <Route path={"/add-role"} element={<AddRole />} />
-            <Route path={"/manage-user"} element={<ManageUser />} />
-            <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </ThemeProvider>
+    // <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to={"/login"} />} />
+      <Route path="/login" element={<Login />} />
+      <Route element={<Layout />}>
+        <Route path="/home" element={<Home />} />
+        <Route path="edit/:id" element={<EditUserOld />} />
+        <Route path="user/:id" element={<ViewUser />} />
+        <Route path="add" element={<AddUserOld />} />
+        <Route path="delete/:id" element={<DeleteUser />} />
+        <Route path={"add-district"} element={<AddDistrict />} />
+        <Route path={"add-city"} element={<AddCity />} />
+        <Route path={"add-state"} element={<AddState />} />
+        <Route path={"/map-district"} element={<MapDistrict />} />
+        <Route path={"/add-menu"} element={<AddMenu />} />
+        <Route path={"/manage-menu/:id"} element={<ManageMenu />} />
+        <Route path={"/edit-menu/:id"} element={<EditMenu />} />
+        <Route path="/add-user" element={<AddUser />} />
+        <Route path={"/edit-user/:id"} element={<EditUser />} />
+        <Route path={"/add-role"} element={<AddRole />} />
+        <Route path={"/manage-user"} element={<ManageUser />} />
+        <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
+      </Route>
+    </Routes>
+    // </BrowserRouter>
   );
 }
 
