@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { capitalize } from "@/utility/helpers";
 import { useEffect } from "react";
 import { fetchDefaultRole } from "@/state/userSlice";
+import profileImage from "../assets/images/profile-image.jfif";
 
 export function AppSidebar() {
   const { id, name, username, menus } = useSelector((state) => state.user);
@@ -59,7 +60,7 @@ export function AppSidebar() {
           user={{
             name: capitalize(name),
             email: username,
-            avatar: "https://github.com/shadcn.png",
+            avatar: profileImage,
           }}
         />
       </SidebarFooter>
