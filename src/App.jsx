@@ -51,7 +51,6 @@ function App() {
   }, [id, dispatch, navigate]);
 
   return (
-    // <BrowserRouter>
     <Routes>
       <Route path="/" element={<Navigate to={"/login"} />} />
       <Route path="/login" element={<Login />} />
@@ -75,7 +74,6 @@ function App() {
         <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
       </Route>
     </Routes>
-    // </BrowserRouter>
   );
 }
 
