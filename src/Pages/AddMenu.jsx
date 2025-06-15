@@ -19,6 +19,7 @@ import { toast } from "sonner";
 import { IoSettingsOutline } from "react-icons/io5";
 import { CiEdit } from "react-icons/ci";
 import { LuTrash } from "react-icons/lu";
+import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 
 export default function AddMenu() {
   const initialValue = {
@@ -115,7 +116,14 @@ export default function AddMenu() {
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <LuTrash />
-                  <Link>Delete</Link>
+                  <button
+                    onClick={() => {
+                      setOpenAlert(true);
+                      setDeleteId(row.getValue("id"));
+                    }}
+                  >
+                    Delete
+                  </button>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
@@ -128,6 +136,8 @@ export default function AddMenu() {
   const [formData, setFormData] = useState(initialValue);
   const [formError, setFormError] = useState(initialError);
   const [isSubItem, setIsSubItem] = useState(false);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleteId, setDeleteId] = useState(undefined);
 
   const { data: menus, refreshHandler: refreshMenu } = useMenu(0);
 
@@ -168,8 +178,29 @@ export default function AddMenu() {
       toast.error("Error", { description: error.message });
     }
   }
+
+  async function handleDelete(id) {
+    try {
+      const response = await axios.delete("/menu", {
+        data: { id },
+      });
+      const _ = response.data;
+      toast.warning("Deleted", { description: "Menu deleted" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div className="container">
+      <ConfirmationAlert
+        isOpen={openAlert}
+        closeHandler={() => setOpenAlert(false)}
+        handleConfirm={() => {
+          handleDelete(deleteId);
+          setOpenAlert(false);
+        }}
+      />
       <form className="w-md mx-auto flex flex-col gap-3" onSubmit={onSubmit}>
         <div className={"form-group flex flex-col gap-2"}>
           <Label htmlFor={"name"}>Menu Item Name</Label>
