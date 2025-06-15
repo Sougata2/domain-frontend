@@ -7,6 +7,7 @@ import axios from "axios";
 import { ArrowUpDown } from "lucide-react";
 import { useNavigate } from "react-router";
 import DataTable from "@/DomainComponents/DataTable.jsx";
+import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 
 function AddRole() {
   const initialValues = {
@@ -15,6 +16,8 @@ function AddRole() {
   const [formData, setFormData] = useState(initialValues);
   const navigate = useNavigate();
   const [roles, setRoles] = useState([]);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleteId, setDeleteId] = useState(null);
   const columns = [
     {
       accessorKey: "name",
@@ -51,6 +54,10 @@ function AddRole() {
               Edit
             </Button> */}
             <Button
+              onClick={() => {
+                setOpenAlert(true);
+                setDeleteId(row.getValue("id"));
+              }}
               className={
                 "bg-red-400 hover:bg-red-500 text-red-700 hover:text-red-800"
               }
@@ -111,8 +118,29 @@ function AddRole() {
     return name.trim().split(/\s+/).join("_");
   }
 
+  async function handleDelete(id) {
+    try {
+      const response = await axios.delete("/role", { data: { id } });
+      const data = response.data;
+      toast.warning("Delete", { description: `Role ${data.name} deleted` });
+      await fetchRoles();
+      setDeleteId(null);
+      setOpenAlert(false);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div className={"flex flex-col gap-4 justify-center items-center py-12"}>
+      <ConfirmationAlert
+        closeHandler={() => {
+          setOpenAlert(false);
+          setDeleteId(null);
+        }}
+        isOpen={openAlert}
+        handleConfirm={() => handleDelete(deleteId)}
+      />
       <form className={"flex flex-col w-md gap-4.5"} onSubmit={onSubmit}>
         <div className={"flex flex-col gap-2.5"}>
           <Label htmlFor={"name"}>Role Name</Label>

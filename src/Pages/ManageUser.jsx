@@ -338,7 +338,6 @@ const AddRoleDrawer = ({ userId }) => {
                   onChange={(e) => {
                     setRolesToAssign([...e]);
                   }}
-                  required
                 />
               </div>
               {!defaultRole && (
