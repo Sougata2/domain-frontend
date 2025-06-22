@@ -99,7 +99,12 @@ export default function ManageUser() {
         return <div>Actions</div>;
       },
       cell: ({ row }) => {
-        return <UserActionsMenu id={row.getValue("id")} />;
+        return (
+          <UserActionsMenu
+            id={row.getValue("id")}
+            refreshHandler={fetchUsers}
+          />
+        );
       },
     },
   ];
@@ -132,40 +137,53 @@ export default function ManageUser() {
   );
 }
 
-const UserActionsMenu = ({ id }) => {
+const UserActionsMenu = ({ id, refreshHandler }) => {
   const navigate = useNavigate();
+
+  async function handleDelete(id) {
+    try {
+      const response = await axios.delete("/user", { data: { id } });
+      toast.warning("Deleted", { description: "User deleted" });
+      await refreshHandler();
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Ellipsis />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56">
-        <DropdownMenuGroup>
-          <AddRoleDrawer userId={id} />
-          <DefaultRoleChange userId={id} />
-          <DropdownMenuItem>
-            <div
-              className={
-                "flex gap-2 justify-center items-center cursor-pointer"
-              }
-            >
-              <PenLine />
-              <div onClick={() => navigate(`/edit-user/${id}`)}>Edit</div>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <div
-              className={
-                "flex gap-2 justify-center items-center cursor-pointer"
-              }
-            >
-              <Trash />
-              <div>Delete</div>
-            </div>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Ellipsis />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56">
+          <DropdownMenuGroup>
+            <AddRoleDrawer userId={id} />
+            <DefaultRoleChange userId={id} />
+            <DropdownMenuItem>
+              <div
+                className={
+                  "flex gap-2 justify-center items-center cursor-pointer"
+                }
+              >
+                <PenLine />
+                <div onClick={() => navigate(`/edit-user/${id}`)}>Edit</div>
+              </div>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <div
+                className={
+                  "flex gap-2 justify-center items-center cursor-pointer"
+                }
+              >
+                <Trash />
+                <div onClick={() => handleDelete(id)}>Delete</div>
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   );
 };
 
