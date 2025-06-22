@@ -10,6 +10,7 @@ function useMenu(topLevel = 0) {
       const response = await axios.get(
         "/menu" + `${topLevel === 1 ? "?top-level=1" : ""}`
       );
+      response.data.sort((a, b) => a.name.localeCompare(b.name));
       setData(response.data);
     } catch (error) {
       toast.error("Error", { description: error.message });

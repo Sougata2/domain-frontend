@@ -51,6 +51,7 @@ export const fetchDefaultRole = createAsyncThunk(
   async (userId, thunkApi) => {
     try {
       const response = await axios.get(`/user/default-role/${userId}`);
+      response.data.menus.sort((a, b) => a.name.localeCompare(b.name));
       return response.data;
     } catch (error) {
       thunkApi.rejectWithValue(error.message);
