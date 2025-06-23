@@ -23,6 +23,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { validateToken } from "./state/userSlice";
 import Cookies from "js-cookie";
+import AddService from "./Pages/AddService";
 
 function App() {
   const dispatch = useDispatch();
@@ -62,6 +63,7 @@ function App() {
         <Route path={"/add-role"} element={<AddRole />} />
         <Route path={"/manage-user"} element={<ManageUser />} />
         <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
+        <Route path={"/add-service"} element={<AddService />} />
       </Route>
     </Routes>
   );
