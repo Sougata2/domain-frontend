@@ -24,6 +24,9 @@ import { useEffect } from "react";
 import { validateToken } from "./state/userSlice";
 import Cookies from "js-cookie";
 import AddService from "./Pages/AddService";
+import ManageService from "./Pages/ManageService";
+import MapSubServiceToService from "./Pages/MapSubServiceToService";
+import EditService from "./Pages/editService";
 
 function App() {
   const dispatch = useDispatch();
@@ -64,6 +67,12 @@ function App() {
         <Route path={"/manage-user"} element={<ManageUser />} />
         <Route path={"/map-menu-to-role"} element={<MapMenuToRole />} />
         <Route path={"/add-service"} element={<AddService />} />
+        <Route path={"/manage-service"} element={<ManageService />} />
+        <Route
+          path={"/map-sub-service-to-service/:id"}
+          element={<MapSubServiceToService />}
+        />
+        <Route path={"/edit-service/:id"} element={<EditService />} />
       </Route>
     </Routes>
   );
