@@ -14,19 +14,29 @@ export default function EditSubService() {
     register,
     reset,
     handleSubmit,
-    getValues,
+    watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      form: null,
+    },
+  });
 
   const [forms, setForms] = useState([]);
   const { id: subServiceId } = useParams();
 
-  const { form } = getValues();
+  const form = watch("form");
 
   const fetchSubService = useCallback(async () => {
     try {
       const response = await axios.get(`/sub-service/${subServiceId}`);
-      reset(response.data);
+      reset({
+        ...response.data,
+        form: response.data.form
+          ? { label: response.data.form.name, value: response.data.form }
+          : null,
+      });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -50,14 +60,11 @@ export default function EditSubService() {
     })();
   }, [fetchForms, fetchSubService, subServiceId]);
 
-  async function submitHandler(data) {
+  async function editHandler(data) {
     try {
-      const response = await axios.post("/sub-service", data);
+      const payload = { ...data, form: { id: data.form.value.id } };
+      const _ = await axios.put("/sub-service", payload);
       toast.success("Success", { description: "Created Sub Service" });
-      reset({
-        name: "",
-        form: null,
-      });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -66,7 +73,7 @@ export default function EditSubService() {
   return (
     <div className="flex flex-col justify-center items-center">
       <form
-        onSubmit={handleSubmit(submitHandler)}
+        onSubmit={handleSubmit(editHandler)}
         className="w-md flex flex-col gap-2"
       >
         <FormInput
@@ -87,7 +94,7 @@ export default function EditSubService() {
           }}
           options={forms}
           control={control}
-          defaultValue={form}
+          defaultValue={{ label: form?.name, value: form }}
         />
         <Button className={"w-full"}>Add Sub Service</Button>
       </form>
