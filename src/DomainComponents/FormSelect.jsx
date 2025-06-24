@@ -1,23 +1,34 @@
 import { Label } from "@/components/ui/label";
+import { Controller } from "react-hook-form";
 import Select from "react-select";
 
 export default function FormSelect({
   label,
   name,
-  register,
   error,
   validation,
   options,
+  control,
 }) {
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={name}>{label}</Label>
-      <Select
-        {...register(name, { ...validation })}
-        placeholder={`Select ${label}`}
-        options={options}
-        isSearchable
-        isClearable
+      <Controller
+        name={name}
+        control={control}
+        rules={validation}
+        render={({ field }) => {
+          return (
+            <Select
+              {...field}
+              onChange={(e) => field.onChange(e)}
+              placeholder={`Select ${label}`}
+              options={options}
+              isSearchable
+              isClearable
+            />
+          );
+        }}
       />
       <div>
         {error && (
