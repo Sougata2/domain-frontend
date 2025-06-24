@@ -41,6 +41,29 @@ export default function ManageSubServices() {
       },
     },
     {
+      accessorKey: "form",
+      header: ({ column }) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Form Name
+              <ArrowUpDown />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize ps-3">{row.getValue("form")?.name}</div>
+        );
+      },
+    },
+    {
       accessorKey: "id",
       header: () => {
         return <div>Actions</div>;
@@ -117,7 +140,7 @@ export default function ManageSubServices() {
           setOpenAlert(false);
         }}
       />
-      <div className="w-2xl">
+      <div className="w-5xl">
         <DataTable
           columns={columns}
           data={subServices}
