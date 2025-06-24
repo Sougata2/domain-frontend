@@ -54,7 +54,7 @@ export default function ManageUser() {
         );
       },
       cell: ({ row }) => {
-        return <div>{row.getValue("firstName")}</div>;
+        return <div className="ps-3">{row.getValue("firstName")}</div>;
       },
     },
     {
@@ -84,13 +84,31 @@ export default function ManageUser() {
             type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Last Name
+            Email
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => {
         return <div>{row.getValue("email")}</div>;
+      },
+    },
+    {
+      accessorKey: "defaultRole",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Role
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.getValue("defaultRole")?.name}</div>;
       },
     },
     {
