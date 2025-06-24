@@ -119,7 +119,7 @@ export default function MapSubServiceToService() {
 
   return (
     <div className={"flex flex-col justify-center items-center"}>
-      <div className={"w-md"}>
+      <div className={"w-3xl"}>
         <DataTable
           data={subServices}
           columns={columns}
