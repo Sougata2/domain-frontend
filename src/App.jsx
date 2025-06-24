@@ -28,6 +28,9 @@ import ManageService from "./Pages/ManageService";
 import MapSubServiceToService from "./Pages/MapSubServiceToService";
 import EditService from "./Pages/editService";
 import AddSubService from "./Pages/AddSubService";
+import AddForms from "./Pages/AddForms";
+import ManageForm from "./Pages/ManageForm";
+import EditForm from "./Pages/EditForm";
 
 function App() {
   const dispatch = useDispatch();
@@ -75,6 +78,9 @@ function App() {
         />
         <Route path={"/edit-service/:id"} element={<EditService />} />
         <Route path="/add-sub-service" element={<AddSubService />} />
+        <Route path={"/add-form"} element={<AddForms />} />
+        <Route path={"/manage-form"} element={<ManageForm />} />
+        <Route path={"/edit-form/:id"} element={<EditForm />} />
       </Route>
     </Routes>
   );
