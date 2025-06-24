@@ -27,10 +27,12 @@ import AddService from "./Pages/AddService";
 import ManageService from "./Pages/ManageService";
 import MapSubServiceToService from "./Pages/MapSubServiceToService";
 import EditService from "./Pages/editService";
-import AddSubService from "./Pages/AddSubService";
+import EditSubService from "./Pages/EditSubService";
 import AddForms from "./Pages/AddForms";
 import ManageForm from "./Pages/ManageForm";
 import EditForm from "./Pages/EditForm";
+import ManageSubServices from "./Pages/ManageSubServices";
+import AddSubService from "./Pages/AddSubService";
 
 function App() {
   const dispatch = useDispatch();
@@ -77,10 +79,12 @@ function App() {
           element={<MapSubServiceToService />}
         />
         <Route path={"/edit-service/:id"} element={<EditService />} />
-        <Route path="/add-sub-service" element={<AddSubService />} />
+        <Route path="/edit-sub-service/:id" element={<EditSubService />} />
         <Route path={"/add-form"} element={<AddForms />} />
         <Route path={"/manage-form"} element={<ManageForm />} />
         <Route path={"/edit-form/:id"} element={<EditForm />} />
+        <Route path={"/manage-sub-service"} element={<ManageSubServices />} />
+        <Route path={"/add-sub-service"} element={<AddSubService />} />
       </Route>
     </Routes>
   );

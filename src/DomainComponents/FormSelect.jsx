@@ -9,7 +9,10 @@ export default function FormSelect({
   validation,
   options,
   control,
+  defaultValue,
 }) {
+  console.log(defaultValue);
+
   return (
     <div className="flex flex-col gap-2">
       <Label htmlFor={name}>{label}</Label>
@@ -24,6 +27,7 @@ export default function FormSelect({
               onChange={(e) => field.onChange(e)}
               placeholder={`Select ${label}`}
               options={options}
+              defaultValue={null}
               isSearchable
               isClearable
             />

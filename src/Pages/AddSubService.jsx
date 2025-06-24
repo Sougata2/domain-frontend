@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
-import FormInput from "@/DomainComponents/FormInput";
-import FormSelect from "@/DomainComponents/FormSelect";
-import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+
+import FormInput from "@/DomainComponents/FormInput";
+import axios from "axios";
 
 export default function AddSubService() {
   const {
@@ -13,28 +12,11 @@ export default function AddSubService() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [forms, setForms] = useState([]);
-
-  const fetchForms = useCallback(async () => {
-    try {
-      const response = await axios.get("/form/all");
-      setForms(
-        response.data.map((form) => ({ label: form.name, value: form }))
-      );
-    } catch (error) {
-      toast.error("Error", { description: error.message });
-    }
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      await fetchForms();
-    })();
-  }, [fetchForms]);
 
   async function submitHandler(data) {
     try {
-      console.log(data);
+      const response = await axios.post("/sub-service", data);
+
       toast.success("Success", { description: "Created Sub Service" });
       reset();
     } catch (error) {
@@ -56,16 +38,6 @@ export default function AddSubService() {
           validation={{
             required: { value: true, message: "Sub Service Name is required" },
           }}
-        />
-        <FormSelect
-          label={"Form"}
-          name={"form"}
-          register={register}
-          error={errors.form}
-          validation={{
-            required: { value: true, message: "Form is Required" },
-          }}
-          options={forms}
         />
         <Button className={"w-full"}>Add Sub Service</Button>
       </form>
