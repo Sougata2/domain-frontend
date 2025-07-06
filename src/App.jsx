@@ -33,6 +33,7 @@ import ManageForm from "./Pages/ManageForm";
 import EditForm from "./Pages/EditForm";
 import ManageSubServices from "./Pages/ManageSubServices";
 import AddSubService from "./Pages/AddSubService";
+import NewRequest from "./Pages/service/NewRequest";
 
 function App() {
   const dispatch = useDispatch();
@@ -85,6 +86,7 @@ function App() {
         <Route path={"/edit-form/:id"} element={<EditForm />} />
         <Route path={"/manage-sub-service"} element={<ManageSubServices />} />
         <Route path={"/add-sub-service"} element={<AddSubService />} />
+        <Route path={"/new-request"} element={<NewRequest />} />
       </Route>
     </Routes>
   );
