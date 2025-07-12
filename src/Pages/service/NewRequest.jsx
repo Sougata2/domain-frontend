@@ -4,16 +4,27 @@ import FormSelect from "@/DomainComponents/Form/FormSelect";
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
 import { toast } from "sonner";
 
 export default function NewRequest() {
+  const defaultValues = {
+    user: {},
+    service: {},
+    subService: {},
+    status: {},
+  };
+
+  const { id: userId } = useSelector((state) => state.user);
   const {
     reset,
     watch,
     formState: { errors },
     handleSubmit,
     control,
-  } = useForm();
+  } = useForm({
+    defaultValues,
+  });
 
   const service = watch("service");
 
@@ -44,7 +55,20 @@ export default function NewRequest() {
   }, [service, services]);
 
   async function submitHandler(data) {
-    console.log(data);
+    try {
+      const payload = {
+        service: { id: data.service },
+        subService: { id: data.subService },
+        user: { id: userId },
+        status: { id: 1 },
+      };
+      const _ = await axios.post("/application", payload);
+      toast.success("Success", { description: "Application Generated" });
+      reset(defaultValues);
+    } catch (error) {
+      console.log(error);
+      toast.error("Error", { description: error.message });
+    }
   }
 
   return (
