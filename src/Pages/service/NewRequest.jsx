@@ -95,7 +95,7 @@ export default function NewRequest() {
                 className="w-full"
               />
               <FormSelect
-                label={"SubService"}
+                label={"Sub Service"}
                 name={"subService"}
                 control={control}
                 error={errors.subService}
