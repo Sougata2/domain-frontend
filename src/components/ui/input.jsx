@@ -1,14 +1,10 @@
-import * as React from "react"
+import * as React from "react";
+import { cn } from "@/lib/utils";
 
-import { cn } from "@/lib/utils"
-
-function Input({
-  className,
-  type,
-  ...props
-}) {
+const Input = React.forwardRef(({ className, type, ...props }, ref) => {
   return (
     <input
+      ref={ref} // ✅ THIS is essential
       type={type}
       data-slot="input"
       className={cn(
@@ -17,8 +13,12 @@ function Input({
         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
         className
       )}
-      {...props} />
+      {...props}
+    />
   );
-}
+});
 
-export { Input }
+// Optional: for better DX with IDEs
+Input.displayName = "Input";
+
+export { Input };
