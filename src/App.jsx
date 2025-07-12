@@ -34,6 +34,9 @@ import EditForm from "./Pages/EditForm";
 import ManageSubServices from "./Pages/ManageSubServices";
 import AddSubService from "./Pages/AddSubService";
 import NewRequest from "./Pages/service/NewRequest";
+import AddStatus from "./Pages/status/AddStatus";
+import ManageStatus from "./Pages/status/ManageStatus";
+import EditStatus from "./Pages/status/EditStatus";
 
 function App() {
   const dispatch = useDispatch();
@@ -87,6 +90,9 @@ function App() {
         <Route path={"/manage-sub-service"} element={<ManageSubServices />} />
         <Route path={"/add-sub-service"} element={<AddSubService />} />
         <Route path={"/new-request"} element={<NewRequest />} />
+        <Route path={"/add-status"} element={<AddStatus />} />
+        <Route path={"/manage-status"} element={<ManageStatus />} />
+        <Route path={"/edit-status/:id"} element={<EditStatus />} />
       </Route>
     </Routes>
   );
