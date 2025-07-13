@@ -37,6 +37,7 @@ import NewRequest from "./Pages/service/NewRequest";
 import AddStatus from "./Pages/status/AddStatus";
 import ManageStatus from "./Pages/status/ManageStatus";
 import EditStatus from "./Pages/status/EditStatus";
+import ApplicationList from "./Pages/service/ApplicationList";
 
 function App() {
   const dispatch = useDispatch();
@@ -93,6 +94,7 @@ function App() {
         <Route path={"/add-status"} element={<AddStatus />} />
         <Route path={"/manage-status"} element={<ManageStatus />} />
         <Route path={"/edit-status/:id"} element={<EditStatus />} />
+        <Route path={"/application-list"} element={<ApplicationList />} />
       </Route>
     </Routes>
   );
