@@ -38,6 +38,7 @@ import AddStatus from "./Pages/status/AddStatus";
 import ManageStatus from "./Pages/status/ManageStatus";
 import EditStatus from "./Pages/status/EditStatus";
 import ApplicationList from "./Pages/service/ApplicationList";
+import AddDevice from "./Pages/device/AddDevice";
 
 function App() {
   const dispatch = useDispatch();
@@ -95,6 +96,7 @@ function App() {
         <Route path={"/manage-status"} element={<ManageStatus />} />
         <Route path={"/edit-status/:id"} element={<EditStatus />} />
         <Route path={"/application-list"} element={<ApplicationList />} />
+        <Route path={"/add-device/:referenceNumber"} element={<AddDevice />} />
       </Route>
     </Routes>
   );
