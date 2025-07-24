@@ -56,7 +56,9 @@ function ManageActivity() {
         return (
           <div className="ps-3 flex gap-1 flex-wrap">
             {row.getValue("services").map((s) => (
-              <Badge variant="secondary">{s.name}</Badge>
+              <Badge key={s.id} variant="secondary">
+                {s.name}
+              </Badge>
             ))}
           </div>
         );
@@ -77,7 +79,11 @@ function ManageActivity() {
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <IoSettingsOutline />
-                  <Link to={`/map-activity/${row.getValue("id")}`}>Manage</Link>
+                  <Link
+                    to={`/map-specification-to-activity/${row.getValue("id")}`}
+                  >
+                    Manage
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <CiEdit />
