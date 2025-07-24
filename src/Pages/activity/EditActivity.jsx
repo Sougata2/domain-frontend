@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
@@ -11,11 +10,18 @@ import { Button } from "@/components/ui/button";
 import FormInput from "@/DomainComponents/FormInput";
 import { toast } from "sonner";
 import axios from "axios";
+import { useParams } from "react-router";
+import { useCallback, useEffect, useMemo } from "react";
 
-function AddActivity() {
-  const defaultValues = {
-    name: "",
-  };
+function EditActivity() {
+  const defaultValues = useMemo(() => {
+    return {
+      id: "",
+      name: "",
+    };
+  }, []);
+
+  const { id: activityId } = useParams();
   const {
     register,
     reset,
@@ -25,12 +31,29 @@ function AddActivity() {
     defaultValues,
   });
 
+  const fetchActivity = useCallback(async () => {
+    try {
+      const response = await axios.get(`/activity/${activityId}`);
+      const data = response.data;
+      reset({ ...defaultValues, id: data.id, name: data.name });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [activityId, defaultValues, reset]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchActivity();
+    })();
+  }, [fetchActivity]);
+
   async function onSubmitHandleSubmit(data) {
     try {
-      const response = await axios.post("/activity", data);
+      const response = await axios.put("/activity", data);
       console.log(response.data);
-      toast.success("Success", { description: "Activity added successfully" });
-      reset();
+      toast.success("Success", {
+        description: "Activity Updated successfully",
+      });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -40,8 +63,7 @@ function AddActivity() {
     <div className="flex justify-center items-center">
       <Card className={"w-md"}>
         <CardHeader>
-          <CardTitle>Add Activity</CardTitle>
-          <CardDescription>add test activity</CardDescription>
+          <CardTitle>Edit Activity</CardTitle>
         </CardHeader>
         <form onSubmit={handleSubmit(onSubmitHandleSubmit)}>
           <CardContent className={"pb-5"}>
@@ -59,7 +81,7 @@ function AddActivity() {
             />
           </CardContent>
           <CardFooter>
-            <Button>Add</Button>
+            <Button>Save</Button>
           </CardFooter>
         </form>
       </Card>
@@ -67,4 +89,4 @@ function AddActivity() {
   );
 }
 
-export default AddActivity;
+export default EditActivity;

@@ -43,6 +43,7 @@ import AddActivity from "./Pages/activity/AddActivity";
 import ManageActivity from "./Pages/activity/ManageActivity";
 import MapActivityToSerivce from "./Pages/activity/MapActivityToSerivce";
 import AddSpecification from "./Pages/specification/AddSpecification";
+import EditActivity from "./Pages/activity/EditActivity";
 
 function App() {
   const dispatch = useDispatch();
@@ -102,6 +103,7 @@ function App() {
         <Route path={"/application-list"} element={<ApplicationList />} />
         <Route path={"/add-device/:referenceNumber"} element={<AddDevice />} />
         <Route path={"/add-activity"} element={<AddActivity />} />
+        <Route path={"/edit-activity/:id"} element={<EditActivity />} />
         <Route path={"/manage-activity"} element={<ManageActivity />} />
         <Route
           path={"/map-activity-to-service"}
