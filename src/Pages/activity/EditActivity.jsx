@@ -49,8 +49,7 @@ function EditActivity() {
 
   async function onSubmitHandleSubmit(data) {
     try {
-      const response = await axios.put("/activity", data);
-      console.log(response.data);
+      const _ = await axios.put("/activity", data);
       toast.success("Success", {
         description: "Activity Updated successfully",
       });
