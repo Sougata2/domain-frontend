@@ -39,6 +39,9 @@ import ManageStatus from "./Pages/status/ManageStatus";
 import EditStatus from "./Pages/status/EditStatus";
 import ApplicationList from "./Pages/service/ApplicationList";
 import AddDevice from "./Pages/device/AddDevice";
+import AddActivity from "./Pages/activity/AddActivity";
+import ManageActivity from "./Pages/activity/ManageActivity";
+import MapActivityToSerivce from "./Pages/activity/MapActivityToSerivce";
 
 function App() {
   const dispatch = useDispatch();
@@ -97,6 +100,12 @@ function App() {
         <Route path={"/edit-status/:id"} element={<EditStatus />} />
         <Route path={"/application-list"} element={<ApplicationList />} />
         <Route path={"/add-device/:referenceNumber"} element={<AddDevice />} />
+        <Route path={"/add-activity"} element={<AddActivity />} />
+        <Route path={"/manage-activity"} element={<ManageActivity />} />
+        <Route
+          path={"/map-activity-to-service"}
+          element={<MapActivityToSerivce />}
+        />
       </Route>
     </Routes>
   );
