@@ -72,8 +72,10 @@ function ManageSpecification() {
       cell: ({ row }) => {
         return (
           <div className="ps-3 flex gap-1 flex-wrap">
-            {row.getValue("activities").map((s) => (
-              <Badge variant="secondary">{s.name}</Badge>
+            {row.getValue("activities").map((a) => (
+              <Badge key={a.id} variant="secondary">
+                {a.name}
+              </Badge>
             ))}
           </div>
         );

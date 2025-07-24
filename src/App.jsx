@@ -46,6 +46,7 @@ import AddSpecification from "./Pages/specification/AddSpecification";
 import EditActivity from "./Pages/activity/EditActivity";
 import ManageSpecification from "./Pages/specification/ManageSpecification";
 import EditSpecification from "./Pages/specification/EditSpecification";
+import MapSpecficationToActivity from "./Pages/activity/MapSpecficationToActivity";
 
 function App() {
   const dispatch = useDispatch();
@@ -110,6 +111,10 @@ function App() {
         <Route
           path={"/map-activity-to-service"}
           element={<MapActivityToSerivce />}
+        />
+        <Route
+          path={"/map-specification-to-activity/:id"}
+          element={<MapSpecficationToActivity />}
         />
         <Route path={"/add-specification"} element={<AddSpecification />} />
         <Route
