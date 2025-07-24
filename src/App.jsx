@@ -42,6 +42,7 @@ import AddDevice from "./Pages/device/AddDevice";
 import AddActivity from "./Pages/activity/AddActivity";
 import ManageActivity from "./Pages/activity/ManageActivity";
 import MapActivityToSerivce from "./Pages/activity/MapActivityToSerivce";
+import AddSpecification from "./Pages/specification/AddSpecification";
 
 function App() {
   const dispatch = useDispatch();
@@ -106,6 +107,7 @@ function App() {
           path={"/map-activity-to-service"}
           element={<MapActivityToSerivce />}
         />
+        <Route path={"/add-specification"} element={<AddSpecification />} />
       </Route>
     </Routes>
   );
