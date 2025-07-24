@@ -7,12 +7,13 @@ export default function FormInput({
   register,
   error,
   validation,
+  ...props
 }) {
   return (
     <div className={"flex flex-col gap-2"}>
       <Label htmlFor={name}>{label}</Label>
       <div>
-        <Input {...register(name, { ...validation })} />
+        <Input {...props} {...register(name, { ...validation })} />
         <div>
           {error && (
             <span className={"text-xs text-red-500"}>{error.message}</span>
