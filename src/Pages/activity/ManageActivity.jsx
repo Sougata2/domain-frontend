@@ -39,7 +39,7 @@ function ManageActivity() {
       },
     },
     {
-      accessorKey: "services",
+      accessorKey: "subServices",
       header: ({ column }) => {
         return (
           <Button
@@ -47,7 +47,7 @@ function ManageActivity() {
             type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Service
+            Sub Services
             <ArrowUpDown />
           </Button>
         );
@@ -55,7 +55,7 @@ function ManageActivity() {
       cell: ({ row }) => {
         return (
           <div className="ps-3 flex gap-1 flex-wrap">
-            {row.getValue("services").map((s) => (
+            {row.getValue("subServices").map((s) => (
               <Badge key={s.id} variant="secondary">
                 {s.name}
               </Badge>

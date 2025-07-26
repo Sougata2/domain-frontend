@@ -9,7 +9,7 @@ import { ArrowUpDown } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
-function MapActivityToSerivce() {
+function MapActivityToSubSerivce() {
   const columns = [
     {
       accessorKey: "name",
@@ -39,7 +39,7 @@ function MapActivityToSerivce() {
           <div>
             <Checkbox
               className={"border-black"}
-              disabled={!selectedService}
+              disabled={!selectedSubService}
               checked={mappedActivities[row.getValue("id")]}
               onCheckedChange={(e) => {
                 setMappedActivities((prevState) => {
@@ -55,17 +55,17 @@ function MapActivityToSerivce() {
       },
     },
   ];
-  const [selectedService, setSelectedService] = useState(undefined);
-  const [services, setServices] = useState([]);
+  const [selectedSubService, setSelectedSubService] = useState(undefined);
+  const [subServices, setSubServices] = useState([]);
   const [activities, setActivities] = useState([]);
   const [mappedActivities, setMappedActivities] = useState({});
   const activityRef = useRef();
 
-  const fetchServices = useCallback(async () => {
+  const fetchSubServices = useCallback(async () => {
     try {
-      const response = await axios.get("/service/all");
+      const response = await axios.get("/sub-service/all");
       const data = response.data;
-      setServices(data.map((d) => ({ label: d.name, value: d })));
+      setSubServices(data.map((d) => ({ label: d.name, value: d })));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -83,9 +83,9 @@ function MapActivityToSerivce() {
 
   useEffect(() => {
     (async () => {
-      await fetchServices();
+      await fetchSubServices();
     })();
-  }, [fetchServices]);
+  }, [fetchSubServices]);
 
   useEffect(() => {
     (async () => {
@@ -94,8 +94,8 @@ function MapActivityToSerivce() {
   }, [fetchActivities]);
 
   useEffect(() => {
-    if (selectedService) {
-      selectedService.value?.activities.forEach((a) => {
+    if (selectedSubService) {
+      selectedSubService.value?.activities.forEach((a) => {
         setMappedActivities((prevState) => {
           return {
             ...prevState,
@@ -106,7 +106,7 @@ function MapActivityToSerivce() {
     } else {
       setMappedActivities({});
     }
-  }, [selectedService]);
+  }, [selectedSubService]);
 
   async function handleSave() {
     try {
@@ -115,20 +115,20 @@ function MapActivityToSerivce() {
         .map(([id]) => Number(id));
 
       const payload = {
-        id: selectedService.value.id,
+        id: selectedSubService.value.id,
         activities: activities
           .filter((a) => selectedActivities.includes(a.id))
           .map((a) => ({ id: a.id })),
       };
-      const response = await axios.put("/service", payload);
+      const response = await axios.put("/sub-service", payload);
       const _ = response.data;
       toast.success("Success", {
         description: "Activities mapped successfully",
       });
-      setSelectedService(undefined);
+      setSelectedSubService(undefined);
       setMappedActivities({});
       activityRef.current.clearValue();
-      await fetchServices();
+      await fetchSubServices();
       await fetchActivities();
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -139,18 +139,18 @@ function MapActivityToSerivce() {
     <div className="flex justify-center items-center">
       <div className="w-md flex flex-col gap-8">
         <div>
-          <Label className={"pb-3"}>Service</Label>
+          <Label className={"pb-3"}>SubService</Label>
           <Select
             ref={activityRef}
             className="basic-single"
             classNamePrefix="select"
-            placeholder={"Select Service"}
+            placeholder={"Select SubService"}
             isClearable={true}
             isSearchable={true}
-            name="service"
-            options={services}
+            name="subService"
+            options={subServices}
             onChange={(e) =>
-              setSelectedService((prevState) => {
+              setSelectedSubService((prevState) => {
                 if (prevState !== null && prevState !== undefined)
                   if (prevState.label !== e?.label) setMappedActivities({});
                 return e;
@@ -167,7 +167,7 @@ function MapActivityToSerivce() {
           />
         </div>
         <div className="flex justify-end">
-          <Button onClick={handleSave} disabled={!selectedService}>
+          <Button onClick={handleSave} disabled={!selectedSubService}>
             Save
           </Button>
         </div>
@@ -176,4 +176,4 @@ function MapActivityToSerivce() {
   );
 }
 
-export default MapActivityToSerivce;
+export default MapActivityToSubSerivce;
