@@ -150,7 +150,7 @@ function ManageActivity() {
           setOpenAlert(false);
         }}
       />
-      <div className="w-md">
+      <div>
         <DataTable
           columns={columns}
           data={activities}
