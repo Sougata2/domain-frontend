@@ -161,7 +161,7 @@ function ManageSpecification() {
           setOpenAlert(false);
         }}
       />
-      <div className="w-md">
+      <div className="max-w-5xl">
         <DataTable
           columns={columns}
           data={specifications}
