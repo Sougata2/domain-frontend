@@ -29,8 +29,17 @@ function MapSpecficationToActivity() {
     },
     {
       accessorKey: "id",
-      header: () => {
-        return <div>Include</div>;
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Include
+            <ArrowUpDown />
+          </Button>
+        );
       },
       cell: ({ row }) => {
         return (

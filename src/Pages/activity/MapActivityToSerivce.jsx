@@ -31,12 +31,21 @@ function MapActivityToSubSerivce() {
     },
     {
       accessorKey: "id",
-      header: () => {
-        return <div>Include</div>;
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Include
+            <ArrowUpDown />
+          </Button>
+        );
       },
       cell: ({ row }) => {
         return (
-          <div>
+          <div className="ps-3">
             <Checkbox
               className={"border-black"}
               disabled={!selectedSubService}
@@ -137,7 +146,7 @@ function MapActivityToSubSerivce() {
 
   return (
     <div className="flex justify-center items-center">
-      <div className="w-md flex flex-col gap-8">
+      <div className="flex flex-col gap-8 max-w-5xl">
         <div>
           <Label className={"pb-3"}>SubService</Label>
           <Select
