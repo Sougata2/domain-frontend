@@ -47,6 +47,7 @@ import ManageSpecification from "./Pages/specification/ManageSpecification";
 import EditSpecification from "./Pages/specification/EditSpecification";
 import MapSpecficationToActivity from "./Pages/activity/MapSpecficationToActivity";
 import MapActivityToSubSerivce from "./Pages/activity/MapActivityToSerivce";
+import RegisterFormStages from "./Pages/formStages/RegisterFormStages";
 
 function App() {
   const dispatch = useDispatch();
@@ -124,6 +125,10 @@ function App() {
         <Route
           path={"/manage-specification"}
           element={<ManageSpecification />}
+        />
+        <Route
+          path={"/register-form-stages"}
+          element={<RegisterFormStages />}
         />
       </Route>
     </Routes>
