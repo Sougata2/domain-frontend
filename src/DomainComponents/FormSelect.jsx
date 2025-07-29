@@ -10,6 +10,7 @@ export default function FormSelect({
   options,
   control,
   defaultValue,
+  disabled,
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -25,6 +26,7 @@ export default function FormSelect({
               onChange={(e) => field.onChange(e)}
               placeholder={`Select ${label}`}
               options={options}
+              isDisabled={disabled}
               defaultValue={
                 defaultValue && defaultValue.value ? defaultValue : null
               }

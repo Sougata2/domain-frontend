@@ -34,11 +34,16 @@ function RegisterFormStages() {
     try {
       const response = await axios.get("/menu/sub-menus");
       const data = response.data;
-      setSubMenus(data.map((d) => ({ label: d.name, value: d })));
+      const stagedMenus = form.value.stages.map((s) => s.menu.id);
+
+      const unstagedMenus = data
+        .filter((d) => !stagedMenus.includes(d.id))
+        .map((d) => ({ label: d.name, value: d }));
+      setSubMenus(unstagedMenus);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, []);
+  }, [form]);
 
   const fetchForms = useCallback(async () => {
     try {
@@ -63,10 +68,12 @@ function RegisterFormStages() {
   }, [form]);
 
   useEffect(() => {
-    (async () => {
-      await fetchSubMenus();
-    })();
-  }, [fetchSubMenus]);
+    if (form) {
+      (async () => {
+        await fetchSubMenus();
+      })();
+    }
+  }, [fetchSubMenus, form]);
 
   useEffect(() => {
     (async () => {
@@ -112,22 +119,6 @@ function RegisterFormStages() {
           <div>
             <FormSelect
               control={control}
-              error={errors.menu}
-              defaultValue={null}
-              label={"Menu"}
-              name={"menu"}
-              options={subMenus}
-              validation={{
-                required: {
-                  value: true,
-                  message: "Menu is Required",
-                },
-              }}
-            />
-          </div>
-          <div>
-            <FormSelect
-              control={control}
               error={errors.form}
               defaultValue={null}
               label={"Form"}
@@ -137,6 +128,22 @@ function RegisterFormStages() {
                 required: {
                   value: true,
                   message: "Form is Required",
+                },
+              }}
+            />
+          </div>
+          <div>
+            <FormSelect
+              control={control}
+              error={errors.menu}
+              defaultValue={null}
+              label={"Menu"}
+              name={"menu"}
+              options={subMenus}
+              validation={{
+                required: {
+                  value: true,
+                  message: "Menu is Required",
                 },
               }}
             />
