@@ -48,6 +48,7 @@ import EditSpecification from "./Pages/specification/EditSpecification";
 import MapSpecficationToActivity from "./Pages/activity/MapSpecficationToActivity";
 import MapActivityToSubSerivce from "./Pages/activity/MapActivityToSerivce";
 import RegisterFormStages from "./Pages/formStages/RegisterFormStages";
+import ServiceLayout from "./DomainComponents/ServiceLayout";
 
 function App() {
   const dispatch = useDispatch();
@@ -101,11 +102,20 @@ function App() {
         <Route path={"/manage-sub-service"} element={<ManageSubServices />} />
         <Route path={"/add-sub-service"} element={<AddSubService />} />
         <Route path={"/new-request"} element={<NewRequest />} />
+        <Route element={<ServiceLayout />}>
+          <Route
+            path={"/new-request/:referenceNumber"}
+            element={<NewRequest />}
+          />
+          <Route
+            path={"/add-device/:referenceNumber"}
+            element={<AddDevice />}
+          />
+        </Route>
         <Route path={"/add-status"} element={<AddStatus />} />
         <Route path={"/manage-status"} element={<ManageStatus />} />
         <Route path={"/edit-status/:id"} element={<EditStatus />} />
         <Route path={"/application-list"} element={<ApplicationList />} />
-        <Route path={"/add-device/:referenceNumber"} element={<AddDevice />} />
         <Route path={"/add-activity"} element={<AddActivity />} />
         <Route path={"/edit-activity/:id"} element={<EditActivity />} />
         <Route path={"/manage-activity"} element={<ManageActivity />} />
