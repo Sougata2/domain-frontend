@@ -17,8 +17,10 @@ import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import { useState } from "react";
 import { toast } from "sonner";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 function ApplicationList() {
+  const navigate = useNavigate();
   const { id: userId } = useSelector((state) => state.user);
 
   const [openAlert, setOpenAlert] = useState(false);
@@ -148,7 +150,13 @@ function ApplicationList() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <FaRegFolderOpen />
-                View
+                <button
+                  onClick={() => {
+                    navigate(`/new-request/${row.getValue("referenceNumber")}`);
+                  }}
+                >
+                  View
+                </button>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <FiTrash />
