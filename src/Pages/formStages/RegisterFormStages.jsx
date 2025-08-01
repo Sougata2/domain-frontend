@@ -233,54 +233,57 @@ function RegisterFormStages() {
         <div className="flex w-md justify-start">
           <div className="flex flex-col gap-3">
             <div className="text-4xl">Stage</div>
-            <Tabs
-              className="w-full"
-              value={defaultTab}
-              onValueChange={setDefaultTab}
-            >
-              <TabsList>
-                {stages.map((s) => (
-                  <TabsTrigger key={s.id} value={String(s.id)}>
-                    {s.menu.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            {!form.value.stages.length && <div>No Stages registered yet.</div>}
+            {form.value.stages.length && (
+              <Tabs
+                className="w-full"
+                value={defaultTab}
+                onValueChange={setDefaultTab}
+              >
+                <TabsList>
+                  {stages.map((s) => (
+                    <TabsTrigger key={s.id} value={String(s.id)}>
+                      {s.menu.name}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
 
-              {stages.map((s) => (
-                <TabsContent key={s.id} value={String(s.id)}>
-                  <div className="py-1 px-2 w-full flex flex-col gap-2">
-                    <div>
-                      <span>Link → </span>
-                      <Link to={`/${s.menu.url}`}>{s.menu.url}</Link>
-                    </div>
-                    <div>
-                      <span>Order → </span>
-                      <span>{s.stageOrder}</span>
-                    </div>
-                    <div className="flex gap-2">
+                {stages.map((s) => (
+                  <TabsContent key={s.id} value={String(s.id)}>
+                    <div className="py-1 px-2 w-full flex flex-col gap-2">
                       <div>
-                        <Button
-                          variant="outline"
-                          onClick={() => selectForEdit(s.id)}
-                        >
-                          edit
-                        </Button>
+                        <span>Link → </span>
+                        <Link to={`/${s.menu.url}`}>{s.menu.url}</Link>
                       </div>
                       <div>
-                        <Button
-                          onClick={() => {
-                            setOpenAlert(true);
-                            setDeleteId(s.id);
-                          }}
-                        >
-                          Delete
-                        </Button>
+                        <span>Order → </span>
+                        <span>{s.stageOrder}</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <div>
+                          <Button
+                            variant="outline"
+                            onClick={() => selectForEdit(s.id)}
+                          >
+                            edit
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            onClick={() => {
+                              setOpenAlert(true);
+                              setDeleteId(s.id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
+                  </TabsContent>
+                ))}
+              </Tabs>
+            )}
           </div>
         </div>
       )}
