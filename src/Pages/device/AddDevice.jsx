@@ -12,7 +12,7 @@ import FormInput from "@/DomainComponents/FormInput";
 function AddDevice() {
   return (
     <div className="flex justify-center items-center">
-      <div className="w-5xl">
+      <div className="w-3xl">
         <Card>
           <CardHeader>
             <CardTitle>Register Device</CardTitle>

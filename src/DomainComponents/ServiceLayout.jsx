@@ -17,7 +17,7 @@ function ServiceLayout() {
     <div className="flex flex-col gap-2.5">
       <div className="flex justify-center items-center">
         {stages && (
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-start gap-2 flex-wrap w-3xl">
             {stages.map((stage, index) => (
               <div key={stage.id} className="flex items-center gap-2">
                 <NavLink
