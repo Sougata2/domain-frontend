@@ -14,10 +14,10 @@ const stageSlice = createSlice({
     setCurrentStage: (state, action) => {
       state.currentStage = action.payload;
     },
-    nextPage: (state) => {
+    nextStage: (state) => {
       state.currentStage += 1;
     },
-    prevPage: (state) => {
+    prevStage: (state) => {
       state.currentStage -= 1;
     },
   },
@@ -28,6 +28,7 @@ const stageSlice = createSlice({
       })
       .addCase(fetchStages.fulfilled, (state, action) => {
         state.stages = action.payload;
+        state.currentStage = 0;
         console.log("Fetched Stages.");
       })
       .addCase(fetchStages.rejected, () => {
@@ -50,5 +51,5 @@ export const fetchStages = createAsyncThunk(
   }
 );
 
-export const { setCurrentStage, nextPage, prevPage } = stageSlice.actions;
+export const { setCurrentStage, nextStage, prevStage } = stageSlice.actions;
 export default stageSlice.reducer;
