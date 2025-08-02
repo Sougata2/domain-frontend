@@ -16,6 +16,7 @@ export default function FormSelect({
   validation,
   options,
   className = "w-full",
+  ...props
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -31,9 +32,9 @@ export default function FormSelect({
 
           return (
             <Select
+              {...props}
               onValueChange={(val) => field.onChange(Number(val))}
               value={field.value?.toString() ?? ""}
-              disabled={!options?.length}
             >
               <SelectTrigger className={className}>
                 <SelectValue placeholder={`Select ${label}`}>

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router";
 import { toast } from "sonner";
 
 export default function NewRequest() {
@@ -15,6 +16,7 @@ export default function NewRequest() {
     status: {},
   };
 
+  const { referenceNumber } = useParams();
   const { id: userId } = useSelector((state) => state.user);
   const {
     reset,
@@ -31,6 +33,25 @@ export default function NewRequest() {
   const [services, setServices] = useState([]);
   const [subServices, setSubServices] = useState([]);
 
+  const fetchSavedApplication = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/application/by-reference-id/${referenceNumber}`
+      );
+      const data = response.data;
+      const savedService = services.find(
+        (service) => data.service.id === service.id
+      );
+      reset({
+        ...data,
+        service: savedService?.id,
+        subService: data.subService?.id,
+      });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber, reset, services]);
+
   const fetchServices = useCallback(async () => {
     try {
       const response = await axios.get("/service/all");
@@ -40,6 +61,14 @@ export default function NewRequest() {
       toast.error("Error", { description: error.message });
     }
   }, []);
+
+  useEffect(() => {
+    if (referenceNumber) {
+      (async () => {
+        await fetchSavedApplication();
+      })();
+    }
+  }, [fetchSavedApplication, referenceNumber]);
 
   useEffect(() => {
     (async () => {
@@ -86,6 +115,7 @@ export default function NewRequest() {
               <FormSelect
                 label={"Service"}
                 name={"service"}
+                disabled={services?.length === 0 || referenceNumber}
                 control={control}
                 error={errors.service}
                 options={services}
@@ -97,6 +127,7 @@ export default function NewRequest() {
               <FormSelect
                 label={"Sub Service"}
                 name={"subService"}
+                disabled={subServices?.length === 0 || referenceNumber}
                 control={control}
                 error={errors.subService}
                 options={subServices}
@@ -107,7 +138,7 @@ export default function NewRequest() {
               />
             </div>
             <div className="flex justify-end">
-              <Button>Save</Button>
+              {!referenceNumber && <Button>Save</Button>}
             </div>
           </form>
         </CardContent>
