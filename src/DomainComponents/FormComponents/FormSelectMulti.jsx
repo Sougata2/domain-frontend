@@ -2,6 +2,9 @@ import { Label } from "@/components/ui/label";
 import Select from "react-select";
 import { Controller } from "react-hook-form";
 import { useCallback, useEffect, useState } from "react";
+import makeAnimated from "react-select/animated";
+
+const animatedComponents = makeAnimated();
 
 export default function FormSelectMulti({
   label,
@@ -51,6 +54,7 @@ export default function FormSelectMulti({
               isSearchable
               inputId={name}
               options={options}
+              components={animatedComponents}
               closeMenuOnSelect={false}
               placeholder={placeholder}
               isClearable={isClearable}
