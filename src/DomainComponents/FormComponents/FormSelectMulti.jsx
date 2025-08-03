@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import Select from "react-select";
-import { Controller } from "react-hook-form";
-import { useCallback, useEffect, useState } from "react";
+import { Controller, useWatch } from "react-hook-form";
+import { useMemo } from "react";
 import makeAnimated from "react-select/animated";
 
 const animatedComponents = makeAnimated();
@@ -11,38 +11,39 @@ export default function FormSelectMulti({
   name,
   control,
   error,
-  options,
+  options = [],
   placeholder = "Select",
   isClearable = true,
   isMulti = true,
   rules,
+  disabled,
 }) {
-  const [selectedValue, setSelectedValue] = useState(null);
+  const fieldValue = useWatch({ control, name });
 
-  const updateSelected = useCallback(
-    (value) => {
-      if (isMulti) {
-        const mapped = options.filter((opt) =>
-          value?.some((v) => v === opt.value || v.value === opt.value)
-        );
-        setSelectedValue(mapped);
-      } else {
-        const found = options.find(
-          (opt) => opt.value === value?.value || opt.value === value
-        );
-        setSelectedValue(found || null);
-      }
-    },
-    [isMulti, options]
-  );
+  // Map field value to Select-compatible format
+  const selectedValue = useMemo(() => {
+    if (!fieldValue) return isMulti ? [] : null;
 
-  useEffect(() => {
-    control._formValues && updateSelected(control._formValues[name]);
-  }, [control, name, options, updateSelected]);
+    if (isMulti) {
+      return options.filter((opt) =>
+        fieldValue.some((v) =>
+          typeof v === "object" ? v?.value === opt.value : v === opt.value
+        )
+      );
+    }
+
+    return (
+      options.find((opt) =>
+        typeof fieldValue === "object"
+          ? opt.value === fieldValue.value
+          : opt.value === fieldValue
+      ) || null
+    );
+  }, [fieldValue, isMulti, options]);
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={name}>{label}</Label>
+      {label && <Label htmlFor={name}>{label}</Label>}
       <div>
         <Controller
           name={name}
@@ -51,19 +52,25 @@ export default function FormSelectMulti({
           render={({ field }) => (
             <Select
               {...field}
-              isSearchable
               inputId={name}
               options={options}
-              components={animatedComponents}
-              closeMenuOnSelect={false}
-              placeholder={placeholder}
-              isClearable={isClearable}
-              isMulti={isMulti}
               value={selectedValue}
+              placeholder={placeholder}
               onChange={(val) => {
-                setSelectedValue(val);
-                field.onChange(val);
+                // Save only values (not full option objects) in form state
+                if (isMulti) {
+                  const selected = val?.map((v) => v.value) || [];
+                  field.onChange(selected);
+                } else {
+                  field.onChange(val?.value || null);
+                }
               }}
+              isDisabled={disabled}
+              isClearable={isClearable}
+              isSearchable
+              isMulti={isMulti}
+              closeMenuOnSelect={!isMulti}
+              components={animatedComponents}
               classNamePrefix="react-select"
             />
           )}
