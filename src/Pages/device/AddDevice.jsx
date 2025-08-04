@@ -10,11 +10,16 @@ import {
 import FormInput from "@/DomainComponents/FormInput";
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 import axios from "axios";
-import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
+import { Label } from "@/components/ui/label";
 import FormSelectMulti from "@/DomainComponents/FormComponents/FormSelectMulti";
+
+const animatedComponents = makeAnimated();
 
 const defaultValues = {
   id: "",
@@ -40,11 +45,17 @@ function AddDevice() {
     watch,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues });
+    setValue,
+  } = useForm({
+    defaultValues,
+  });
 
   const { referenceNumber } = useParams();
 
   const selectedActivties = watch("activities");
+  const selectedSpecification = watch("specifications");
+
+  const specificationRef = useRef(null);
 
   const [activities, setActivities] = useState([]);
   const [specificationOptions, setSpecificationOptions] = useState([]);
@@ -76,23 +87,6 @@ function AddDevice() {
     }
   }, [subService]);
 
-  const setSpecifications = useCallback(() => {
-    try {
-      const specifications = [];
-      selectedActivties.forEach((activity) =>
-        specifications.push(
-          ...activity.value.specifications.map((specification) => ({
-            label: specification.name,
-            value: specification,
-          }))
-        )
-      );
-      setSpecificationOptions([...specifications]);
-    } catch (error) {
-      toast.error("Error", { description: error.message });
-    }
-  }, [selectedActivties]);
-
   useEffect(() => {
     (async () => {
       if (referenceNumber) {
@@ -108,12 +102,6 @@ function AddDevice() {
       })();
     }
   }, [fetchActivities, subService]);
-
-  useEffect(() => {
-    if (selectedActivties.length > 0) {
-      setSpecifications();
-    }
-  }, [selectedActivties, setSpecifications]);
 
   async function handleOnSubmit(data) {
     try {
@@ -255,6 +243,71 @@ function AddDevice() {
                     },
                   }}
                 />
+                <Controller
+                  name="activities"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Activities are required",
+                    },
+                  }}
+                  render={() => (
+                    <FormSelectMulti
+                      name={"activities"}
+                      label={"Activities"}
+                      defaultValue={selectedActivties}
+                      disabled={
+                        activitieOptions && activitieOptions.length === 0
+                      }
+                      options={activitieOptions}
+                      error={errors.activities}
+                      handleOnChange={(e) => {
+                        setValue("activities", [...e]);
+                        specificationRef.current.clearValue();
+                        setSpecificationOptions(() => {
+                          const specs = [];
+                          e.forEach((ac) =>
+                            specs.push(
+                              ...ac.value.specifications.map((s) => ({
+                                label: s.name,
+                                value: s,
+                              }))
+                            )
+                          );
+                          return specs;
+                        });
+                      }}
+                    />
+                  )}
+                />
+                <Controller
+                  name="specifications"
+                  control={control}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: "Specifications are required",
+                    },
+                  }}
+                  render={() => (
+                    <FormSelectMulti
+                      ref={specificationRef}
+                      name={"specifications"}
+                      label={"Specifications"}
+                      defaultValue={selectedSpecification}
+                      disabled={
+                        specificationOptions &&
+                        specificationOptions.length === 0
+                      }
+                      error={errors.specifications}
+                      options={specificationOptions}
+                      handleOnChange={(e) => {
+                        setValue("specifications", [...e]);
+                      }}
+                    />
+                  )}
+                />
                 <FormInput
                   label={"Quantity"}
                   name={"quantity"}
@@ -271,32 +324,6 @@ function AddDevice() {
                     },
                   }}
                   type={"number"}
-                />
-                <FormSelectMulti
-                  control={control}
-                  name={"activities"}
-                  label={"Test Activity"}
-                  error={errors.activities}
-                  options={activitieOptions}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: "Test Activities are required",
-                    },
-                  }}
-                />
-                <FormSelectMulti
-                  control={control}
-                  label={"Activity Specifications"}
-                  name={"specifications"}
-                  error={errors.specifications}
-                  options={specificationOptions}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: "Activity Specifications are required",
-                    },
-                  }}
                 />
               </div>
             </CardContent>
