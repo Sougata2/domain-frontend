@@ -559,6 +559,8 @@ function AddDevice() {
                 type="button"
                 onClick={() => {
                   reset(defaultValues);
+                  activityRef.current.clearValue();
+                  specificationRef.current.clearValue();
                 }}
               >
                 Reset
