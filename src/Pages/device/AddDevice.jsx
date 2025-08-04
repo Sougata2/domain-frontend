@@ -51,6 +51,7 @@ function AddDevice() {
   const selectedSpecification = watch("specifications");
 
   const specificationRef = useRef(null);
+  const activityRef = useRef(null);
 
   const [activities, setActivities] = useState([]);
   const [specificationOptions, setSpecificationOptions] = useState([]);
@@ -76,11 +77,31 @@ function AddDevice() {
       );
       const data = response.data;
       setActivities(data);
-      setActivitieOptions(data.map((d) => ({ label: d.name, value: d })));
+      const formattedData = data.map((d) => ({ label: d.name, value: d }));
+      formattedData.sort((a, b) => a.label.localeCompare(b.label));
+      setActivitieOptions(formattedData);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
   }, [subService]);
+
+  const clearMultiSelectValues = (field) => {
+    switch (field) {
+      case "*":
+        specificationRef.current.clearValue();
+        activityRef.current.clearValue();
+        break;
+      case "specification":
+        specificationRef.current.clearValue();
+        break;
+      case "acitivity":
+        activityRef.current.clearValue();
+        break;
+      default:
+        toast.error("Unknown Field");
+        break;
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -103,6 +124,7 @@ function AddDevice() {
       console.log(data);
       toast.success("Success", { description: "Device Saved" });
       reset(defaultValues);
+      clearMultiSelectValues("*");
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -249,6 +271,7 @@ function AddDevice() {
                   }}
                   render={() => (
                     <FormSelectMulti
+                      ref={activityRef}
                       name={"activities"}
                       label={"Activities"}
                       defaultValue={selectedActivties}
@@ -259,7 +282,12 @@ function AddDevice() {
                       error={errors.activities}
                       handleOnChange={(e) => {
                         setValue("activities", [...e]);
-                        specificationRef.current.clearValue();
+
+                        // clear the specifications options only
+                        // when activity is delete form multi select combo.
+                        if (e.length < selectedActivties.length)
+                          clearMultiSelectValues("specification");
+
                         setSpecificationOptions(() => {
                           const specs = [];
                           e.forEach((ac) =>
@@ -270,6 +298,7 @@ function AddDevice() {
                               }))
                             )
                           );
+                          specs.sort((a, b) => a.label.localeCompare(b.label));
                           return specs;
                         });
                       }}
