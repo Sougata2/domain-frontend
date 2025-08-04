@@ -53,7 +53,6 @@ function AddDevice() {
   const specificationRef = useRef(null);
   const activityRef = useRef(null);
 
-  const [activities, setActivities] = useState([]);
   const [specificationOptions, setSpecificationOptions] = useState([]);
   const [subService, setSubService] = useState(null);
   const [activitieOptions, setActivitieOptions] = useState([]);
@@ -76,7 +75,6 @@ function AddDevice() {
         `/activity/by-sub-service/${subService.id}`
       );
       const data = response.data;
-      setActivities(data);
       const formattedData = data.map((d) => ({ label: d.name, value: d }));
       formattedData.sort((a, b) => a.label.localeCompare(b.label));
       setActivitieOptions(formattedData);
