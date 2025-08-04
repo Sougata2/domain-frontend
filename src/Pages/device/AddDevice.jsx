@@ -121,7 +121,17 @@ function AddDevice() {
 
   async function handleOnSubmit(data) {
     try {
-      console.log(data);
+      const payload = {
+        ...data,
+        heightUnit: data.heightUnit.value,
+        lengthUnit: data.lengthUnit.value,
+        weightUnit: data.weightUnit.value,
+        activities: data.activities.map((d) => ({ id: d.value.id })),
+        specifications: data.specifications.map((d) => ({ id: d.value.id })),
+        application: { referenceNumber: referenceNumber },
+      };
+
+      await axios.post("/device", payload);
       toast.success("Success", { description: "Device Saved" });
       reset(defaultValues);
       clearMultiSelectValues("*");
