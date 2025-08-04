@@ -86,7 +86,7 @@ function ServiceLayout() {
         <Outlet />
       </div>
       <div
-        className={`w-3xl flex justify-${
+        className={`w-3xl mb-3 flex justify-${
           currentStage <= 0 ? "end" : "between"
         }`}
       >
