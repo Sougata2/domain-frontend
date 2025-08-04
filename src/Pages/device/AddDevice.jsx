@@ -182,6 +182,7 @@ function AddDevice() {
   const [openAlert, setOpenAlert] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const [devices, setDevices] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
 
   const fetchApplicationData = useCallback(async () => {
     try {
@@ -270,11 +271,17 @@ function AddDevice() {
         weightUnit: data.weightUnit.value,
         activities: data.activities.map((d) => ({ id: d.value.id })),
         specifications: data.specifications.map((d) => ({ id: d.value.id })),
-        application: { referenceNumber: referenceNumber },
+        application: isEditing ? null : { referenceNumber: referenceNumber },
       };
 
-      await axios.post("/device", payload);
-      toast.success("Success", { description: "Device Saved" });
+      if (isEditing) {
+        await axios.put("/device", payload);
+        toast.info("Updated", { description: "Device Updated" });
+      } else {
+        await axios.post("/device", payload);
+        toast.success("Success", { description: "Device Saved" });
+      }
+      setIsEditing(false);
       reset(defaultValues);
       clearMultiSelectValues("*");
       await fetchDevices();
@@ -285,9 +292,9 @@ function AddDevice() {
 
   async function handleEditDevice(deviceId) {
     try {
+      setIsEditing(true);
       const response = await axios.get(`/device/${deviceId}`);
       const data = response.data;
-      console.log(data);
       const { createdAt, updatedAt, ...formattedData } = {
         ...data,
         activities: data.activities.map((d) => ({ label: d.name, value: d })),
@@ -300,6 +307,13 @@ function AddDevice() {
         weightUnit: { label: data.weightUnit, value: data.weightUnit },
       };
       reset(formattedData);
+
+      // apply the saved values in the multi select options
+      activityRef.current?.setValue(formattedData.activities, "set-value");
+      specificationRef.current?.setValue(
+        formattedData.specifications,
+        "set-value"
+      );
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -549,7 +563,8 @@ function AddDevice() {
               >
                 Reset
               </Button>
-              <Button>Save</Button>
+              {!isEditing && <Button>Save</Button>}
+              {isEditing && <Button>Update</Button>}
             </CardFooter>
           </form>
         </Card>
