@@ -15,6 +15,21 @@ import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
 import FormSelectMulti from "@/DomainComponents/FormComponents/FormSelectMulti";
+import DataTable from "@/DomainComponents/DataTable";
+
+import { Badge } from "@/components/ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
+import { ArrowUpDown, Ellipsis } from "lucide-react";
+import { CiEdit } from "react-icons/ci";
+import { IoSettingsOutline } from "react-icons/io5";
+import { LuTrash } from "react-icons/lu";
 
 const defaultValues = {
   id: "",
@@ -33,6 +48,114 @@ const defaultValues = {
 };
 
 function AddDevice() {
+  const columns = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Device Name
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div className="ps-3">{row.getValue("name")}</div>;
+      },
+    },
+    {
+      accessorKey: "activities",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Activity
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="ps-3 flex gap-1 flex-wrap">
+            {row.getValue("activities").map((s) => (
+              <Badge key={s.id} variant="secondary">
+                {s.name}
+              </Badge>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "specifications",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Specifications
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="ps-3 flex gap-1 flex-wrap">
+            {row.getValue("specifications").map((s) => (
+              <Badge key={s.id} variant="secondary">
+                {s.name}
+              </Badge>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "id",
+      header: () => {
+        return <div>Actions</div>;
+      },
+      cell: ({ row }) => {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Ellipsis />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <CiEdit />
+                  {/* <Link to={`/edit-activity/${row.getValue("id")}`}>Edit</Link> */}
+                  <div>Edit</div>
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <LuTrash />
+                  <button
+                    onClick={() => {
+                      setOpenAlert(true);
+                      setDeleteId(row.getValue("id"));
+                    }}
+                  >
+                    Delete
+                  </button>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
+
   const {
     control,
     register,
@@ -54,8 +177,11 @@ function AddDevice() {
   const activityRef = useRef(null);
 
   const [specificationOptions, setSpecificationOptions] = useState([]);
-  const [subService, setSubService] = useState(null);
   const [activitieOptions, setActivitieOptions] = useState([]);
+  const [subService, setSubService] = useState(null);
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+  const [devices, setDevices] = useState([]);
 
   const fetchApplicationData = useCallback(async () => {
     try {
@@ -82,6 +208,18 @@ function AddDevice() {
       toast.error("Error", { description: error.message });
     }
   }, [subService]);
+
+  const fetchDevices = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/device/by-application-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setDevices(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
 
   const clearMultiSelectValues = (field) => {
     switch (field) {
@@ -117,6 +255,12 @@ function AddDevice() {
     }
   }, [fetchActivities, subService]);
 
+  useEffect(() => {
+    (async () => {
+      await fetchDevices();
+    })();
+  }, [fetchDevices]);
+
   async function handleOnSubmit(data) {
     try {
       const payload = {
@@ -133,13 +277,27 @@ function AddDevice() {
       toast.success("Success", { description: "Device Saved" });
       reset(defaultValues);
       clearMultiSelectValues("*");
+      await fetchDevices();
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      const _ = await axios.delete("/device", {
+        data: { id },
+      });
+      setDeleteId("");
+      await fetchDevices();
+      toast.warning("Deleted", { description: "Device Deleted" });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
   }
 
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex flex-col justify-center items-center">
       <div className="w-3xl">
         <Card>
           <CardHeader>
@@ -373,6 +531,24 @@ function AddDevice() {
             </CardFooter>
           </form>
         </Card>
+      </div>
+      <div className={"flex justify-center items-center"}>
+        <ConfirmationAlert
+          isOpen={openAlert}
+          closeHandler={() => setOpenAlert(false)}
+          handleConfirm={() => {
+            handleDelete(deleteId);
+            setOpenAlert(false);
+          }}
+        />
+        <div className="w-3xl mt-5">
+          <div>Devices</div>
+          <DataTable
+            columns={columns}
+            data={devices}
+            options={{ searchField: "name" }}
+          />
+        </div>
       </div>
     </div>
   );
