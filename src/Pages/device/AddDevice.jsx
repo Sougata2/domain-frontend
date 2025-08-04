@@ -14,12 +14,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
-import { Label } from "@/components/ui/label";
 import FormSelectMulti from "@/DomainComponents/FormComponents/FormSelectMulti";
-
-const animatedComponents = makeAnimated();
 
 const defaultValues = {
   id: "",
