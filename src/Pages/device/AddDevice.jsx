@@ -28,7 +28,6 @@ import {
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import { ArrowUpDown, Ellipsis } from "lucide-react";
 import { CiEdit } from "react-icons/ci";
-import { IoSettingsOutline } from "react-icons/io5";
 import { LuTrash } from "react-icons/lu";
 
 const defaultValues = {
@@ -134,8 +133,9 @@ function AddDevice() {
               <DropdownMenuGroup>
                 <DropdownMenuItem>
                   <CiEdit />
-                  {/* <Link to={`/edit-activity/${row.getValue("id")}`}>Edit</Link> */}
-                  <div>Edit</div>
+                  <button onClick={() => handleEditDevice(row.getValue("id"))}>
+                    Edit
+                  </button>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
                   <LuTrash />
@@ -278,6 +278,28 @@ function AddDevice() {
       reset(defaultValues);
       clearMultiSelectValues("*");
       await fetchDevices();
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  async function handleEditDevice(deviceId) {
+    try {
+      const response = await axios.get(`/device/${deviceId}`);
+      const data = response.data;
+      console.log(data);
+      const { createdAt, updatedAt, ...formattedData } = {
+        ...data,
+        activities: data.activities.map((d) => ({ label: d.name, value: d })),
+        specifications: data.specifications.map((d) => ({
+          label: d.name,
+          value: d,
+        })),
+        heightUnit: { label: data.heightUnit, value: data.heightUnit },
+        lengthUnit: { label: data.lengthUnit, value: data.lengthUnit },
+        weightUnit: { label: data.weightUnit, value: data.weightUnit },
+      };
+      reset(formattedData);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
