@@ -49,6 +49,9 @@ import MapSpecficationToActivity from "./Pages/activity/MapSpecficationToActivit
 import MapActivityToSubSerivce from "./Pages/activity/MapActivityToSerivce";
 import RegisterFormStages from "./Pages/formStages/RegisterFormStages";
 import ServiceLayout from "./DomainComponents/ServiceLayout";
+import AddLab from "./Pages/lab/AddLab";
+import ManageLab from "./Pages/lab/ManageLab";
+import EditLab from "./Pages/lab/EditLab";
 
 function App() {
   const dispatch = useDispatch();
@@ -140,6 +143,9 @@ function App() {
           path={"/register-form-stages"}
           element={<RegisterFormStages />}
         />
+        <Route path={"/add-lab"} element={<AddLab />} />
+        <Route path={"/manage-lab"} element={<ManageLab />} />
+        <Route path={"/edit-lab/:id"} element={<EditLab />} />
       </Route>
     </Routes>
   );
