@@ -82,6 +82,7 @@ function LabInformation() {
       toast.error("Error", { description: error.message });
     }
   }
+
   return (
     <Card className={"w-3xl"}>
       <CardHeader>
