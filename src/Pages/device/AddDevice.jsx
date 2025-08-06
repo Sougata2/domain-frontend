@@ -558,6 +558,7 @@ function AddDevice() {
                 variant="outline"
                 type="button"
                 onClick={() => {
+                  isEditing(false);
                   reset(defaultValues);
                   activityRef.current.clearValue();
                   specificationRef.current.clearValue();
