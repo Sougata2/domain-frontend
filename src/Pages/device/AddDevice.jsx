@@ -10,7 +10,7 @@ import {
 import FormInput from "@/DomainComponents/FormInput";
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useParams } from "react-router";
 import { toast } from "sonner";
@@ -29,6 +29,7 @@ import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import { ArrowUpDown, Ellipsis } from "lucide-react";
 import { CiEdit } from "react-icons/ci";
 import { LuTrash } from "react-icons/lu";
+import FormMultiSelect from "@/DomainComponents/FormComponents/FormMultiSelect";
 
 const defaultValues = {
   id: "",
@@ -163,7 +164,6 @@ function AddDevice() {
     watch,
     handleSubmit,
     formState: { errors },
-    setValue,
   } = useForm({
     defaultValues,
   });
@@ -171,10 +171,6 @@ function AddDevice() {
   const { referenceNumber } = useParams();
 
   const selectedActivties = watch("activities");
-  const selectedSpecification = watch("specifications");
-
-  const specificationRef = useRef(null);
-  const activityRef = useRef(null);
 
   const [specificationOptions, setSpecificationOptions] = useState([]);
   const [activitieOptions, setActivitieOptions] = useState([]);
@@ -222,23 +218,17 @@ function AddDevice() {
     }
   }, [referenceNumber]);
 
-  const clearMultiSelectValues = (field) => {
-    switch (field) {
-      case "*":
-        specificationRef.current.clearValue();
-        activityRef.current.clearValue();
-        break;
-      case "specification":
-        specificationRef.current.clearValue();
-        break;
-      case "acitivity":
-        activityRef.current.clearValue();
-        break;
-      default:
-        toast.error("Unknown Field");
-        break;
+  const fetchSpecificationOptions = useCallback(async (ids) => {
+    try {
+      const response = await axios.get(
+        `/specification/by-activity-ids?ids=${ids}`
+      );
+      const data = response.data;
+      setSpecificationOptions(data.map((s) => ({ label: s.name, value: s })));
+    } catch (error) {
+      toast.error("Error", { description: error.message });
     }
-  };
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -255,6 +245,20 @@ function AddDevice() {
       })();
     }
   }, [fetchActivities, subService]);
+
+  useEffect(() => {
+    (async () => {
+      if (selectedActivties.length) {
+        const activityIds = [];
+        selectedActivties.forEach((sa) => {
+          activityIds.push(sa.value.id);
+        });
+        await fetchSpecificationOptions(activityIds.join(","));
+      } else {
+        setSpecificationOptions([]);
+      }
+    })();
+  }, [fetchSpecificationOptions, selectedActivties]);
 
   useEffect(() => {
     (async () => {
@@ -283,7 +287,6 @@ function AddDevice() {
       }
       setIsEditing(false);
       reset(defaultValues);
-      clearMultiSelectValues("*");
       await fetchDevices();
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -307,13 +310,6 @@ function AddDevice() {
         weightUnit: { label: data.weightUnit, value: data.weightUnit },
       };
       reset(formattedData);
-
-      // apply the saved values in the multi select options
-      activityRef.current?.setValue(formattedData.activities, "set-value");
-      specificationRef.current?.setValue(
-        formattedData.specifications,
-        "set-value"
-      );
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -462,77 +458,31 @@ function AddDevice() {
                     },
                   }}
                 />
-                <Controller
-                  name="activities"
+                <FormMultiSelect
                   control={control}
-                  rules={{
+                  name={"activities"}
+                  label={"Activities"}
+                  options={activitieOptions}
+                  error={errors.activities}
+                  validations={{
                     required: {
                       value: true,
                       message: "Activities are required",
                     },
                   }}
-                  render={() => (
-                    <FormSelectMulti
-                      ref={activityRef}
-                      name={"activities"}
-                      label={"Activities"}
-                      defaultValue={selectedActivties}
-                      disabled={
-                        activitieOptions && activitieOptions.length === 0
-                      }
-                      options={activitieOptions}
-                      error={errors.activities}
-                      handleOnChange={(e) => {
-                        setValue("activities", [...e]);
-
-                        // clear the specifications options only
-                        // when activity is delete form multi select combo.
-                        if (e.length < selectedActivties.length)
-                          clearMultiSelectValues("specification");
-
-                        setSpecificationOptions(() => {
-                          const specs = [];
-                          e.forEach((ac) =>
-                            specs.push(
-                              ...ac.value.specifications.map((s) => ({
-                                label: s.name,
-                                value: s,
-                              }))
-                            )
-                          );
-                          specs.sort((a, b) => a.label.localeCompare(b.label));
-                          return specs;
-                        });
-                      }}
-                    />
-                  )}
                 />
-                <Controller
-                  name="specifications"
+                <FormMultiSelect
                   control={control}
-                  rules={{
+                  name={"specifications"}
+                  label={"Specifications"}
+                  options={specificationOptions}
+                  error={errors.specifications}
+                  validations={{
                     required: {
                       value: true,
                       message: "Specifications are required",
                     },
                   }}
-                  render={() => (
-                    <FormSelectMulti
-                      ref={specificationRef}
-                      name={"specifications"}
-                      label={"Specifications"}
-                      defaultValue={selectedSpecification}
-                      disabled={
-                        specificationOptions &&
-                        specificationOptions.length === 0
-                      }
-                      error={errors.specifications}
-                      options={specificationOptions}
-                      handleOnChange={(e) => {
-                        setValue("specifications", [...e]);
-                      }}
-                    />
-                  )}
                 />
                 <FormInput
                   label={"Quantity"}
@@ -558,10 +508,8 @@ function AddDevice() {
                 variant="outline"
                 type="button"
                 onClick={() => {
-                  isEditing(false);
+                  setIsEditing(false);
                   reset(defaultValues);
-                  activityRef.current.clearValue();
-                  specificationRef.current.clearValue();
                 }}
               >
                 Reset
