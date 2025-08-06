@@ -52,6 +52,7 @@ import ServiceLayout from "./DomainComponents/ServiceLayout";
 import AddLab from "./Pages/lab/AddLab";
 import ManageLab from "./Pages/lab/ManageLab";
 import EditLab from "./Pages/lab/EditLab";
+import LabInformation from "./Pages/lab/LabInformation";
 
 function App() {
   const dispatch = useDispatch();
@@ -113,6 +114,10 @@ function App() {
           <Route
             path={"/add-device/:referenceNumber"}
             element={<AddDevice />}
+          />
+          <Route
+            path={"/lab-information/:referenceNumber"}
+            element={<LabInformation />}
           />
         </Route>
         <Route path={"/add-status"} element={<AddStatus />} />
