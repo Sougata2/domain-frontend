@@ -144,3 +144,20 @@
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
+
+/* bootstrap table css */
+.table-bordered {
+  @apply min-w-full table-auto border border-gray-300 text-sm;
+}
+
+.table-bordered th {
+  @apply border border-gray-300 px-4 py-2 font-bold text-left;
+}
+
+.table-bordered td {
+  @apply border border-gray-300 px-4 py-2;
+}
+
+.table-bordered td:first-child {
+  @apply font-bold;
+}
