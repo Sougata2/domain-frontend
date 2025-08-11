@@ -53,6 +53,7 @@ import AddLab from "./Pages/lab/AddLab";
 import ManageLab from "./Pages/lab/ManageLab";
 import EditLab from "./Pages/lab/EditLab";
 import LabInformation from "./Pages/lab/LabInformation";
+import UserDocument from "./Pages/userDocuments/UserDocument";
 
 function App() {
   const dispatch = useDispatch();
@@ -118,6 +119,10 @@ function App() {
           <Route
             path={"/lab-information/:referenceNumber"}
             element={<LabInformation />}
+          />
+          <Route
+            path={"/user-document/:referenceNumber"}
+            element={<UserDocument />}
           />
         </Route>
         <Route path={"/add-status"} element={<AddStatus />} />
