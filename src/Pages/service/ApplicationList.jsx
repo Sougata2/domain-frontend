@@ -136,6 +136,9 @@ function ApplicationList() {
     {
       accessorKey: "id",
       enableHiding: false,
+      header: () => {
+        return <div></div>;
+      },
       cell: ({ row }) => {
         return (
           <DropdownMenu>
