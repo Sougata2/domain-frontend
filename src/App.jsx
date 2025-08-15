@@ -54,6 +54,9 @@ import ManageLab from "./Pages/lab/ManageLab";
 import EditLab from "./Pages/lab/EditLab";
 import LabInformation from "./Pages/lab/LabInformation";
 import UserDocument from "./Pages/userDocuments/UserDocument";
+import AddMandatoryDocument from "./Pages/mandatoryDocument/AddMandatoryDocument";
+import ManageMandatoryDocument from "./Pages/mandatoryDocument/ManageMandatoryDocument";
+import EditMandatoryDocument from "./Pages/mandatoryDocument/EditMandatoryDocument";
 
 function App() {
   const dispatch = useDispatch();
@@ -156,6 +159,18 @@ function App() {
         <Route path={"/add-lab"} element={<AddLab />} />
         <Route path={"/manage-lab"} element={<ManageLab />} />
         <Route path={"/edit-lab/:id"} element={<EditLab />} />
+        <Route
+          path={"/add-mandatory-document"}
+          element={<AddMandatoryDocument />}
+        />
+        <Route
+          path={"/manage-mandatory-document"}
+          element={<ManageMandatoryDocument />}
+        />
+        <Route
+          path={"/edit-mandatory-document/:id"}
+          element={<EditMandatoryDocument />}
+        />
       </Route>
     </Routes>
   );
