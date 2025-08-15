@@ -3,10 +3,10 @@ import FormInput from "@/DomainComponents/FormInput";
 import axios from "axios";
 
 import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useParams } from "react-router";
 
 const defaultValues = {
   name: "",
@@ -66,7 +66,7 @@ function EditMandatoryDocument() {
         ...data,
         form: { id: data.form.value.id },
       };
-      const response = await axios.put("/mandatory-document", payload);
+      const _ = await axios.put("/mandatory-document", payload);
       await fetchSavedData();
       toast.info("Update", { description: "Manadatory Document Updated" });
     } catch (error) {

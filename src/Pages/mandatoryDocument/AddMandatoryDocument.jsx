@@ -45,7 +45,7 @@ function AddMandatoryDocument() {
         ...data,
         form: { id: data.form.value.id },
       };
-      const response = await axios.post("/mandatory-document", payload);
+      const _ = await axios.post("/mandatory-document", payload);
       reset(defaultValues);
       toast.success("Success", { description: "Manadatory Document Added" });
     } catch (error) {
