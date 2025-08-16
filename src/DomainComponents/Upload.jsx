@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
-import axios from "axios";
 import { useRef } from "react";
 import { toast } from "sonner";
+import axios from "axios";
 
-function FileUploadButton() {
+function Upload({ referenceNumber, onUpload }) {
   const fileInputRef = useRef(null);
 
   function handleClick() {
@@ -22,8 +22,7 @@ function FileUploadButton() {
           "Content-Type": "multipart/form-data",
         },
       });
-      const data = response.data;
-      console.log(data);
+      onUpload(response.data);
       toast.success("Success", { description: "File Uploaded successfully" });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -45,4 +44,4 @@ function FileUploadButton() {
   );
 }
 
-export default FileUploadButton;
+export default Upload;
