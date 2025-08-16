@@ -5,7 +5,7 @@ import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { toast } from "sonner";
 
 export default function NewRequest() {
@@ -16,6 +16,7 @@ export default function NewRequest() {
     status: {},
   };
 
+  const navigate = useNavigate();
   const { referenceNumber } = useParams();
   const { id: userId } = useSelector((state) => state.user);
   const {
@@ -91,9 +92,10 @@ export default function NewRequest() {
         user: { id: userId },
         status: { id: 1 },
       };
-      const _ = await axios.post("/application", payload);
+      const response = await axios.post("/application", payload);
       toast.success("Success", { description: "Application Generated" });
       reset(defaultValues);
+      navigate(`/new-request/${response.data.referenceNumber}`);
     } catch (error) {
       console.log(error);
       toast.error("Error", { description: error.message });
