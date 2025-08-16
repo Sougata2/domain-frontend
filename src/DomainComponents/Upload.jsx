@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { toast } from "sonner";
 import axios from "axios";
 
-function Upload({ referenceNumber, onUpload }) {
+function Upload({ onUpload, disabled }) {
   const fileInputRef = useRef(null);
 
   function handleClick() {
@@ -26,12 +26,14 @@ function Upload({ referenceNumber, onUpload }) {
       toast.success("Success", { description: "File Uploaded successfully" });
     } catch (error) {
       toast.error("Error", { description: error.message });
+    } finally {
+      e.target.value = "";
     }
   }
 
   return (
     <div>
-      <Button variant="default" onClick={handleClick}>
+      <Button variant="default" onClick={handleClick} disabled={disabled}>
         Upload
       </Button>
       <input
