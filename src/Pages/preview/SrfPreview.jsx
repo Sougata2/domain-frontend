@@ -24,6 +24,7 @@ function SrfPreview() {
               <ApplicationPreviewCC.BasicDetails />
               <ApplicationPreviewCC.DeviceDetails />
               <ApplicationPreviewCC.LabInformation />
+              <ApplicationPreviewCC.Documents />
             </ApplicationPreviewCC>
           </CardContent>
           <CardFooter></CardFooter>

@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import PreviewDataBody from "./PreviewDataBody";
 import PreviewDataCell from "./PreviewDataCell";
 import axios from "axios";
+import Download from "./Download";
 
 const PREVIEW_CONTEXT = createContext({});
 
@@ -183,6 +184,60 @@ function LabInformation() {
   );
 }
 
+function Documents() {
+  const { referenceNumber } = useContext(PREVIEW_CONTEXT);
+  const [documents, setDocuments] = useState([]);
+
+  const fetchDocuments = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/document/by-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setDocuments(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchDocuments();
+    })();
+  }, [fetchDocuments]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Documents</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <table className="table-bordered">
+          <tbody>
+            {documents.map((d, index) => (
+              <tr>
+                <td>{index + 1}</td>
+                <td>{d.name}</td>
+                <td>
+                  {d.mandatoryDocument === null ? (
+                    <Badge variant={"secondary"}>User uploaded</Badge>
+                  ) : (
+                    <Badge>Mandatory</Badge>
+                  )}
+                </td>
+                <td>
+                  <Download fileId={d?.file.id} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
+
+ApplicationPreviewCC.Documents = Documents;
 ApplicationPreviewCC.BasicDetails = BasicDetails;
 ApplicationPreviewCC.DeviceDetails = DeviceDetails;
 ApplicationPreviewCC.LabInformation = LabInformation;
