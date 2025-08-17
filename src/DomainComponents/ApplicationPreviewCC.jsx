@@ -6,7 +6,6 @@ import {
   useState,
 } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useParams } from "react-router";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
@@ -77,7 +76,7 @@ function BasicDetails() {
 }
 
 function DeviceDetails() {
-  const { referenceNumber } = useParams();
+  const { referenceNumber } = useContext(PREVIEW_CONTEXT);
   const [devices, setDevices] = useState([]);
 
   const fetchDevices = useCallback(async () => {
@@ -151,5 +150,39 @@ function DeviceDetails() {
   );
 }
 
+function LabInformation() {
+  const { applicationData } = useContext(PREVIEW_CONTEXT);
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>LAB Information</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <table className="table-bordered">
+          <tbody>
+            <tr>
+              <td>Name</td>
+              <td>{applicationData.lab?.name}</td>
+            </tr>
+            <tr>
+              <td>Phone</td>
+              <td>{applicationData.lab?.phone}</td>
+            </tr>
+            <tr>
+              <td>Email</td>
+              <td>{applicationData.lab?.email}</td>
+            </tr>
+            <tr>
+              <td>Address</td>
+              <td>{applicationData.lab?.address}</td>
+            </tr>
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
+
 ApplicationPreviewCC.BasicDetails = BasicDetails;
 ApplicationPreviewCC.DeviceDetails = DeviceDetails;
+ApplicationPreviewCC.LabInformation = LabInformation;
