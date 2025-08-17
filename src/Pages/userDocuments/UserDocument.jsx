@@ -16,6 +16,7 @@ import FormInput from "@/DomainComponents/FormInput";
 import Download from "@/DomainComponents/Download";
 import Upload from "@/DomainComponents/Upload";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 function UserDocument() {
   const { referenceNumber } = useParams();
@@ -24,6 +25,7 @@ function UserDocument() {
   const [uploadedMandatoryDocument, setUploadedMandatoryDocument] = useState(
     {}
   );
+  const [addMore, setAddMore] = useState(false);
 
   const fetchMandatoryDocuments = useCallback(async () => {
     try {
@@ -171,10 +173,23 @@ function UserDocument() {
         )}
       </CardContent>
       <CardFooter>
-        <UploadAdditionalDocument
-          existingFileNames={documents.map((d) => d.name)}
-          onAdditionalDocumentUpload={async () => await fetchUserDocuments()}
-        />
+        <div className="flex flex-col gap-3">
+          <div>
+            <Button onClick={() => setAddMore((prev) => !prev)}>
+              Add More
+            </Button>
+          </div>
+          <div>
+            {addMore && (
+              <UploadAdditionalDocument
+                existingFileNames={documents.map((d) => d.name)}
+                onAdditionalDocumentUpload={async () =>
+                  await fetchUserDocuments()
+                }
+              />
+            )}
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );
