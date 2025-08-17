@@ -121,10 +121,10 @@ function UserDocument() {
           <table className="table-bordered">
             <tbody>
               {mandatoryDocuments.map((md, index) => (
-                <tr key={md.id} className="grid grid-cols-[1fr_10fr_1fr]">
-                  <td>{index + 1}</td>
+                <tr key={md.id}>
+                  <td className="w-5">{index + 1}</td>
                   <td className="capitalize">{md.name}</td>
-                  <td>
+                  <td className="w-20">
                     <div className="flex gap-2 items-center">
                       <Upload
                         onUpload={(e) => handleFileUpload(e, md.id, md.name)}
@@ -153,10 +153,10 @@ function UserDocument() {
                   {documents
                     .filter((d) => d.mandatoryDocument === null)
                     .map((d, index) => (
-                      <tr key={d.id} className="grid grid-cols-[1fr_10fr_1fr]">
-                        <td>{index + 1}</td>
+                      <tr key={d.id}>
+                        <td className="w-5">{index + 1}</td>
                         <td className="capitalize">{d.name}</td>
-                        <td>
+                        <td className="w-20">
                           <div className="flex gap-2 items-center">
                             <Upload
                               onUpload={(e) => updateAdditionalDocument(d, e)}
