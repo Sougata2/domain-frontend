@@ -6,12 +6,13 @@ import {
   useState,
 } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IoMdArrowDropright } from "react-icons/io";
+import { useParams } from "react-router";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-import axios from "axios";
 import PreviewDataBody from "./PreviewDataBody";
 import PreviewDataCell from "./PreviewDataCell";
+import axios from "axios";
 
 const PREVIEW_CONTEXT = createContext({});
 
@@ -75,4 +76,80 @@ function BasicDetails() {
   );
 }
 
+function DeviceDetails() {
+  const { referenceNumber } = useParams();
+  const [devices, setDevices] = useState([]);
+
+  const fetchDevices = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/device/by-application-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setDevices(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchDevices();
+    })();
+  }, [fetchDevices]);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Devices</CardTitle>
+      </CardHeader>
+      <CardContent className={"overflow-x-scroll"}>
+        <table className="table-bordered">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Name</th>
+              <th>Height</th>
+              <th>Length</th>
+              <th>Weight</th>
+              <th>Quantity</th>
+              <th>Activities</th>
+              <th>Specifications</th>
+            </tr>
+          </thead>
+          <tbody>
+            {devices.map((d, index) => (
+              <tr key={d.id}>
+                <th>{index + 1}</th>
+                <td>{d.name}</td>
+                <td>
+                  {d.height} {d.heightUnit}
+                </td>
+                <td>
+                  {d.length} {d.lengthUnit}
+                </td>
+                <td>
+                  {d.weight} {d.weightUnit}
+                </td>
+                <td>{d.quantity}</td>
+                <td>
+                  {d?.activities.map((a) => (
+                    <Badge key={a.name}>{a.name}</Badge>
+                  ))}
+                </td>
+                <td>
+                  {d?.specifications.map((s) => (
+                    <Badge key={s.name}>{s.name}</Badge>
+                  ))}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
+
 ApplicationPreviewCC.BasicDetails = BasicDetails;
+ApplicationPreviewCC.DeviceDetails = DeviceDetails;

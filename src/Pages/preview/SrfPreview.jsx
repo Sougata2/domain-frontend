@@ -22,6 +22,7 @@ function SrfPreview() {
           <CardContent>
             <ApplicationPreviewCC referenceNumber={referenceNumber}>
               <ApplicationPreviewCC.BasicDetails />
+              <ApplicationPreviewCC.DeviceDetails />
             </ApplicationPreviewCC>
           </CardContent>
           <CardFooter></CardFooter>
