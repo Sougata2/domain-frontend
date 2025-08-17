@@ -27,7 +27,11 @@ function SrfPreview() {
               <ApplicationPreviewCC.Documents />
             </ApplicationPreviewCC>
           </CardContent>
-          <CardFooter></CardFooter>
+          <CardFooter className={"flex justify-center items-center"}>
+            <ApplicationPreviewCC referenceNumber={referenceNumber}>
+              <ApplicationPreviewCC.ApplicationSubmitSection />
+            </ApplicationPreviewCC>
+          </CardFooter>
         </Card>
       </div>
     </div>

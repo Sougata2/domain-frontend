@@ -13,6 +13,7 @@ import PreviewDataBody from "./PreviewDataBody";
 import PreviewDataCell from "./PreviewDataCell";
 import Download from "./Download";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 const PREVIEW_CONTEXT = createContext({});
 
@@ -194,6 +195,15 @@ function Documents() {
         `/document/by-reference-number/${referenceNumber}`
       );
       const data = response.data;
+
+      // sort according to is mandatory or not.
+      data.sort((a, b) => {
+        const first =
+          a.mandatoryDocument === null ? "user upload" : "mandatory";
+        const second =
+          b.mandatoryDocument === null ? "user upload" : "mandatory";
+        return first.localeCompare(second);
+      });
       setDocuments(data);
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -237,7 +247,17 @@ function Documents() {
   );
 }
 
+function ApplicationSubmitSection() {
+  const { referenceNumber } = useContext(PREVIEW_CONTEXT);
+  return (
+    <div>
+      <Button>Submit Application</Button>
+    </div>
+  );
+}
+
 ApplicationPreviewCC.Documents = Documents;
 ApplicationPreviewCC.BasicDetails = BasicDetails;
 ApplicationPreviewCC.DeviceDetails = DeviceDetails;
 ApplicationPreviewCC.LabInformation = LabInformation;
+ApplicationPreviewCC.ApplicationSubmitSection = ApplicationSubmitSection;
