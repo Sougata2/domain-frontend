@@ -89,7 +89,7 @@ export default function NewRequest() {
       const payload = {
         service: { id: data.service },
         subService: { id: data.subService },
-        user: { id: userId },
+        applicant: { id: userId },
         status: { id: 1 },
       };
       const response = await axios.post("/application", payload);
