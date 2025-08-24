@@ -59,6 +59,7 @@ import ManageMandatoryDocument from "./Pages/mandatoryDocument/ManageMandatoryDo
 import EditMandatoryDocument from "./Pages/mandatoryDocument/EditMandatoryDocument";
 import SrfPreview from "./Pages/preview/SrfPreview";
 import AddWorkFlow from "./Pages/WorkFlow/AddWorkFlow";
+import ManageWorkFlow from "./Pages/WorkFlow/ManageWorkFlow";
 
 function App() {
   const dispatch = useDispatch();
@@ -178,6 +179,7 @@ function App() {
           element={<EditMandatoryDocument />}
         />
         <Route path={"/add-workflow"} element={<AddWorkFlow />} />
+        <Route path={"/manage-workflow"} element={<ManageWorkFlow />} />
       </Route>
     </Routes>
   );
