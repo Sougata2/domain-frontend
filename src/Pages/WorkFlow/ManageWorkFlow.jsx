@@ -29,6 +29,13 @@ function ManageWorkFlow() {
         header: () => <div>Action</div>,
         cell: (row) => <div>{row.getValue()}</div>,
       },
+      {
+        accessorKey: "id",
+        header: () => <div></div>,
+        cell: (row) => <div>actions</div>,
+        enableSorting: false,
+        enableColumnFilter: false,
+      },
     ],
     []
   );

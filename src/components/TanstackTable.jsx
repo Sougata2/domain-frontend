@@ -104,14 +104,16 @@ function TanstackTable({ columns, postURL }) {
                               header.getContext()
                             )}
                           </div>
-                          <div className="flex gap-1 items-center">
-                            {{
-                              asc: <MdKeyboardArrowUp className="ms-1" />,
-                              desc: <MdKeyboardArrowDown className="ms-1" />,
-                            }[header.column.getIsSorted()] ?? (
-                              <PiCaretUpDownBold className="ms-1" />
-                            )}
-                          </div>
+                          {header.column.getCanSort() && (
+                            <div className="flex gap-1 items-center">
+                              {{
+                                asc: <MdKeyboardArrowUp className="ms-1" />,
+                                desc: <MdKeyboardArrowDown className="ms-1" />,
+                              }[header.column.getIsSorted()] ?? (
+                                <PiCaretUpDownBold className="ms-1" />
+                              )}
+                            </div>
+                          )}
                         </div>
                         <div className="mb-2">
                           {header.column.getCanFilter() ? (
