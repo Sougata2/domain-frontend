@@ -56,7 +56,7 @@ function ManageWorkFlow() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <CiEdit />
-                    <Link to={`/edit-specification/${row.getValue("id")}`}>
+                    <Link to={`/edit-workflow/${row.getValue("id")}`}>
                       Edit
                     </Link>
                   </DropdownMenuItem>
