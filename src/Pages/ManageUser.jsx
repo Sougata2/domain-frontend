@@ -1,4 +1,5 @@
 import { CgArrowsExchange } from "react-icons/cg";
+import { MdOutlineLocationOn } from "react-icons/md";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -34,6 +35,8 @@ import {
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import { Label } from "@/components/ui/label";
+import { useForm } from "react-hook-form";
+import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 
 const animatedComponents = makeAnimated();
 
@@ -112,6 +115,24 @@ export default function ManageUser() {
       },
     },
     {
+      accessorKey: "lab",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant={"ghost"}
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            LAB
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.getValue("lab")?.name}</div>;
+      },
+    },
+    {
       accessorKey: "id",
       header: () => {
         return <div>Actions</div>;
@@ -178,6 +199,7 @@ const UserActionsMenu = ({ id, refreshHandler }) => {
           <DropdownMenuGroup>
             <AddRoleDrawer userId={id} />
             <DefaultRoleChange userId={id} />
+            <AllocateLab userId={id} />
             <DropdownMenuItem>
               <div
                 className={
@@ -506,6 +528,137 @@ const DefaultRoleChange = ({ userId }) => {
                   filterOption={(option) =>
                     option.value.id !== defaultRole.value.id
                   }
+                />
+              </div>
+            </div>
+            <DrawerFooter>
+              <Button>Submit</Button>
+              <DrawerClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DrawerClose>
+            </DrawerFooter>
+          </form>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
+
+const AllocateLab = ({ userId }) => {
+  const defaultValues = {
+    lab: "",
+  };
+
+  const {
+    control,
+    reset,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues });
+  const [labOptions, setLabOptions] = useState("");
+  const [allocatedLab, setAllocatedLab] = useState("");
+
+  const fetchLabs = useCallback(async () => {
+    try {
+      const response = await axios.get("/lab/all");
+      const data = response.data;
+      setLabOptions(data.map((d) => ({ label: d.name, value: d.id })));
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, []);
+
+  const fetchUserData = useCallback(async () => {
+    try {
+      const response = await axios.get(`/user/${userId}`);
+      const data = response.data;
+      if (data.lab) {
+        setAllocatedLab(data.lab?.name);
+        reset({ lab: { label: data.lab?.name, value: data.lab?.id } });
+      }
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [reset, userId]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchLabs();
+      await fetchUserData();
+    })();
+  }, [fetchUserData, fetchLabs]);
+
+  async function onSubmitHandler(data) {
+    try {
+      const payload = {
+        id: userId,
+        lab: { id: data.lab.value },
+      };
+
+      const response = await axios.put("/user", payload);
+      const _ = response.data;
+      await fetchUserData();
+      toast.success("Success", { description: "Default Role Updated!" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <DropdownMenuItem
+          onSelect={(e) => e.preventDefault()} // prevents menu from closing
+          className="cursor-pointer flex items-center gap-2"
+        >
+          <MdOutlineLocationOn />
+          <div>Allocated LAB</div>
+        </DropdownMenuItem>
+      </DrawerTrigger>
+      <DrawerContent className="min-h-[60vh] max-h-[100vh]">
+        <div className="mx-auto w-full max-w-md">
+          <DrawerHeader>
+            <DrawerTitle>Allocate LAB</DrawerTitle>
+            <DrawerDescription>Allocate Employee to a LAB</DrawerDescription>
+          </DrawerHeader>
+          <form onSubmit={handleSubmit(onSubmitHandler)}>
+            <div className="flex flex-col items-center justify-center gap-3.5 my-5">
+              {!allocatedLab && (
+                <div
+                  className={
+                    "shadow bg-gray-100 flex gap-2.5 justify-between items-start px-2 rounded-2xl"
+                  }
+                >
+                  No LAB Allocated Yet!
+                </div>
+              )}
+              {allocatedLab && (
+                <div className={"w-full flex flex-col gap-2.5"}>
+                  <Label>Allocated LAB</Label>
+                  <div className={"flex gap-2 flex-wrap"}>
+                    <div
+                      className={
+                        "shadow bg-gray-100 flex gap-2.5 justify-between items-center px-2 rounded-2xl"
+                      }
+                    >
+                      {allocatedLab}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className={"w-full flex flex-col gap-2.5"}>
+                <FormSelect
+                  control={control}
+                  label={"LAB"}
+                  name={"lab"}
+                  error={errors.lab}
+                  options={labOptions}
+                  validations={{
+                    required: {
+                      value: false,
+                      message: "Lab is required",
+                    },
+                  }}
                 />
               </div>
             </div>
