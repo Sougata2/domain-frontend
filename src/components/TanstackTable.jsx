@@ -1,13 +1,4 @@
 import {
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import axios from "axios";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import {
   Table,
   TableBody,
   TableCell,
@@ -15,14 +6,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
-
+import {
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useCallback, useEffect, useState } from "react";
+import { MdKeyboardArrowDown } from "react-icons/md";
 import { PiCaretUpDownBold } from "react-icons/pi";
 import { MdKeyboardArrowUp } from "react-icons/md";
-import { MdKeyboardArrowDown } from "react-icons/md";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
 import { Input } from "./ui/input";
 
-function TanstackTable() {
+import axios from "axios";
+
+function TanstackTable({ columns, postURL }) {
   const [data, setData] = useState([]);
   const [filters, setFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
@@ -32,43 +32,10 @@ function TanstackTable() {
     pageSize: 10,
   });
 
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: "status.name",
-        header: () => <div>Status</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-      {
-        accessorKey: "targetStatus.name",
-        header: () => <div>Target Status</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-      {
-        accessorKey: "targetRole.name",
-        header: () => <div>Target Role</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-      {
-        accessorKey: "movement",
-        header: () => <div>Movement</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-      {
-        accessorKey: "name",
-        header: () => <div>Action</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-    ],
-    []
-  );
-
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.post(
-        `/workflow-action/search?page=${pagination.pageIndex}&size=${
-          pagination.pageSize
-        }${
+        `${postURL}?page=${pagination.pageIndex}&size=${pagination.pageSize}${
           sorting.length > 0
             ? "&sort=" +
               sorting
@@ -76,14 +43,16 @@ function TanstackTable() {
                 .join("&sort=")
             : ""
         }`,
-        Object.fromEntries(filters.map((f) => [f.id, f.value]))
+        Object.fromEntries(
+          filters.map((f) => [f.id.split("_").join("."), f.value])
+        )
       );
       setData(response.data.content);
       setPageCount(response.data.totalPages);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [pagination, sorting, filters]);
+  }, [postURL, pagination.pageIndex, pagination.pageSize, sorting, filters]);
 
   useEffect(() => {
     (async () => {
@@ -120,36 +89,39 @@ function TanstackTable() {
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead key={header.id}>
-                      <div
-                        className="flex"
-                        {...{
-                          className: header.column.getCanSort()
-                            ? "cursor-pointer select-none"
-                            : "",
-                          onClick: header.column.getToggleSortingHandler(),
-                        }}
-                      >
-                        <div>
-                          {flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                        </div>
-                        <div className="flex gap-1 items-center">
-                          {{
-                            asc: <MdKeyboardArrowUp className="ms-1" />,
-                            desc: <MdKeyboardArrowDown className="ms-1" />,
-                          }[header.column.getIsSorted()] ?? (
-                            <PiCaretUpDownBold className="ms-1" />
-                          )}
-                        </div>
-                      </div>
-                      <div>
-                        {header.column.getCanFilter() ? (
+                      <div className="flex flex-col gap-2">
+                        <div
+                          {...{
+                            className: header.column.getCanSort()
+                              ? "cursor-pointer select-none flex"
+                              : "flex",
+                            onClick: header.column.getToggleSortingHandler(),
+                          }}
+                        >
                           <div>
-                            <Input />
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                           </div>
-                        ) : null}
+                          <div className="flex gap-1 items-center">
+                            {{
+                              asc: <MdKeyboardArrowUp className="ms-1" />,
+                              desc: <MdKeyboardArrowDown className="ms-1" />,
+                            }[header.column.getIsSorted()] ?? (
+                              <PiCaretUpDownBold className="ms-1" />
+                            )}
+                          </div>
+                        </div>
+                        <div className="mb-2">
+                          {header.column.getCanFilter() ? (
+                            <DebouncedInput
+                              placeHolder={"Search..."}
+                              value={header.column.getFilterValue()}
+                              onChange={header.column.setFilterValue}
+                            />
+                          ) : null}
+                        </div>
                       </div>
                     </TableHead>
                   );
@@ -212,6 +184,33 @@ function TanstackTable() {
         </div>
       </div>
     </div>
+  );
+}
+
+function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
+}) {
+  const [value, setValue] = useState(initialValue);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+    return () => clearTimeout(timeout);
+  }, [debounce, onChange, value]);
+
+  return (
+    <Input
+      {...props}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
   );
 }
 
