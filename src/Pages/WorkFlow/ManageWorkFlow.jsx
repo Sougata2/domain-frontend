@@ -1,5 +1,19 @@
 import TanstackTable from "@/components/TanstackTable";
-import { useMemo } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
+import axios from "axios";
+import { Ellipsis } from "lucide-react";
+import { useMemo, useState } from "react";
+import { CiEdit } from "react-icons/ci";
+import { LuTrash } from "react-icons/lu";
+import { Link } from "react-router";
+import { toast } from "sonner";
 
 function ManageWorkFlow() {
   const columns = useMemo(
@@ -32,7 +46,36 @@ function ManageWorkFlow() {
       {
         accessorKey: "id",
         header: () => <div></div>,
-        cell: (row) => <div>actions</div>,
+        cell: ({ row }) => {
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Ellipsis />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <CiEdit />
+                    <Link to={`/edit-specification/${row.getValue("id")}`}>
+                      Edit
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    <LuTrash />
+                    <button
+                      onClick={() => {
+                        setOpenAlert(true);
+                        setDeleteId(row.getValue("id"));
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
         enableSorting: false,
         enableColumnFilter: false,
       },
@@ -40,8 +83,31 @@ function ManageWorkFlow() {
     []
   );
 
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleteId, setDeleteId] = useState("");
+
+  async function handleDelete(id) {
+    try {
+      const _ = await axios.delete("/workflow-action", {
+        data: { id },
+      });
+      setDeleteId("");
+      toast.warning("Deleted", { description: "WorkFlow Action Deleted" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div className="flex justify-center items-center">
+      <ConfirmationAlert
+        isOpen={openAlert}
+        closeHandler={() => setOpenAlert(false)}
+        handleConfirm={() => {
+          handleDelete(deleteId);
+          setOpenAlert(false);
+        }}
+      />
       <TanstackTable columns={columns} postURL={"/workflow-action/search"} />
     </div>
   );
