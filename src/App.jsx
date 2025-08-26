@@ -61,6 +61,7 @@ import SrfPreview from "./Pages/preview/SrfPreview";
 import AddWorkFlow from "./Pages/WorkFlow/AddWorkFlow";
 import ManageWorkFlow from "./Pages/WorkFlow/ManageWorkFlow";
 import EditWorkFlow from "./Pages/WorkFlow/EditWorkFlow";
+import AssignmentList from "./Pages/service/AssignmentList";
 
 function App() {
   const dispatch = useDispatch();
@@ -182,6 +183,7 @@ function App() {
         <Route path={"/add-workflow"} element={<AddWorkFlow />} />
         <Route path={"/manage-workflow"} element={<ManageWorkFlow />} />
         <Route path={"/edit-workflow/:id"} element={<EditWorkFlow />} />
+        <Route path={"/assignee-list"} element={<AssignmentList />} />
       </Route>
     </Routes>
   );
