@@ -62,6 +62,7 @@ import AddWorkFlow from "./Pages/WorkFlow/AddWorkFlow";
 import ManageWorkFlow from "./Pages/WorkFlow/ManageWorkFlow";
 import EditWorkFlow from "./Pages/WorkFlow/EditWorkFlow";
 import AssignmentList from "./Pages/Task/AssignmentList";
+import TaskView from "./Pages/Task/TaskView";
 
 function App() {
   const dispatch = useDispatch();
@@ -184,6 +185,7 @@ function App() {
         <Route path={"/manage-workflow"} element={<ManageWorkFlow />} />
         <Route path={"/edit-workflow/:id"} element={<EditWorkFlow />} />
         <Route path={"/assignee-list"} element={<AssignmentList />} />
+        <Route path={"/task-view/:referenceNumber"} element={<TaskView />} />
       </Route>
     </Routes>
   );
