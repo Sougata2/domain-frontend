@@ -61,7 +61,7 @@ import SrfPreview from "./Pages/preview/SrfPreview";
 import AddWorkFlow from "./Pages/WorkFlow/AddWorkFlow";
 import ManageWorkFlow from "./Pages/WorkFlow/ManageWorkFlow";
 import EditWorkFlow from "./Pages/WorkFlow/EditWorkFlow";
-import AssignmentList from "./Pages/service/AssignmentList";
+import AssignmentList from "./Pages/Task/AssignmentList";
 
 function App() {
   const dispatch = useDispatch();
