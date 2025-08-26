@@ -119,7 +119,7 @@ function DataTable({
 
   return (
     <div>
-      <div className="rounded-md border w-3xl">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

@@ -213,7 +213,7 @@ function ApplicationList() {
         }}
       />
 
-      <div className="w-3xl">
+      <div className="flex flex-col gap-3">
         <Select onValueChange={(value) => setStatus(value)} value={status}>
           <SelectTrigger>
             <SelectValue placeholder="Select Status" />
@@ -226,15 +226,15 @@ function ApplicationList() {
             </SelectGroup>
           </SelectContent>
         </Select>
-      </div>
 
-      <DataTable
-        columns={columns}
-        api={`/application/by-status-and-user-id?user=${userId}&status=${status}`}
-        checkBeforeFetchData={userId}
-        triggerRefresh={doRefresh}
-        setTriggerRefresh={setDoRefresh}
-      />
+        <DataTable
+          columns={columns}
+          api={`/application/by-status-and-user-id?user=${userId}&status=${status}`}
+          checkBeforeFetchData={userId}
+          triggerRefresh={doRefresh}
+          setTriggerRefresh={setDoRefresh}
+        />
+      </div>
     </div>
   );
 }
