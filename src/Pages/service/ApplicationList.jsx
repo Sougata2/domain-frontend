@@ -11,6 +11,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FaRegFolderOpen } from "react-icons/fa";
 import { FiTrash } from "react-icons/fi";
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
@@ -26,6 +35,7 @@ function ApplicationList() {
   const [openAlert, setOpenAlert] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const [doRefresh, setDoRefresh] = useState(false);
+  const [status, setStatus] = useState("AG");
 
   const columns = [
     {
@@ -202,9 +212,25 @@ function ApplicationList() {
           setOpenAlert(false);
         }}
       />
+
+      <div className="w-3xl">
+        <Select onValueChange={(value) => setStatus(value)} value={status}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select Status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectLabel>Status</SelectLabel>
+              <SelectItem value="AG">Application Generated</SelectItem>
+              <SelectItem value="AS">Application Submitted</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
       <DataTable
         columns={columns}
-        api={`/application/by-status-and-user-id?user=${userId}&status=${"AG"}`}
+        api={`/application/by-status-and-user-id?user=${userId}&status=${status}`}
         checkBeforeFetchData={userId}
         triggerRefresh={doRefresh}
         setTriggerRefresh={setDoRefresh}
