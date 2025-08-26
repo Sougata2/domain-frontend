@@ -118,7 +118,7 @@ function TanstackTable({ columns, postURL }) {
                         <div className="mb-2">
                           {header.column.getCanFilter() ? (
                             <DebouncedInput
-                              placeHolder={"Search..."}
+                              placeholder={"Search..."}
                               value={header.column.getFilterValue()}
                               onChange={header.column.setFilterValue}
                             />
