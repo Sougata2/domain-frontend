@@ -6,8 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Ellipsis } from "lucide-react";
-import { CiEdit } from "react-icons/ci";
-import { LuTrash } from "react-icons/lu";
+import { BiTask } from "react-icons/bi";
 import { Link } from "react-router";
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -56,21 +55,10 @@ function AssignmentList() {
               <DropdownMenuContent>
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
-                    <CiEdit />
-                    <Link to={`/edit-workflow/${row.getValue("id")}`}>
-                      Edit
+                    <BiTask />
+                    <Link to={`/task-view/${row.getValue("referenceNumber")}`}>
+                      View
                     </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <LuTrash />
-                    <button
-                      onClick={() => {
-                        setOpenAlert(true);
-                        setDeleteId(row.getValue("id"));
-                      }}
-                    >
-                      Delete
-                    </button>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
