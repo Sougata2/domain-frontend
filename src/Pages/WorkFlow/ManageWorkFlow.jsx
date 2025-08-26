@@ -85,6 +85,7 @@ function ManageWorkFlow() {
 
   const [openAlert, setOpenAlert] = useState(false);
   const [deleteId, setDeleteId] = useState("");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   async function handleDelete(id) {
     try {
@@ -92,6 +93,7 @@ function ManageWorkFlow() {
         data: { id },
       });
       setDeleteId("");
+      setRefreshKey((prev) => prev + 1);
       toast.warning("Deleted", { description: "WorkFlow Action Deleted" });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -108,7 +110,11 @@ function ManageWorkFlow() {
           setOpenAlert(false);
         }}
       />
-      <TanstackTable columns={columns} postURL={"/workflow-action/search"} />
+      <TanstackTable
+        columns={columns}
+        postURL={"/workflow-action/search"}
+        refreshKey={refreshKey}
+      />
     </div>
   );
 }

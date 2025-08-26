@@ -22,7 +22,7 @@ import { Input } from "./ui/input";
 
 import axios from "axios";
 
-function TanstackTable({ columns, postURL }) {
+function TanstackTable({ columns, postURL, refreshKey = 0 }) {
   const [data, setData] = useState([]);
   const [filters, setFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
@@ -58,7 +58,7 @@ function TanstackTable({ columns, postURL }) {
     (async () => {
       await fetchData();
     })();
-  }, [fetchData]);
+  }, [fetchData, refreshKey]);
 
   const table = useReactTable({
     data,
