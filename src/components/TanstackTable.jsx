@@ -22,7 +22,7 @@ import { Input } from "./ui/input";
 
 import axios from "axios";
 
-function TanstackTable({ columns, postURL, refreshKey = 0 }) {
+function TanstackTable({ columns, postURL, extraFilters, refreshKey = 0 }) {
   const [data, setData] = useState([]);
   const [filters, setFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
@@ -43,16 +43,26 @@ function TanstackTable({ columns, postURL, refreshKey = 0 }) {
                 .join("&sort=")
             : ""
         }`,
-        Object.fromEntries(
-          filters.map((f) => [f.id.split("_").join("."), f.value])
-        )
+        {
+          ...Object.fromEntries(
+            filters.map((f) => [f.id.split("_").join("."), f.value])
+          ),
+          ...extraFilters,
+        }
       );
       setData(response.data.content);
       setPageCount(response.data.totalPages);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [postURL, pagination.pageIndex, pagination.pageSize, sorting, filters]);
+  }, [
+    postURL,
+    pagination.pageIndex,
+    pagination.pageSize,
+    sorting,
+    filters,
+    extraFilters,
+  ]);
 
   useEffect(() => {
     (async () => {
@@ -81,7 +91,7 @@ function TanstackTable({ columns, postURL, refreshKey = 0 }) {
 
   return (
     <div>
-      <div className="rounded-md border w-3xl">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (

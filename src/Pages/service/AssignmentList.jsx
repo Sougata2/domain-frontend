@@ -15,6 +15,7 @@ import axios from "axios";
 import { toast } from "sonner";
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import TanstackTable from "@/components/TanstackTable";
+import { useSelector } from "react-redux";
 
 function AssignmentList() {
   const columns = useMemo(
@@ -38,15 +39,10 @@ function AssignmentList() {
         accessorKey: "createdAt",
         header: () => <div>Request Date</div>,
         cell: (row) => (
-          <div>{format(new Date(row.getValue()), "dd-MM-yyyy")} </div>
+          <div>{format(new Date(row.getValue()), "dd-MM-yyyy")}</div>
         ),
-      },
-      {
-        accessorKey: "createdAt",
-        header: () => <div>Request Time</div>,
-        cell: (row) => (
-          <div>{format(new Date(row.getValue()), "hh:mm bb")}</div>
-        ),
+        enableSorting: false,
+        enableColumnFilter: false,
       },
       {
         accessorKey: "id",
@@ -88,6 +84,7 @@ function AssignmentList() {
     []
   );
 
+  const { id: userId } = useSelector((state) => state.user);
   const [openAlert, setOpenAlert] = useState(false);
   const [deleteId, setDeleteId] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -115,11 +112,14 @@ function AssignmentList() {
           setOpenAlert(false);
         }}
       />
-      <TanstackTable
-        columns={columns}
-        postURL={"/application/search"}
-        refreshKey={refreshKey}
-      />
+      {userId && (
+        <TanstackTable
+          columns={columns}
+          postURL={`/application/search`}
+          refreshKey={refreshKey}
+          extraFilters={{ "assignee.id": userId }}
+        />
+      )}
     </div>
   );
 }
