@@ -14,6 +14,8 @@ import PreviewDataBody from "./PreviewDataBody";
 import PreviewDataCell from "./PreviewDataCell";
 import Download from "./Download";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 const PREVIEW_CONTEXT = createContext({});
 
@@ -248,10 +250,55 @@ function Documents() {
 }
 
 function ApplicationSubmitSection() {
-  const { referenceNumber } = useContext(PREVIEW_CONTEXT);
+  const navigate = useNavigate();
+  const { id } = useSelector((state) => state.user);
+  const { referenceNumber, applicationData } = useContext(PREVIEW_CONTEXT);
+  const [workFlowActionData, setWorkFlowActionData] = useState("");
+
+  const fetchWorkFlowAction = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/workflow-action/by-status/${applicationData.status?.id}`
+      );
+      const data = response.data;
+      setWorkFlowActionData(data[0]);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [applicationData]);
+
+  useEffect(() => {
+    if (applicationData.status?.id) {
+      (async () => {
+        await fetchWorkFlowAction();
+      })();
+    }
+  }, [applicationData, fetchWorkFlowAction]);
+
+  async function submitApplication() {
+    try {
+      const _ = await axios.post("/application/do-next", {
+        application: { referenceNumber },
+        assigner: { id },
+        workFlowAction: { id: workFlowActionData.id },
+      });
+      toast.success("Success", {
+        description: "Application Submitted Successfully",
+      });
+      navigate("/application-list");
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div>
-      <Button>Submit Application</Button>
+      {applicationData.status?.name !== "AG" && (
+        <Button disabled={true}>Application Submitted</Button>
+      )}
+      {applicationData.status?.name === "AG" && (
+        <Button onClick={submitApplication}>Submit Application</Button>
+      )}
     </div>
   );
 }
