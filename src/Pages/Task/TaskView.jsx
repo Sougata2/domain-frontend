@@ -6,16 +6,110 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useParams } from "react-router";
-import TaskDetails from "./TaskDetails";
-import { FaRegFolderOpen } from "react-icons/fa";
 import { FaRegFolderClosed } from "react-icons/fa6";
-import { useState } from "react";
+import { FaRegFolderOpen } from "react-icons/fa";
+import { useParams } from "react-router";
+import { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+
+import TaskDetails from "./TaskDetails";
+import FormTextarea from "@/DomainComponents/FormComponents/FormTextarea";
+import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
+import { toast } from "sonner";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+const defaultValues = {
+  application: "",
+  workFlowAction: "",
+  assignee: "",
+  assigner: "",
+  comments: "",
+};
 
 function TaskView() {
   const { referenceNumber } = useParams();
+  const { id: assignerId } = useSelector((state) => state.user);
+  const {
+    control,
+    register,
+    watch,
+    reset,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues });
+
+  const action = watch("workFlowAction");
+
   const [openDetails, setOpenDetails] = useState(false);
+  const [actionOptions, setActionOptions] = useState([]);
+  const [assigneeOptions, setAssigneeOptions] = useState([]);
+
+  const fetchActions = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/workflow-action/by-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setActionOptions(data.map((d) => ({ label: d.name, value: d })));
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
+
+  const fetchAssignees = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/workflow-action/assignee-list-for-action/${action.value.id}/${referenceNumber}`
+      );
+      const data = response.data;
+      if (action?.value?.movement === "PROGRESSIVE") {
+        setAssigneeOptions(
+          data.map((d) => ({
+            label: d.email,
+            value: d,
+          }))
+        );
+      } else {
+        setValue("assignee", { label: data[0].email, value: data[0] });
+      }
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [action, referenceNumber, setValue]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchActions();
+    })();
+  }, [fetchActions]);
+
+  useEffect(() => {
+    if (action) {
+      (async () => {
+        await fetchAssignees();
+      })();
+    }
+  }, [action, fetchAssignees]);
+
+  async function handleOnSubmit(data) {
+    try {
+      const payload = {
+        ...data,
+        application: { referenceNumber },
+        workFlowAction: { id: data.workFlowAction.value.id },
+        assigner: { id: assignerId },
+        assignee: { id: data.assignee.value.id },
+      };
+      console.log(payload);
+      const response = await axios.post("/application/do-next", payload);
+      toast.success("Success", { description: "Task Submitted" });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
 
   return (
     <div className="flex justify-center items-center">
@@ -46,7 +140,57 @@ function TaskView() {
             <CardTitle>Task Action</CardTitle>
             <CardDescription>take action for this application</CardDescription>
           </CardHeader>
-          <CardContent>YOUR TASK FORM</CardContent>
+          <CardContent>
+            <form
+              className="flex flex-col gap-2"
+              onSubmit={handleSubmit(handleOnSubmit)}
+            >
+              <div className="grid grid-cols-2 gap-10">
+                <FormSelect
+                  control={control}
+                  label={"Action"}
+                  name={"workFlowAction"}
+                  error={errors.workFlowAction}
+                  validations={{
+                    required: {
+                      value: true,
+                      message: "Action is required",
+                    },
+                  }}
+                  options={actionOptions}
+                />
+                <FormSelect
+                  control={control}
+                  label={"Assign To"}
+                  name={"assignee"}
+                  error={errors.assignee}
+                  isDisabled={action?.value?.movement !== "PROGRESSIVE"}
+                  validations={{
+                    required: {
+                      value: true,
+                      message: "Assignee is required",
+                    },
+                  }}
+                  options={assigneeOptions}
+                />
+              </div>
+              <FormTextarea
+                register={register}
+                label={"Comments"}
+                name={"comments"}
+                error={errors.comments}
+                validation={{
+                  required: {
+                    value: false,
+                    message: "Comments are required.",
+                  },
+                }}
+              />
+              <div className="flex justify-end">
+                <Button>Submit Task</Button>
+              </div>
+            </form>
+          </CardContent>
         </Card>
       </div>
     </div>
