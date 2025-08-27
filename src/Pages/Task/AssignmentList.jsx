@@ -15,24 +15,34 @@ import { toast } from "sonner";
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import TanstackTable from "@/components/TanstackTable";
 import { useSelector } from "react-redux";
+import { Badge } from "@/components/ui/badge";
 
 function AssignmentList() {
   const columns = useMemo(
     () => [
       {
         accessorKey: "referenceNumber",
-        header: () => <div>Status</div>,
+        header: () => <div>Reference Number</div>,
         cell: (row) => <div>{row.getValue()}</div>,
       },
       {
         accessorKey: "service.name",
-        header: () => <div>Target Status</div>,
+        header: () => <div>Service</div>,
         cell: (row) => <div>{row.getValue()}</div>,
       },
       {
         accessorKey: "subService.name",
-        header: () => <div>Target Role</div>,
+        header: () => <div>Sub Service</div>,
         cell: (row) => <div>{row.getValue()}</div>,
+      },
+      {
+        accessorKey: "status.description",
+        header: () => <div>Status</div>,
+        cell: (row) => (
+          <div>
+            <Badge variant={"secondary"}>{row.getValue()}</Badge>
+          </div>
+        ),
       },
       {
         accessorKey: "createdAt",
