@@ -40,7 +40,7 @@ function AssignmentList() {
         cell: (row) => (
           <div>{format(new Date(row.getValue()), "dd-MM-yyyy")}</div>
         ),
-        enableSorting: false,
+        // enableSorting: false,
         enableColumnFilter: false,
       },
       {
