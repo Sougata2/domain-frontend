@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/card";
 import { FaRegFolderClosed } from "react-icons/fa6";
 import { FaRegFolderOpen } from "react-icons/fa";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
@@ -29,13 +29,13 @@ const defaultValues = {
 };
 
 function TaskView() {
+  const navigate = useNavigate();
   const { referenceNumber } = useParams();
   const { id: assignerId } = useSelector((state) => state.user);
   const {
     control,
     register,
     watch,
-    reset,
     setValue,
     handleSubmit,
     formState: { errors },
@@ -62,8 +62,13 @@ function TaskView() {
   const fetchAssignees = useCallback(async () => {
     try {
       const response = await axios.get(
-        `/workflow-action/assignee-list-for-action/${action.value.id}/${referenceNumber}`
+        `/workflow-action/assignee-list-for-action/${
+          action.value.id
+        }/${referenceNumber}?regressive=${
+          action?.value?.movement === "REGRESSIVE"
+        }`
       );
+
       const data = response.data;
       if (action?.value?.movement === "PROGRESSIVE") {
         setAssigneeOptions(
@@ -72,6 +77,8 @@ function TaskView() {
             value: d,
           }))
         );
+      } else if (action?.value?.movement === "PROGRESSIVE_ONE") {
+        setValue("assignee", { label: data[0].email, value: data[0] });
       } else {
         setValue("assignee", { label: data[0].email, value: data[0] });
       }
@@ -103,9 +110,9 @@ function TaskView() {
         assigner: { id: assignerId },
         assignee: { id: data.assignee.value.id },
       };
-      console.log(payload);
-      const response = await axios.post("/application/do-next", payload);
+      const _ = await axios.post("/application/do-next", payload);
       toast.success("Success", { description: "Task Submitted" });
+      navigate("/assignee-list");
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
