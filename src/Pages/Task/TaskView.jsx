@@ -10,15 +10,15 @@ import { FaRegFolderClosed } from "react-icons/fa6";
 import { FaRegFolderOpen } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router";
 import { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import TaskDetails from "./TaskDetails";
 import FormTextarea from "@/DomainComponents/FormComponents/FormTextarea";
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
-import { toast } from "sonner";
 import axios from "axios";
-import { useSelector } from "react-redux";
 
 const defaultValues = {
   application: "",
@@ -43,9 +43,21 @@ function TaskView() {
 
   const action = watch("workFlowAction");
 
-  const [openDetails, setOpenDetails] = useState(false);
+  const [openDetails, setOpenDetails] = useState(true);
   const [actionOptions, setActionOptions] = useState([]);
   const [assigneeOptions, setAssigneeOptions] = useState([]);
+  const [applicationData, setApplicationData] = useState("");
+
+  const fetchApplication = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/application/by-reference-id/${referenceNumber}`
+      );
+      setApplicationData(response.data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
 
   const fetchActions = useCallback(async () => {
     try {
@@ -90,8 +102,9 @@ function TaskView() {
   useEffect(() => {
     (async () => {
       await fetchActions();
+      await fetchApplication();
     })();
-  }, [fetchActions]);
+  }, [fetchActions, fetchApplication]);
 
   useEffect(() => {
     if (action) {
@@ -142,63 +155,67 @@ function TaskView() {
             {openDetails && <TaskDetails referenceNumber={referenceNumber} />}
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Action</CardTitle>
-            <CardDescription>take action for this application</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form
-              className="flex flex-col gap-2"
-              onSubmit={handleSubmit(handleOnSubmit)}
-            >
-              <div className="grid grid-cols-2 gap-10">
-                <FormSelect
-                  control={control}
-                  label={"Action"}
-                  name={"workFlowAction"}
-                  error={errors.workFlowAction}
-                  validations={{
+        {applicationData?.assignee?.id === assignerId && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Task Action</CardTitle>
+              <CardDescription>
+                take action for this application
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <form
+                className="flex flex-col gap-2"
+                onSubmit={handleSubmit(handleOnSubmit)}
+              >
+                <div className="grid grid-cols-2 gap-10">
+                  <FormSelect
+                    control={control}
+                    label={"Action"}
+                    name={"workFlowAction"}
+                    error={errors.workFlowAction}
+                    validations={{
+                      required: {
+                        value: true,
+                        message: "Action is required",
+                      },
+                    }}
+                    options={actionOptions}
+                  />
+                  <FormSelect
+                    control={control}
+                    label={"Assign To"}
+                    name={"assignee"}
+                    error={errors.assignee}
+                    isDisabled={action?.value?.movement !== "PROGRESSIVE"}
+                    validations={{
+                      required: {
+                        value: true,
+                        message: "Assignee is required",
+                      },
+                    }}
+                    options={assigneeOptions}
+                  />
+                </div>
+                <FormTextarea
+                  register={register}
+                  label={"Comments"}
+                  name={"comments"}
+                  error={errors.comments}
+                  validation={{
                     required: {
-                      value: true,
-                      message: "Action is required",
+                      value: false,
+                      message: "Comments are required.",
                     },
                   }}
-                  options={actionOptions}
                 />
-                <FormSelect
-                  control={control}
-                  label={"Assign To"}
-                  name={"assignee"}
-                  error={errors.assignee}
-                  isDisabled={action?.value?.movement !== "PROGRESSIVE"}
-                  validations={{
-                    required: {
-                      value: true,
-                      message: "Assignee is required",
-                    },
-                  }}
-                  options={assigneeOptions}
-                />
-              </div>
-              <FormTextarea
-                register={register}
-                label={"Comments"}
-                name={"comments"}
-                error={errors.comments}
-                validation={{
-                  required: {
-                    value: false,
-                    message: "Comments are required.",
-                  },
-                }}
-              />
-              <div className="flex justify-end">
-                <Button>Submit Task</Button>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                <div className="flex justify-end">
+                  <Button>Submit Task</Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
