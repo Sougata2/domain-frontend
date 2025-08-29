@@ -53,7 +53,7 @@ function EditWorkFlow() {
       setStatusOptions(
         response.data.map((d) => ({
           label: `${d.name} [${d.description}]`,
-          value: d,
+          value: d.id,
         }))
       );
     } catch (error) {
@@ -68,7 +68,10 @@ function EditWorkFlow() {
       );
       const data = response.data;
       setTargetStatusOptions(
-        data.map((d) => ({ label: `${d.name} [${d.description}]`, value: d }))
+        data.map((d) => ({
+          label: `${d.name} [${d.description}]`,
+          value: d.id,
+        }))
       );
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -130,9 +133,7 @@ function EditWorkFlow() {
       const payload = {
         ...data,
         status: { id: data.status.value },
-        targetStatus: {
-          id: data.targetStatus.value.id || data.targetStatus.value,
-        },
+        targetStatus: { id: data.targetStatus.value },
         targetRole: { id: data.targetRole.value },
         movement: data.movement.value,
       };
