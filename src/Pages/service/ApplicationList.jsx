@@ -21,12 +21,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FaRegFolderOpen } from "react-icons/fa";
+import { useNavigate } from "react-router";
 import { FiTrash } from "react-icons/fi";
-import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import { useState } from "react";
 import { toast } from "sonner";
+
+import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import axios from "axios";
-import { useNavigate } from "react-router";
 
 function ApplicationList() {
   const navigate = useNavigate();
@@ -51,6 +52,30 @@ function ApplicationList() {
         return (
           <div className="capitalize ps-3">
             {row.getValue("referenceNumber")}
+          </div>
+        );
+      },
+      enableSorting: false,
+    },
+    {
+      accessorKey: "status",
+      header: ({ column }) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() => column.toggleSorting(undefined, false)}
+            >
+              Status
+              <ArrowUpDown />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize ps-3">
+            {row.getValue("status")?.description}
           </div>
         );
       },
@@ -163,13 +188,27 @@ function ApplicationList() {
               <DropdownMenuSeparator />
               <DropdownMenuItem>
                 <FaRegFolderOpen />
-                <button
-                  onClick={() => {
-                    navigate(`/new-request/${row.getValue("referenceNumber")}`);
-                  }}
-                >
-                  View
-                </button>
+                {status === "AG" && (
+                  <button
+                    onClick={() => {
+                      navigate(
+                        `/new-request/${row.getValue("referenceNumber")}`
+                      );
+                    }}
+                  >
+                    View
+                  </button>
+                )}
+
+                {status === "AS" && (
+                  <button
+                    onClick={() => {
+                      navigate(`/task-view/${row.getValue("referenceNumber")}`);
+                    }}
+                  >
+                    View
+                  </button>
+                )}
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <FiTrash />
@@ -227,13 +266,24 @@ function ApplicationList() {
           </SelectContent>
         </Select>
 
-        <DataTable
-          columns={columns}
-          api={`/application/by-status-and-user-id?user=${userId}&status=${status}`}
-          checkBeforeFetchData={userId}
-          triggerRefresh={doRefresh}
-          setTriggerRefresh={setDoRefresh}
-        />
+        {status === "AG" && (
+          <DataTable
+            columns={columns}
+            api={`/application/by-status-and-user-id?user=${userId}&status=${status}`}
+            checkBeforeFetchData={userId}
+            triggerRefresh={doRefresh}
+            setTriggerRefresh={setDoRefresh}
+          />
+        )}
+        {status === "AS" && (
+          <DataTable
+            columns={columns}
+            api={`/application/applicant-submitted-application/${userId}?`}
+            checkBeforeFetchData={userId}
+            triggerRefresh={doRefresh}
+            setTriggerRefresh={setDoRefresh}
+          />
+        )}
       </div>
     </div>
   );
