@@ -33,12 +33,15 @@ function EditWorkFlow() {
   const {
     reset,
     control,
+    watch,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({ defaultValues });
 
   const { id } = useParams();
+
+  const status = watch("status");
 
   const [statusOptions, setStatusOptions] = useState([]);
   const [targetStatusOptions, setTargetStatusOptions] = useState([]);
@@ -50,17 +53,27 @@ function EditWorkFlow() {
       setStatusOptions(
         response.data.map((d) => ({
           label: `${d.name} [${d.description}]`,
-          value: d.id,
+          value: d,
         }))
       );
-      setTargetStatusOptions((d) => ({
-        label: `${d.name} [${d.description}]`,
-        value: d.id,
-      }));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
   }, []);
+
+  const fetchTargetStatuses = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/workflow-action/find-target-status/${status.value}`
+      );
+      const data = response.data;
+      setTargetStatusOptions(
+        data.map((d) => ({ label: `${d.name} [${d.description}]`, value: d }))
+      );
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [status]);
 
   const fetchRoles = useCallback(async () => {
     try {
@@ -79,7 +92,10 @@ function EditWorkFlow() {
       reset({
         ...data,
         status: { label: data.status.name, value: data.status.id },
-        targetStatus: { label: data.targetStatus.name, value: data.status.id },
+        targetStatus: {
+          label: `${data.targetStatus.name} [${data.targetStatus.description}]`,
+          value: data.status.id,
+        },
         targetRole: { label: data.targetRole.name, value: data.targetRole.id },
         movement: { label: data.movement, value: data.movement },
       });
@@ -101,18 +117,29 @@ function EditWorkFlow() {
     })();
   }, [fetchWorkFlowAction]);
 
+  useEffect(() => {
+    (async () => {
+      if (status) {
+        await fetchTargetStatuses();
+      }
+    })();
+  }, [fetchTargetStatuses, status]);
+
   async function submitHandler(data) {
     try {
       const payload = {
         ...data,
         status: { id: data.status.value },
-        targetStatus: { id: data.targetStatus.value },
+        targetStatus: {
+          id: data.targetStatus.value.id || data.targetStatus.value,
+        },
         targetRole: { id: data.targetRole.value },
         movement: data.movement.value,
       };
 
       const _ = await axios.put("/workflow-action", payload);
       toast.info("Success", { description: "work-flow action Updated" });
+      await fetchWorkFlowAction();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
