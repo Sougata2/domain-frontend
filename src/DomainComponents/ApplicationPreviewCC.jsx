@@ -101,6 +101,8 @@ function DeviceDetails() {
     })();
   }, [fetchDevices]);
 
+  if (devices.length < 1) return;
+
   return (
     <Card>
       <CardHeader>
@@ -156,6 +158,7 @@ function DeviceDetails() {
 
 function LabInformation() {
   const { applicationData } = useContext(PREVIEW_CONTEXT);
+  if (!applicationData.lab) return;
   return (
     <Card>
       <CardHeader>
@@ -217,6 +220,8 @@ function Documents() {
       await fetchDocuments();
     })();
   }, [fetchDocuments]);
+
+  if (documents.length < 1) return;
 
   return (
     <Card>

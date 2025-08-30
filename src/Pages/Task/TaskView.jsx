@@ -152,7 +152,7 @@ function TaskView() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            {openDetails && <TaskDetails referenceNumber={referenceNumber} />}
+            {openDetails && <TaskDetails applicationData={applicationData} />}
           </CardContent>
         </Card>
         {applicationData?.assignee?.id === assignerId && (

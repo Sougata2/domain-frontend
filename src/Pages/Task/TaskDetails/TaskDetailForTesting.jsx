@@ -2,7 +2,7 @@ import ApplicationPreviewCC from "@/DomainComponents/ApplicationPreviewCC";
 import React from "react";
 import { useParams } from "react-router";
 
-function TaskDetailForService12() {
+function TaskDetailForTesting() {
   const { referenceNumber } = useParams();
   return (
     <ApplicationPreviewCC referenceNumber={referenceNumber}>
@@ -14,4 +14,4 @@ function TaskDetailForService12() {
   );
 }
 
-export default TaskDetailForService12;
+export default TaskDetailForTesting;
