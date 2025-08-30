@@ -28,6 +28,7 @@ import { toast } from "sonner";
 
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import axios from "axios";
+import { Badge } from "@/components/ui/badge";
 
 function ApplicationList() {
   const navigate = useNavigate();
@@ -73,9 +74,20 @@ function ApplicationList() {
         );
       },
       cell: ({ row }) => {
+        const assignee = row.original.assignee;
+        console.log(assignee, userId);
+
         return (
           <div className="capitalize ps-3">
-            {row.getValue("status")?.description}
+            {row.getValue("status")?.description}{" "}
+            {status === "AS" && row.original.assignee.id === userId && (
+              <Badge
+                variant={"secondary"}
+                className="bg-amber-200 text-amber-600 dark:bg-amber-300"
+              >
+                Action Required
+              </Badge>
+            )}
           </div>
         );
       },
