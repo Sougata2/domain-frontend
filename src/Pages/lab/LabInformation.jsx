@@ -130,10 +130,8 @@ function LabInformation() {
             )}
           </div>
         </CardContent>
-        <CardFooter>
-          <div>
-            <Button>Save</Button>
-          </div>
+        <CardFooter className={"flex justify-end"}>
+          <Button>Save</Button>
         </CardFooter>
       </form>
     </Card>
