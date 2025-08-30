@@ -31,7 +31,7 @@ const defaultValues = {
 function TaskView() {
   const navigate = useNavigate();
   const { referenceNumber } = useParams();
-  const { id: assignerId } = useSelector((state) => state.user);
+  const { id: assignerId, defaultRole } = useSelector((state) => state.user);
   const {
     control,
     register,
@@ -125,6 +125,7 @@ function TaskView() {
       };
       const _ = await axios.post("/application/do-next", payload);
       toast.success("Success", { description: "Task Submitted" });
+      if (defaultRole === "ROLE_CUSTOMER") return navigate("/application-list");
       navigate("/assignee-list");
     } catch (error) {
       toast.error("Error", { description: error.message });

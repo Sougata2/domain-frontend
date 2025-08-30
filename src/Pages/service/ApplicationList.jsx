@@ -74,9 +74,6 @@ function ApplicationList() {
         );
       },
       cell: ({ row }) => {
-        const assignee = row.original.assignee;
-        console.log(assignee, userId);
-
         return (
           <div className="capitalize ps-3">
             {row.getValue("status")?.description}{" "}
