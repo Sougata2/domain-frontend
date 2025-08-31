@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { AlertButton } from "@/DomainComponents/AlertBox";
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import axios from "axios";
 import { Ellipsis } from "lucide-react";
@@ -62,14 +63,11 @@ function ManageWorkFlow() {
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <LuTrash />
-                    <button
-                      onClick={() => {
-                        setOpenAlert(true);
-                        setDeleteId(row.getValue("id"));
-                      }}
+                    <AlertButton
+                      onConfirm={() => handleDelete(row.getValue("id"))}
                     >
                       Delete
-                    </button>
+                    </AlertButton>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
@@ -83,8 +81,6 @@ function ManageWorkFlow() {
     []
   );
 
-  const [openAlert, setOpenAlert] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
   async function handleDelete(id) {
@@ -92,7 +88,6 @@ function ManageWorkFlow() {
       const _ = await axios.delete("/workflow-action", {
         data: { id },
       });
-      setDeleteId("");
       setRefreshKey((prev) => prev + 1);
       toast.warning("Deleted", { description: "WorkFlow Action Deleted" });
     } catch (error) {
@@ -102,14 +97,6 @@ function ManageWorkFlow() {
 
   return (
     <div className="flex justify-center items-center">
-      <ConfirmationAlert
-        isOpen={openAlert}
-        closeHandler={() => setOpenAlert(false)}
-        handleConfirm={() => {
-          handleDelete(deleteId);
-          setOpenAlert(false);
-        }}
-      />
       <TanstackTable
         columns={columns}
         postURL={"/workflow-action/search"}
