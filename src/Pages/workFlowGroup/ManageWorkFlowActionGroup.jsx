@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
+import { AlertButton } from "@/DomainComponents/AlertBox";
 import axios from "axios";
 import { Ellipsis } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -56,14 +56,11 @@ function ManageWorkFlowActionGroup() {
                   </DropdownMenuItem>
                   <DropdownMenuItem>
                     <LuTrash />
-                    <button
-                      onClick={() => {
-                        setOpenAlert(true);
-                        setDeleteId(row.getValue("id"));
-                      }}
+                    <AlertButton
+                      onConfirm={() => handleDelete(row.getValue("id"))}
                     >
                       Delete
-                    </button>
+                    </AlertButton>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
@@ -78,15 +75,12 @@ function ManageWorkFlowActionGroup() {
   );
 
   const [refreshKey, setRefreshKey] = useState(0);
-  const [openAlert, setOpenAlert] = useState(false);
-  const [deleteId, setDeleteId] = useState("");
 
   async function handleDelete(id) {
     try {
       const _ = await axios.delete("/workflow-group", {
         data: { id },
       });
-      setDeleteId("");
       setRefreshKey((prev) => prev + 1);
       toast.warning("Deleted", { description: "WorkFlow Group Deleted" });
     } catch (error) {
@@ -96,21 +90,11 @@ function ManageWorkFlowActionGroup() {
 
   return (
     <div className="flex justify-center items-center">
-      <ConfirmationAlert
-        isOpen={openAlert}
-        closeHandler={() => setOpenAlert(false)}
-        handleConfirm={() => {
-          handleDelete(deleteId);
-          setOpenAlert(false);
-        }}
+      <TanstackTable
+        columns={columns}
+        postURL={"/workflow-group/search"}
+        refreshKey={refreshKey}
       />
-      <div>
-        <TanstackTable
-          columns={columns}
-          postURL={"/workflow-group/search"}
-          refreshKey={refreshKey}
-        />
-      </div>
     </div>
   );
 }
