@@ -65,6 +65,7 @@ import AssignmentList from "./Pages/Task/AssignmentList";
 import TaskView from "./Pages/Task/TaskView";
 import AddWorkFlowActionGroup from "./Pages/workFlowGroup/addWorkFlowActionGroup";
 import ManageWorkFlowActionGroup from "./Pages/workFlowGroup/ManageWorkFlowActionGroup";
+import AlertProvider from "./context/provider/AlertProvider";
 
 function App() {
   const dispatch = useDispatch();
@@ -86,7 +87,13 @@ function App() {
     <Routes>
       <Route path="/" element={<Navigate to={"/login"} />} />
       <Route path="/login" element={<Login />} />
-      <Route element={<Layout />}>
+      <Route
+        element={
+          <AlertProvider>
+            <Layout />
+          </AlertProvider>
+        }
+      >
         <Route path="/home" element={<Home />} />
         <Route path="edit/:id" element={<EditUserOld />} />
         <Route path="user/:id" element={<ViewUser />} />
