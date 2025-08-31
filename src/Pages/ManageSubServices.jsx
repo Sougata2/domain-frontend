@@ -64,6 +64,31 @@ export default function ManageSubServices() {
       },
     },
     {
+      accessorKey: "workFlowGroup",
+      header: ({ column }) => {
+        return (
+          <div>
+            <Button
+              variant="ghost"
+              onClick={() =>
+                column.toggleSorting(column.getIsSorted() === "asc")
+              }
+            >
+              Work Flow Group
+              <ArrowUpDown />
+            </Button>
+          </div>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize ps-3">
+            {row.getValue("workFlowGroup")?.name}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "id",
       header: () => {
         return <div>Actions</div>;
