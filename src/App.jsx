@@ -63,6 +63,8 @@ import ManageWorkFlow from "./Pages/WorkFlow/ManageWorkFlow";
 import EditWorkFlow from "./Pages/WorkFlow/EditWorkFlow";
 import AssignmentList from "./Pages/Task/AssignmentList";
 import TaskView from "./Pages/Task/TaskView";
+import AddWorkFlowActionGroup from "./Pages/workFlowGroup/addWorkFlowActionGroup";
+import ManageWorkFlowActionGroup from "./Pages/workFlowGroup/ManageWorkFlowActionGroup";
 
 function App() {
   const dispatch = useDispatch();
@@ -186,6 +188,14 @@ function App() {
         <Route path={"/edit-workflow/:id"} element={<EditWorkFlow />} />
         <Route path={"/assignee-list"} element={<AssignmentList />} />
         <Route path={"/task-view/:referenceNumber"} element={<TaskView />} />
+        <Route
+          path={"/add-workflow-group"}
+          element={<AddWorkFlowActionGroup />}
+        />
+        <Route
+          path={"/manage-workflow-group"}
+          element={<ManageWorkFlowActionGroup />}
+        />
       </Route>
     </Routes>
   );
