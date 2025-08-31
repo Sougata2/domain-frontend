@@ -50,7 +50,7 @@ function ManageWorkFlowActionGroup() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <CiEdit />
-                    <Link to={`/edit-workflow/${row.getValue("id")}`}>
+                    <Link to={`/edit-workflow-group/${row.getValue("id")}`}>
                       Edit
                     </Link>
                   </DropdownMenuItem>

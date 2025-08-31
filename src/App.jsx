@@ -66,6 +66,7 @@ import TaskView from "./Pages/Task/TaskView";
 import AddWorkFlowActionGroup from "./Pages/workFlowGroup/addWorkFlowActionGroup";
 import ManageWorkFlowActionGroup from "./Pages/workFlowGroup/ManageWorkFlowActionGroup";
 import AlertProvider from "./context/provider/AlertProvider";
+import EditWorkFlowActionGroup from "./Pages/workFlowGroup/EditWorkFlowActionGroup";
 
 function App() {
   const dispatch = useDispatch();
@@ -198,6 +199,10 @@ function App() {
         <Route
           path={"/add-workflow-group"}
           element={<AddWorkFlowActionGroup />}
+        />
+        <Route
+          path={"/edit-workflow-group/:id"}
+          element={<EditWorkFlowActionGroup />}
         />
         <Route
           path={"/manage-workflow-group"}
