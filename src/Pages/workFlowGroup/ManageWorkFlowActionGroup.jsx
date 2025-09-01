@@ -28,7 +28,7 @@ function ManageWorkFlowActionGroup() {
         accessorKey: "subServices",
         header: () => <div>Sub Services</div>,
         cell: (row) => (
-          <div>
+          <div className="flex gap-1.5">
             {row.getValue().map((s) => (
               <Badge>{s.name}</Badge>
             ))}
