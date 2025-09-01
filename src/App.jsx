@@ -68,6 +68,7 @@ import ManageWorkFlowActionGroup from "./Pages/workFlowGroup/ManageWorkFlowActio
 import AlertProvider from "./context/provider/AlertProvider";
 import EditWorkFlowActionGroup from "./Pages/workFlowGroup/EditWorkFlowActionGroup";
 import MapSubServiceToWorkFlowGroup from "./Pages/workFlowGroup/MapSubServiceToWorkFlowGroup";
+import MapActionToGroup from "./Pages/workFlowGroup/MapActionToGroup";
 
 function App() {
   const dispatch = useDispatch();
@@ -212,6 +213,10 @@ function App() {
         <Route
           path={"/map-sub-service-to-workflow-group"}
           element={<MapSubServiceToWorkFlowGroup />}
+        />
+        <Route
+          path={"/map-action-to-group/:id"}
+          element={<MapActionToGroup />}
         />
       </Route>
     </Routes>

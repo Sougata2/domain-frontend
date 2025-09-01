@@ -12,6 +12,7 @@ import axios from "axios";
 import { Ellipsis } from "lucide-react";
 import { useMemo, useState } from "react";
 import { CiEdit } from "react-icons/ci";
+import { IoSettingsOutline } from "react-icons/io5";
 import { LuTrash } from "react-icons/lu";
 import { Link } from "react-router";
 import { toast } from "sonner";
@@ -48,6 +49,12 @@ function ManageWorkFlowActionGroup() {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 <DropdownMenuGroup>
+                  <DropdownMenuItem>
+                    <IoSettingsOutline />
+                    <Link to={`/map-action-to-group/${row.getValue("id")}`}>
+                      Manage
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuItem>
                     <CiEdit />
                     <Link to={`/edit-workflow-group/${row.getValue("id")}`}>
