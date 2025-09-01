@@ -263,14 +263,14 @@ function ApplicationSubmitSection() {
   const fetchWorkFlowAction = useCallback(async () => {
     try {
       const response = await axios.get(
-        `/workflow-action/by-status/${applicationData.status?.id}`
+        `/workflow-action/by-reference-number/${referenceNumber}`
       );
       const data = response.data;
       setWorkFlowActionData(data[0]);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [applicationData]);
+  }, [referenceNumber]);
 
   useEffect(() => {
     if (applicationData.status?.id) {
