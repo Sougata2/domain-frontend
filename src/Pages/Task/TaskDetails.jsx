@@ -2,8 +2,8 @@ import TaskDetailForTesting from "./TaskDetails/TaskDetailForTesting";
 
 function TaskDetails({ applicationData }) {
   function DetailsBySubService() {
-    switch (applicationData.service?.name) {
-      case "Testing":
+    switch (applicationData.service?.name.toLowerCase()) {
+      case "testing":
         return <TaskDetailForTesting />;
 
       default:
