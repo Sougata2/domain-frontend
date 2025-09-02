@@ -9,7 +9,7 @@ import { toast } from "sonner";
 
 const defaultValues = {
   name: "",
-  form: "",
+  subService: "",
 };
 
 function AddMandatoryDocument() {
@@ -21,13 +21,13 @@ function AddMandatoryDocument() {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const [formOptions, setFormOptions] = useState([]);
+  const [subServiceOptions, setSubServiceOptions] = useState([]);
 
-  const fetchForms = useCallback(async () => {
+  const fetchSubServices = useCallback(async () => {
     try {
-      const response = await axios.get("/form/all");
+      const response = await axios.get("/sub-service/all");
       const data = response.data;
-      setFormOptions(data.map((d) => ({ label: d.name, value: d })));
+      setSubServiceOptions(data.map((d) => ({ label: d.name, value: d })));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -35,15 +35,15 @@ function AddMandatoryDocument() {
 
   useEffect(() => {
     (async () => {
-      await fetchForms();
+      await fetchSubServices();
     })();
-  }, [fetchForms]);
+  }, [fetchSubServices]);
 
   async function submitHandler(data) {
     try {
       const payload = {
         ...data,
-        form: { id: data.form.value.id },
+        subService: { id: data.subService.value.id },
       };
       const _ = await axios.post("/mandatory-document", payload);
       reset(defaultValues);
@@ -74,14 +74,14 @@ function AddMandatoryDocument() {
           />
           <FormSelect
             control={control}
-            error={errors.form}
-            name={"form"}
-            label={"Select Form"}
-            options={formOptions}
+            error={errors.subService}
+            name={"subService"}
+            label={"Select Sub Service"}
+            options={subServiceOptions}
             validations={{
               required: {
                 value: true,
-                message: "Form is required",
+                message: "Sub Service is required",
               },
             }}
           />

@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 const defaultValues = {
   name: "",
-  form: "",
+  subService: "",
 };
 
 function EditMandatoryDocument() {
@@ -23,13 +23,13 @@ function EditMandatoryDocument() {
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const [formOptions, setFormOptions] = useState([]);
+  const [subServiceOptions, setSubServiceOptions] = useState([]);
 
-  const fetchForms = useCallback(async () => {
+  const fetchSubServices = useCallback(async () => {
     try {
-      const response = await axios.get("/form/all");
+      const response = await axios.get("/sub-service/all");
       const data = response.data;
-      setFormOptions(data.map((d) => ({ label: d.name, value: d })));
+      setSubServiceOptions(data.map((d) => ({ label: d.name, value: d })));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -41,7 +41,9 @@ function EditMandatoryDocument() {
       const data = response.data;
       reset({
         ...data,
-        form: { label: data.form.name, value: data.form },
+        subService: data.subService
+          ? { label: data.subService?.name, value: data.form }
+          : null,
       });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -50,9 +52,9 @@ function EditMandatoryDocument() {
 
   useEffect(() => {
     (async () => {
-      await fetchForms();
+      await fetchSubServices();
     })();
-  }, [fetchForms]);
+  }, [fetchSubServices]);
 
   useEffect(() => {
     (async () => {
@@ -64,7 +66,7 @@ function EditMandatoryDocument() {
     try {
       const payload = {
         ...data,
-        form: { id: data.form.value.id },
+        subService: { id: data.subService.value.id },
       };
       const _ = await axios.put("/mandatory-document", payload);
       await fetchSavedData();
@@ -95,14 +97,14 @@ function EditMandatoryDocument() {
           />
           <FormSelect
             control={control}
-            error={errors.form}
-            name={"form"}
-            label={"Select Form"}
-            options={formOptions}
+            error={errors.subService}
+            name={"subService"}
+            label={"Select Sub Service"}
+            options={subServiceOptions}
             validations={{
               required: {
                 value: true,
-                message: "Form is required",
+                message: "Sub Service is required",
               },
             }}
           />

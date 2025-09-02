@@ -39,7 +39,7 @@ function ManageMandatoryDocument() {
       },
     },
     {
-      accessorKey: "form",
+      accessorKey: "subService",
       header: ({ column }) => {
         return (
           <Button
@@ -47,15 +47,18 @@ function ManageMandatoryDocument() {
             type="button"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           >
-            Form
+            Sub Service
             <ArrowUpDown />
           </Button>
         );
       },
       cell: ({ row }) => {
+        if (!row.getValue("subService")) return null;
         return (
           <div className="ps-3 flex gap-1 flex-wrap">
-            <Badge variant="secondary">{row.getValue("form").name}</Badge>
+            <Badge variant="secondary">
+              {row.getValue("subService")?.name}
+            </Badge>
           </div>
         );
       },
