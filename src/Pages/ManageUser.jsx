@@ -314,9 +314,10 @@ const AddRoleDrawer = ({ userId }) => {
 
   async function handleDelete(userId, roleId) {
     try {
-      const response = await axios.delete(
-        `/user-role-map?userId=${userId}&roleId=${roleId}`
-      );
+      const response = await axios.post("/user/remove-role", {
+        userId,
+        roleId,
+      });
       const _ = response.data;
       await fetchUser();
       toast.warning("Deleted", { description: "Removed Access" });
