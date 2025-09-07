@@ -21,12 +21,22 @@ const defaultValues = {
   targetRole: "",
   targetStatus: "",
   movement: "",
+  type: "",
 };
 
 const movementOptions = [
   { label: "PROGRESSIVE", value: "PROGRESSIVE" },
   { label: "REGRESSIVE", value: "REGRESSIVE" },
   { label: "PROGRESSIVE_ONE", value: "PROGRESSIVE_ONE" },
+];
+
+const typeOptions = [
+  { label: "ACTION", value: "ACTION" },
+  { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
+  { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "PAYMENT", value: "PAYMENT" },
+  { label: "NONE", value: "NONE" },
+  { label: "NO_ACTION", value: "NO_ACTION" },
 ];
 
 function EditWorkFlow() {
@@ -101,6 +111,7 @@ function EditWorkFlow() {
         },
         targetRole: { label: data.targetRole.name, value: data.targetRole.id },
         movement: { label: data.movement, value: data.movement },
+        type: { label: data.type, value: data.type },
       });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -136,6 +147,8 @@ function EditWorkFlow() {
         targetStatus: { id: data.targetStatus.value },
         targetRole: { id: data.targetRole.value },
         movement: data.movement.value,
+        type: data.type.value,
+        groups: null,
       };
 
       const _ = await axios.put("/workflow-action", payload);
@@ -208,6 +221,20 @@ function EditWorkFlow() {
                 required: {
                   value: true,
                   message: "Movement is required",
+                },
+              }}
+            />
+            <FormSelect
+              control={control}
+              isDisabled={!status}
+              name={"type"}
+              label={"Action Type"}
+              error={errors.type}
+              options={typeOptions}
+              validations={{
+                required: {
+                  value: true,
+                  message: "Action Type is required",
                 },
               }}
             />

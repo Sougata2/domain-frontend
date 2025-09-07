@@ -40,6 +40,11 @@ function ManageWorkFlow() {
         cell: (row) => <div>{row.getValue()}</div>,
       },
       {
+        accessorKey: "type",
+        header: () => <div>Action Type</div>,
+        cell: (row) => <div>{row.getValue()}</div>,
+      },
+      {
         accessorKey: "name",
         header: () => <div>Action</div>,
         cell: (row) => <div>{row.getValue()}</div>,
