@@ -107,11 +107,13 @@ function EditWorkFlow() {
         status: { label: data.status.name, value: data.status.id },
         targetStatus: {
           label: `${data.targetStatus.name} [${data.targetStatus.description}]`,
-          value: data.status.id,
+          value: data.targetStatus.id,
         },
         targetRole: { label: data.targetRole.name, value: data.targetRole.id },
-        movement: { label: data.movement, value: data.movement },
-        type: { label: data.type, value: data.type },
+        movement: data.movement
+          ? { label: data.movement, value: data.movement }
+          : null,
+        type: data.type ? { label: data.type, value: data.type } : null,
       });
     } catch (error) {
       toast.error("Error", { description: error.message });
