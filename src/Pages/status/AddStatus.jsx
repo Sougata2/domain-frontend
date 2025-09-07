@@ -3,15 +3,26 @@ import { Button } from "@/components/ui/button";
 import FormInput from "@/DomainComponents/FormInput";
 import { toast } from "sonner";
 import axios from "axios";
+import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
+
+const typeOptions = [
+  { label: "ACTION", value: "ACTION" },
+  { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
+  { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "PAYMENT", value: "PAYMENT" },
+  { label: "NONE", value: "NONE" },
+];
 
 export default function AddStatus() {
   const defaultValues = {
     name: "",
     description: "",
+    actionType: "",
   };
 
   const {
     register,
+    control,
     reset,
     handleSubmit,
     formState: { errors },
@@ -64,6 +75,19 @@ export default function AddStatus() {
             required: {
               value: true,
               message: "Status Description is required",
+            },
+          }}
+        />
+        <FormSelect
+          control={control}
+          name={"actionType"}
+          label={"Action Type"}
+          error={errors.actionType}
+          options={typeOptions}
+          validations={{
+            required: {
+              value: true,
+              message: "Action Type is required",
             },
           }}
         />

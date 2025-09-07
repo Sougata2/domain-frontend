@@ -55,6 +55,24 @@ export default function ManageStatus() {
       },
     },
     {
+      accessorKey: "actionType",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Action Type
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.getValue("actionType")}</div>;
+      },
+    },
+    {
       accessorKey: "id",
       header: () => {
         return <div>Actions</div>;
@@ -133,7 +151,7 @@ export default function ManageStatus() {
           setOpenAlert(false);
         }}
       />
-      <div className="w-md">
+      <div>
         <DataTable
           columns={columns}
           data={statuses}

@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { AlertButton } from "@/DomainComponents/AlertBox";
-import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import axios from "axios";
 import { Ellipsis } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -37,11 +36,6 @@ function ManageWorkFlow() {
       {
         accessorKey: "movement",
         header: () => <div>Movement</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
-      },
-      {
-        accessorKey: "type",
-        header: () => <div>Action Type</div>,
         cell: (row) => <div>{row.getValue()}</div>,
       },
       {

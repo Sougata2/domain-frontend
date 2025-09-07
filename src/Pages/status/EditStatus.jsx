@@ -5,6 +5,15 @@ import { toast } from "sonner";
 import axios from "axios";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
+
+const typeOptions = [
+  { label: "ACTION", value: "ACTION" },
+  { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
+  { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "PAYMENT", value: "PAYMENT" },
+  { label: "NONE", value: "NONE" },
+];
 
 export default function EditStatus() {
   const defaultValues = {
@@ -15,6 +24,7 @@ export default function EditStatus() {
   const { id: statusId } = useParams();
   const {
     register,
+    control,
     reset,
     handleSubmit,
     formState: { errors },
@@ -26,7 +36,12 @@ export default function EditStatus() {
     try {
       const response = await axios.get(`/status/${statusId}`);
       const data = response.data;
-      reset(data);
+      reset({
+        ...data,
+        actionType: data.actionType
+          ? { label: data.actionType, value: data.actionType }
+          : null,
+      });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -40,7 +55,13 @@ export default function EditStatus() {
 
   async function submitHandler(payload) {
     try {
-      const response = await axios.put("/status", payload);
+      const { id, name, description, actionType, ..._ } = payload;
+      const response = await axios.put("/status", {
+        id,
+        name,
+        description,
+        actionType: actionType.value,
+      });
       const data = response.data;
 
       toast.success("Success", {
@@ -82,6 +103,19 @@ export default function EditStatus() {
             required: {
               value: true,
               message: "Status Description is required",
+            },
+          }}
+        />
+        <FormSelect
+          control={control}
+          name={"actionType"}
+          label={"Action Type"}
+          error={errors.actionType}
+          options={typeOptions}
+          validations={{
+            required: {
+              value: true,
+              message: "Action Type is required",
             },
           }}
         />

@@ -20,21 +20,12 @@ const defaultValues = {
   targetRole: "",
   targetStatus: "",
   movement: "",
-  type: "",
 };
 
 const movementOptions = [
   { label: "PROGRESSIVE", value: "PROGRESSIVE" },
   { label: "REGRESSIVE", value: "REGRESSIVE" },
   { label: "PROGRESSIVE_ONE", value: "PROGRESSIVE_ONE" },
-];
-
-const typeOptions = [
-  { label: "ACTION", value: "ACTION" },
-  { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
-  { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
-  { label: "PAYMENT", value: "PAYMENT" },
-  { label: "NONE", value: "NONE" },
 ];
 
 function AddWorkFlow() {
@@ -114,7 +105,6 @@ function AddWorkFlow() {
         targetStatus: { id: data.targetStatus.value.id },
         targetRole: { id: data.targetRole.value.id },
         movement: data.movement.value,
-        type: data.type.value,
       };
 
       const _ = await axios.post("/workflow-action", payload);
@@ -190,20 +180,6 @@ function AddWorkFlow() {
                 required: {
                   value: true,
                   message: "Movement is required",
-                },
-              }}
-            />
-            <FormSelect
-              control={control}
-              isDisabled={!status}
-              name={"type"}
-              label={"Action Type"}
-              error={errors.type}
-              options={typeOptions}
-              validations={{
-                required: {
-                  value: true,
-                  message: "Action Type is required",
                 },
               }}
             />

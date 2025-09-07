@@ -6,6 +6,7 @@ import {
   Card,
 } from "@/components/ui/card";
 import { useCallback, useEffect, useState } from "react";
+import { useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -13,7 +14,6 @@ import { toast } from "sonner";
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 import FormInput from "@/DomainComponents/FormInput";
 import axios from "axios";
-import { useParams } from "react-router";
 
 const defaultValues = {
   name: "",
@@ -21,22 +21,12 @@ const defaultValues = {
   targetRole: "",
   targetStatus: "",
   movement: "",
-  type: "",
 };
 
 const movementOptions = [
   { label: "PROGRESSIVE", value: "PROGRESSIVE" },
   { label: "REGRESSIVE", value: "REGRESSIVE" },
   { label: "PROGRESSIVE_ONE", value: "PROGRESSIVE_ONE" },
-];
-
-const typeOptions = [
-  { label: "ACTION", value: "ACTION" },
-  { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
-  { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
-  { label: "PAYMENT", value: "PAYMENT" },
-  { label: "NONE", value: "NONE" },
-  { label: "NO_ACTION", value: "NO_ACTION" },
 ];
 
 function EditWorkFlow() {
@@ -113,7 +103,6 @@ function EditWorkFlow() {
         movement: data.movement
           ? { label: data.movement, value: data.movement }
           : null,
-        type: data.type ? { label: data.type, value: data.type } : null,
       });
     } catch (error) {
       toast.error("Error", { description: error.message });
@@ -149,7 +138,6 @@ function EditWorkFlow() {
         targetStatus: { id: data.targetStatus.value },
         targetRole: { id: data.targetRole.value },
         movement: data.movement.value,
-        type: data.type.value,
         groups: null,
       };
 
@@ -223,20 +211,6 @@ function EditWorkFlow() {
                 required: {
                   value: true,
                   message: "Movement is required",
-                },
-              }}
-            />
-            <FormSelect
-              control={control}
-              isDisabled={!status}
-              name={"type"}
-              label={"Action Type"}
-              error={errors.type}
-              options={typeOptions}
-              validations={{
-                required: {
-                  value: true,
-                  message: "Action Type is required",
                 },
               }}
             />
