@@ -19,6 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCallback, useEffect, useState } from "react";
+import { BsArrowRight } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -88,6 +89,29 @@ function CreateJobCard({ referenceNumber, applicationData }) {
     }
   }
 
+  async function handleDoNext(device) {
+    try {
+      console.log(device.job.id);
+
+      const response = await axios.get(
+        `/workflow-action/by-job-id/${device.job.id}`
+      );
+      const actions = response.data;
+
+      const payload = {
+        job: { id: device.job.id },
+        workFlowAction: { id: actions[0].id },
+        assigner: { id: applicationData.assignee.id },
+      };
+
+      console.log(payload);
+
+      console.log("procced to next stage");
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div className="flex flex-col gap-2 justify-center items-center">
       {devices.map((device) => (
@@ -142,7 +166,22 @@ function CreateJobCard({ referenceNumber, applicationData }) {
               />
             </PreviewDataBody>
           </CardContent>
-          <CardFooter></CardFooter>
+          <CardFooter className={"flex justify-end"}>
+            {device.job !== null && (
+              <div
+                onClick={() => handleDoNext(device)}
+                className="flex items-center gap-2 group bg-primary hover:bg-primary/90 text-white rounded-md py-0.5 px-3 cursor-pointer"
+              >
+                <div>Proceed For Testing</div>
+                <div>
+                  <BsArrowRight
+                    size={25}
+                    className="mt-1 font-bold transform transition-transform duration-200 group-hover:translate-x-1"
+                  />
+                </div>
+              </div>
+            )}
+          </CardFooter>
         </Card>
       ))}
     </div>
