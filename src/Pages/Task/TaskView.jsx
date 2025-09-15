@@ -77,6 +77,7 @@ function TaskView() {
             <CardContent>
               <TaskCardProvider
                 referenceNumber={referenceNumber}
+                applicationData={applicationData}
                 actionType={applicationData.status.actionType}
               />
             </CardContent>
