@@ -125,7 +125,7 @@ function CreateJobCard({ referenceNumber, applicationData }) {
                 value={
                   <div className="flex gap-2">
                     {device.activities.map((a) => (
-                      <Badge>{a.name}</Badge>
+                      <Badge key={a.name}>{a.name}</Badge>
                     ))}
                   </div>
                 }
@@ -135,7 +135,7 @@ function CreateJobCard({ referenceNumber, applicationData }) {
                 value={
                   <div className="flex gap-2">
                     {device.specifications.map((s) => (
-                      <Badge>{s.name}</Badge>
+                      <Badge key={s.name}>{s.name}</Badge>
                     ))}
                   </div>
                 }

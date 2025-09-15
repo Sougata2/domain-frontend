@@ -232,7 +232,7 @@ function Documents() {
         <table className="table-bordered">
           <tbody>
             {documents.map((d, index) => (
-              <tr>
+              <tr key={d.id}>
                 <td>{index + 1}</td>
                 <td>{d.name}</td>
                 <td>
