@@ -32,7 +32,10 @@ export default function AddStatus() {
 
   async function submitHandler(payload) {
     try {
-      const response = await axios.post("/status", payload);
+      const response = await axios.post("/status", {
+        ...payload,
+        actionType: payload.actionType.value,
+      });
       const data = response.data;
 
       toast.success("Success", {
