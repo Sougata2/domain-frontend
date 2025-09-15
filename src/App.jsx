@@ -69,6 +69,7 @@ import AlertProvider from "./context/provider/AlertProvider";
 import EditWorkFlowActionGroup from "./Pages/workFlowGroup/EditWorkFlowActionGroup";
 import MapSubServiceToWorkFlowGroup from "./Pages/workFlowGroup/MapSubServiceToWorkFlowGroup";
 import MapActionToGroup from "./Pages/workFlowGroup/MapActionToGroup";
+import JobList from "./Pages/Task/job/JobList";
 
 function App() {
   const dispatch = useDispatch();
@@ -218,6 +219,7 @@ function App() {
           path={"/map-action-to-group/:id"}
           element={<MapActionToGroup />}
         />
+        <Route path={"/job-list"} element={<JobList />} />
       </Route>
     </Routes>
   );
