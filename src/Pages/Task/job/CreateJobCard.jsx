@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCallback, useEffect, useState } from "react";
-import { BsArrowRight } from "react-icons/bs";
+import { FaArrowRight } from "react-icons/fa6";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
@@ -170,13 +170,13 @@ function CreateJobCard({ referenceNumber, applicationData }) {
             {device.job !== null && (
               <div
                 onClick={() => handleDoNext(device)}
-                className="flex items-center gap-2 group bg-primary hover:bg-primary/90 text-white rounded-md py-0.5 px-3 cursor-pointer"
+                className="flex items-center gap-3 group bg-primary hover:bg-primary/90 text-white rounded-md py-2 px-3 cursor-pointer"
               >
                 <div>Proceed For Testing</div>
                 <div>
-                  <BsArrowRight
-                    size={25}
-                    className="mt-1 font-bold transform transition-transform duration-200 group-hover:translate-x-1"
+                  <FaArrowRight
+                    size={20}
+                    className="mt-[3px] font-bold transform transition-transform duration-200 group-hover:translate-x-1"
                   />
                 </div>
               </div>
