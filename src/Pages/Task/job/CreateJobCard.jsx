@@ -51,8 +51,22 @@ export function Confirm({ handleConfirm }) {
   );
 }
 
-function CreateJobCard({ referenceNumber, applicationData }) {
+function CreateJobCard({ referenceNumber }) {
   const [devices, setDevices] = useState([]);
+
+  const [applicationData, setApplicationData] = useState("");
+
+  const fetchApplicationData = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/application/by-reference-id/${referenceNumber}`
+      );
+      const data = response.data;
+      setApplicationData(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
 
   const fetchDevices = useCallback(async () => {
     try {
@@ -68,9 +82,10 @@ function CreateJobCard({ referenceNumber, applicationData }) {
 
   useEffect(() => {
     (async () => {
+      await fetchApplicationData();
       await fetchDevices();
     })();
-  }, [fetchDevices]);
+  }, [fetchApplicationData, fetchDevices]);
 
   async function handleCreateJobCard(device) {
     try {
@@ -110,7 +125,7 @@ function CreateJobCard({ referenceNumber, applicationData }) {
   }
 
   return (
-    <div className="flex flex-col gap-2 justify-center items-center">
+    <div className="flex flex-col gap-8 justify-center items-center">
       {devices.map((device) => (
         <Card key={device.id} className={"w-full"}>
           <CardHeader>
