@@ -70,6 +70,7 @@ import EditWorkFlowActionGroup from "./Pages/workFlowGroup/EditWorkFlowActionGro
 import MapSubServiceToWorkFlowGroup from "./Pages/workFlowGroup/MapSubServiceToWorkFlowGroup";
 import MapActionToGroup from "./Pages/workFlowGroup/MapActionToGroup";
 import JobList from "./Pages/Task/job/JobList";
+import JobView from "./Pages/Task/job/JobView";
 
 function App() {
   const dispatch = useDispatch();
@@ -220,6 +221,7 @@ function App() {
           element={<MapActionToGroup />}
         />
         <Route path={"/job-list"} element={<JobList />} />
+        <Route path={"/job-view/:id"} element={<JobView />} />
       </Route>
     </Routes>
   );

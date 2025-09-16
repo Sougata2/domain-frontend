@@ -43,7 +43,7 @@ function JobList() {
       {
         accessorKey: "id",
         header: () => <div></div>,
-        cell: ({ row }) => {
+        cell: (row) => {
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -53,9 +53,7 @@ function JobList() {
                 <DropdownMenuGroup>
                   <DropdownMenuItem>
                     <BiTask />
-                    <Link to={`/task-view/${row.getValue("referenceNumber")}`}>
-                      View
-                    </Link>
+                    <Link to={`/job-view/${row.getValue()}`}>View</Link>
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
               </DropdownMenuContent>
