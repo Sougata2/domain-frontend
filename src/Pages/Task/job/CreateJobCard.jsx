@@ -91,8 +91,6 @@ function CreateJobCard({ referenceNumber, applicationData }) {
 
   async function handleDoNext(device) {
     try {
-      console.log(device.job.id);
-
       const response = await axios.get(
         `/workflow-action/by-job-id/${device.job.id}`
       );
@@ -104,9 +102,8 @@ function CreateJobCard({ referenceNumber, applicationData }) {
         assigner: { id: applicationData.assignee.id },
       };
 
-      console.log(payload);
-
-      console.log("procced to next stage");
+      await axios.post(`/job/do-next`, payload);
+      toast.success("Success", { description: "Task Submitted Successfully" });
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
