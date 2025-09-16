@@ -74,7 +74,7 @@ function CreateJobCard({ referenceNumber }) {
         `/device/by-application-reference-number/${referenceNumber}`
       );
       const data = response.data;
-      setDevices(data);
+      setDevices(data.filter((d) => d.job === null));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
