@@ -11,7 +11,6 @@ import axios from "axios";
 import FormFileInput from "@/DomainComponents/FormComponents/FormFileInput";
 
 const defaultValues = {
-  application: "",
   workFlowAction: "",
   assignee: "",
   assigner: "",
@@ -19,7 +18,7 @@ const defaultValues = {
   file: "",
 };
 
-function ActionCardWithUpload({ referenceNumber }) {
+function ActionCardWithUpload({ referenceNumber, jobId }) {
   const navigate = useNavigate();
   const { id: assignerId } = useSelector((state) => state.user);
 
@@ -41,15 +40,20 @@ function ActionCardWithUpload({ referenceNumber }) {
 
   const fetchActions = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/workflow-action/by-reference-number/${referenceNumber}`
-      );
+      let response;
+      if (jobId) {
+        response = await axios.get(`/workflow-action/by-job-id/${jobId}`);
+      } else {
+        response = await axios.get(
+          `/workflow-action/by-reference-number/${referenceNumber}`
+        );
+      }
       const data = response.data;
       setActionOptions(data.map((d) => ({ label: d.name, value: d })));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [referenceNumber]);
+  }, [jobId, referenceNumber]);
 
   const fetchAssignees = useCallback(async () => {
     try {
@@ -97,7 +101,9 @@ function ActionCardWithUpload({ referenceNumber }) {
     try {
       const payload = {
         ...data,
-        application: { referenceNumber },
+        ...(jobId
+          ? { job: { id: jobId } }
+          : { application: { referenceNumber } }),
         workFlowAction: { id: data.workFlowAction.value.id },
         assigner: { id: assignerId },
         assignee: { id: data.assignee.value.id },
@@ -117,7 +123,11 @@ function ActionCardWithUpload({ referenceNumber }) {
       if (uploadResponseData) {
         payload.file = { id: uploadResponseData.id };
 
-        const _ = await axios.post("/application/do-next", payload);
+        if (jobId) {
+          await axios.post("/job/do-next", payload);
+        } else {
+          await axios.post("/application/do-next", payload);
+        }
         toast.success("Success", { description: "Task Submitted" });
         navigate("/assignee-list");
       } else {

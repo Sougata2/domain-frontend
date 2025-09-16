@@ -10,14 +10,13 @@ import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 import axios from "axios";
 
 const defaultValues = {
-  application: "",
   workFlowAction: "",
   assignee: "",
   assigner: "",
   comments: "",
 };
 
-function ActionCard({ referenceNumber }) {
+function ActionCard({ referenceNumber, jobId }) {
   const navigate = useNavigate();
   const { id: assignerId } = useSelector((state) => state.user);
 
@@ -39,15 +38,20 @@ function ActionCard({ referenceNumber }) {
 
   const fetchActions = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/workflow-action/by-reference-number/${referenceNumber}`
-      );
+      let response;
+      if (jobId) {
+        response = await axios.get(`/workflow-action/by-job-id/${jobId}`);
+      } else {
+        response = await axios.get(
+          `/workflow-action/by-reference-number/${referenceNumber}`
+        );
+      }
       const data = response.data;
       setActionOptions(data.map((d) => ({ label: d.name, value: d })));
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [referenceNumber]);
+  }, [jobId, referenceNumber]);
 
   const fetchAssignees = useCallback(async () => {
     try {
@@ -95,12 +99,18 @@ function ActionCard({ referenceNumber }) {
     try {
       const payload = {
         ...data,
-        application: { referenceNumber },
+        ...(jobId
+          ? { job: { id: jobId } }
+          : { application: { referenceNumber } }),
         workFlowAction: { id: data.workFlowAction.value.id },
         assigner: { id: assignerId },
         assignee: { id: data.assignee.value.id },
       };
-      const _ = await axios.post("/application/do-next", payload);
+      if (jobId) {
+        await axios.post("/job/do-next", payload);
+      } else {
+        await axios.post("/application/do-next", payload);
+      }
       toast.success("Success", { description: "Task Submitted" });
       navigate("/assignee-list");
     } catch (error) {
