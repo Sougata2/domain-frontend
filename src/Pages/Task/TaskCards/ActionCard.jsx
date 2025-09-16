@@ -55,13 +55,16 @@ function ActionCard({ referenceNumber, jobId }) {
 
   const fetchAssignees = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `/workflow-action/assignee-list-for-action/${
-          action.value.id
-        }/${referenceNumber}?regressive=${
-          action?.value?.movement === "REGRESSIVE"
-        }`
-      );
+      let response;
+      if (jobId) {
+        response = await axios.get(
+          `/workflow-action/assignee-list-for-action?action=${action.value.id}&job=${jobId}`
+        );
+      } else {
+        response = await axios.get(
+          `/workflow-action/assignee-list-for-action?action=${action.value.id}&referenceNumber=${referenceNumber}`
+        );
+      }
 
       const data = response.data;
       if (action?.value?.movement === "PROGRESSIVE") {
@@ -79,7 +82,7 @@ function ActionCard({ referenceNumber, jobId }) {
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [action, referenceNumber, setValue]);
+  }, [action, referenceNumber, jobId, setValue]);
 
   useEffect(() => {
     (async () => {
