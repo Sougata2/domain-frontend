@@ -2,6 +2,7 @@ import CreateJobCard from "../job/CreateJobCard";
 import ActionCard from "./ActionCard";
 import ActionCardWithUpload from "./ActionCardWithUpload";
 import PaymentCard from "./PaymentCard";
+import TestCard from "./TestCard";
 
 function TaskCardProvider({ referenceNumber, jobId, actionType }) {
   switch (actionType) {
@@ -15,6 +16,8 @@ function TaskCardProvider({ referenceNumber, jobId, actionType }) {
       return <CreateJobCard referenceNumber={referenceNumber} />;
     case "PAYMENT":
       return <PaymentCard referenceNumber={referenceNumber} />;
+    case "TEST_CARD":
+      return <TestCard jobId={jobId} />;
     case "NONE":
       return <div>Action form not decided yet</div>;
     default:

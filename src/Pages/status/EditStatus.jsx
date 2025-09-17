@@ -1,17 +1,19 @@
-import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button";
-import FormInput from "@/DomainComponents/FormInput";
-import { toast } from "sonner";
-import axios from "axios";
 import { useCallback, useEffect } from "react";
 import { useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
+import FormInput from "@/DomainComponents/FormInput";
+import axios from "axios";
 
 const typeOptions = [
-  { label: "ACTION", value: "ACTION" },
   { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
   { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "TEST_CARD", value: "TEST_CARD" },
   { label: "PAYMENT", value: "PAYMENT" },
+  { label: "ACTION", value: "ACTION" },
   { label: "NONE", value: "NONE" },
 ];
 

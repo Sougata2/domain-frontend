@@ -71,6 +71,7 @@ import MapSubServiceToWorkFlowGroup from "./Pages/workFlowGroup/MapSubServiceToW
 import MapActionToGroup from "./Pages/workFlowGroup/MapActionToGroup";
 import JobList from "./Pages/Task/job/JobList";
 import JobView from "./Pages/Task/job/JobView";
+import LabTestEntry from "./Pages/test/LabTestEntry";
 
 function App() {
   const dispatch = useDispatch();
@@ -222,6 +223,7 @@ function App() {
         />
         <Route path={"/job-list"} element={<JobList />} />
         <Route path={"/job-view/:id"} element={<JobView />} />
+        <Route path={"/lab-test-entry/:id"} element={<LabTestEntry />} />
       </Route>
     </Routes>
   );

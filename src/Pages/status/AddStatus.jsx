@@ -6,10 +6,11 @@ import axios from "axios";
 import FormSelect from "@/DomainComponents/FormComponents/FormSelect";
 
 const typeOptions = [
-  { label: "ACTION", value: "ACTION" },
   { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
   { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "TEST_CARD", value: "TEST_CARD" },
   { label: "PAYMENT", value: "PAYMENT" },
+  { label: "ACTION", value: "ACTION" },
   { label: "NONE", value: "NONE" },
 ];
 
