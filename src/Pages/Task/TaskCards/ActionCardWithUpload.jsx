@@ -132,7 +132,11 @@ function ActionCardWithUpload({ referenceNumber, jobId }) {
           await axios.post("/application/do-next", payload);
         }
         toast.success("Success", { description: "Task Submitted" });
-        navigate("/assignee-list");
+        if (jobId) {
+          navigate("/job-list");
+        } else {
+          navigate("/assignee-list");
+        }
       } else {
         throw new Error("Something went wrong, document could not be uploaded");
       }
