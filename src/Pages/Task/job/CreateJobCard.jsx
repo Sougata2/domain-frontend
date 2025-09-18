@@ -169,8 +169,6 @@ function CreateJobCard({ referenceNumber }) {
     }
   }
 
-  console.log(deviceJobMap);
-
   return (
     <div className="flex flex-col gap-8 justify-center items-center">
       {devices.map((device) => (
