@@ -53,8 +53,9 @@ export function Confirm({ handleConfirm }) {
 
 function CreateJobCard({ referenceNumber }) {
   const [devices, setDevices] = useState([]);
-
+  const [jobs, setJobs] = useState([]);
   const [applicationData, setApplicationData] = useState("");
+  const [deviceJobMap, setDeviceJobMap] = useState("");
 
   const fetchApplicationData = useCallback(async () => {
     try {
@@ -74,11 +75,46 @@ function CreateJobCard({ referenceNumber }) {
         `/device/by-application-reference-number/${referenceNumber}`
       );
       const data = response.data;
-      setDevices(data.filter((d) => d.job === null));
+      setDevices(data);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
   }, [referenceNumber]);
+
+  const fetchJobs = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/job/by-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setJobs(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
+
+  const mapDeviceToJob = useCallback(() => {
+    try {
+      const map = {};
+      if (devices && jobs) {
+        devices.forEach((device) => {
+          map[device.id] = null;
+        });
+        jobs.forEach((job) => {
+          map[job.device.id] = job;
+        });
+      }
+      setDeviceJobMap(map);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }, [devices, jobs]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchJobs();
+    })();
+  }, [fetchJobs]);
 
   useEffect(() => {
     (async () => {
@@ -86,6 +122,10 @@ function CreateJobCard({ referenceNumber }) {
       await fetchDevices();
     })();
   }, [fetchApplicationData, fetchDevices]);
+
+  useEffect(() => {
+    mapDeviceToJob();
+  }, [mapDeviceToJob]);
 
   async function handleCreateJobCard(device) {
     try {
@@ -99,6 +139,8 @@ function CreateJobCard({ referenceNumber }) {
       const _ = await axios.post("/job", payload);
       toast.success("Success", { description: "Job Created Successfully" });
       await fetchDevices();
+      await fetchJobs();
+      mapDeviceToJob();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -119,10 +161,15 @@ function CreateJobCard({ referenceNumber }) {
 
       await axios.post(`/job/do-next`, payload);
       toast.success("Success", { description: "Task Submitted Successfully" });
+      await fetchDevices();
+      await fetchJobs();
+      mapDeviceToJob();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
   }
+
+  console.log(deviceJobMap);
 
   return (
     <div className="flex flex-col gap-8 justify-center items-center">
@@ -180,17 +227,26 @@ function CreateJobCard({ referenceNumber }) {
           </CardContent>
           <CardFooter className={"flex justify-end"}>
             {device.job !== null && (
-              <div
-                onClick={() => handleDoNext(device)}
-                className="flex items-center gap-3 group bg-primary hover:bg-primary/90 text-white rounded-md py-2 px-3 cursor-pointer"
-              >
-                <div>Proceed For Testing</div>
-                <div>
-                  <FaArrowRight
-                    size={20}
-                    className="mt-[3px] font-bold transform transition-transform duration-200 group-hover:translate-x-1"
-                  />
-                </div>
+              <div>
+                {deviceJobMap[device.id]?.status.name !== "JCG" && (
+                  <div>
+                    <Button disabled={true}>Forwarded For Testing</Button>
+                  </div>
+                )}
+                {deviceJobMap[device.id]?.status.name === "JCG" && (
+                  <div
+                    onClick={() => handleDoNext(device)}
+                    className="flex items-center gap-3 group bg-primary hover:bg-primary/90 text-white rounded-md py-2 px-3 cursor-pointer"
+                  >
+                    <div>Proceed For Testing</div>
+                    <div>
+                      <FaArrowRight
+                        size={20}
+                        className="mt-[3px] font-bold transform transition-transform duration-200 group-hover:translate-x-1"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </CardFooter>
