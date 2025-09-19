@@ -56,114 +56,141 @@ function LabTestEntry() {
   const sheetContainerRef = useRef(null);
 
   useEffect(() => {
-    const containerNode = sheetContainerRef.current;
+    (async () => {
+      const containerNode = sheetContainerRef.current;
 
-    const univer = new Univer({
-      locale: LocaleType.EN_US,
-      locales: {
-        [LocaleType.EN_US]: mergeLocales(
-          DesignEnUS,
-          UIEnUS,
-          DocsUIEnUS,
-          SheetsEnUS,
-          SheetsUIEnUS,
-          SheetsFormulaUIEnUS,
-          SheetsNumfmtUIEnUS
-        ),
-      },
-    });
+      const univer = new Univer({
+        locale: LocaleType.EN_US,
+        locales: {
+          [LocaleType.EN_US]: mergeLocales(
+            DesignEnUS,
+            UIEnUS,
+            DocsUIEnUS,
+            SheetsEnUS,
+            SheetsUIEnUS,
+            SheetsFormulaUIEnUS,
+            SheetsNumfmtUIEnUS
+          ),
+        },
+      });
 
-    univer.registerPlugin(UniverRenderEnginePlugin);
-    univer.registerPlugin(UniverFormulaEnginePlugin);
+      univer.registerPlugin(UniverRenderEnginePlugin);
+      univer.registerPlugin(UniverFormulaEnginePlugin);
 
-    univer.registerPlugin(UniverUIPlugin, {
-      container: containerNode,
-    });
+      univer.registerPlugin(UniverUIPlugin, {
+        container: containerNode,
+      });
 
-    univer.registerPlugin(UniverDocsPlugin);
-    univer.registerPlugin(UniverDocsUIPlugin);
-    univer.registerPlugin(UniverSheetsPlugin);
-    univer.registerPlugin(UniverSheetsUIPlugin);
-    univer.registerPlugin(UniverSheetsFormulaPlugin);
-    univer.registerPlugin(UniverSheetsFormulaUIPlugin);
-    univer.registerPlugin(UniverSheetsNumfmtPlugin);
-    univer.registerPlugin(UniverSheetsNumfmtUIPlugin);
+      univer.registerPlugin(UniverDocsPlugin);
+      univer.registerPlugin(UniverDocsUIPlugin);
+      univer.registerPlugin(UniverSheetsPlugin);
+      univer.registerPlugin(UniverSheetsUIPlugin, {
+        protectedRangeShadow: false,
+      });
+      univer.registerPlugin(UniverSheetsFormulaPlugin);
+      univer.registerPlugin(UniverSheetsFormulaUIPlugin);
+      univer.registerPlugin(UniverSheetsNumfmtPlugin);
+      univer.registerPlugin(UniverSheetsNumfmtUIPlugin);
 
-    univer.createUnit(UniverInstanceType.UNIVER_SHEET, {
-      id: "workbook-1",
-      name: "Lab Report",
-      sheetOrder: [testId],
-      styles: {
-        header: {
-          ht: 2, // center horizontally
-          vt: 2, // middle vertically
-          bl: true, // bold
-          bg: { rgb: "#f2f2f2" },
-          bd: {
-            t: { s: 1, cl: { rgb: "#333" } },
-            b: { s: 1, cl: { rgb: "#333" } },
-            l: { s: 1, cl: { rgb: "#333" } },
-            r: { s: 1, cl: { rgb: "#333" } },
+      univer.createUnit(UniverInstanceType.UNIVER_SHEET, {
+        id: "workbook-1",
+        name: "Lab Report",
+        sheetOrder: [testId],
+        styles: {
+          header: {
+            ht: 2, // center horizontally
+            vt: 2, // middle vertically
+            bl: true, // bold
+            bg: { rgb: "#f2f2f2" },
+            bd: {
+              t: { s: 1, cl: { rgb: "#333" } },
+              b: { s: 1, cl: { rgb: "#333" } },
+              l: { s: 1, cl: { rgb: "#333" } },
+              r: { s: 1, cl: { rgb: "#333" } },
+            },
           },
         },
-      },
 
-      sheets: {
-        [testId]: {
-          id: testId,
-          name: testId,
-          rowCount: 100,
-          columnCount: 8,
-          cellData: {
-            // Row 0 (top headers)
-            0: {
-              0: { v: "No.", s: "header", locked: true },
-              1: { v: "Type", s: "header", locked: true },
-              2: { v: "", s: "header", locked: true },
-              3: { v: "", s: "header", locked: true },
-              4: { v: "", s: "header", locked: true },
-              5: { v: "", s: "header", locked: true },
-              6: { v: "Remarks", s: "header", locked: true },
-              7: { v: "", s: "header", locked: true },
+        sheets: {
+          [testId]: {
+            id: testId,
+            name: testId,
+            rowCount: 100,
+            columnCount: 8,
+            cellData: {
+              // Row 0 (top headers)
+              0: {
+                0: { v: "No.", s: "header" },
+                1: { v: "Type", s: "header" },
+                2: { v: "", s: "header" },
+                3: { v: "", s: "header" },
+                4: { v: "", s: "header" },
+                5: { v: "", s: "header" },
+                6: { v: "Remarks", s: "header" },
+                7: { v: "", s: "header" },
+              },
+              // Row 1 (second-level headers)
+              1: {
+                0: { v: "", s: "header" },
+                1: { v: "A", s: "header" },
+                2: { v: "", s: "header" },
+                3: { v: "", s: "header" },
+                4: { v: "B", s: "header" },
+                5: { v: "C", s: "header" },
+                6: { v: "A", s: "header" },
+                7: { v: "B", s: "header" },
+              },
+              // Row 2 (third-level headers)
+              2: {
+                0: { v: "", s: "header" },
+                1: { v: "1", s: "header" },
+                2: { v: "2", s: "header" },
+                3: { v: "3", s: "header" },
+                4: { v: "", s: "header" },
+                5: { v: "", s: "header" },
+                6: { v: "", s: "header" },
+                7: { v: "", s: "header" },
+              },
             },
-            // Row 1 (second-level headers, locked: true)
-            1: {
-              0: { v: "", s: "header", locked: true },
-              1: { v: "A", s: "header", locked: true },
-              2: { v: "", s: "header", locked: true },
-              3: { v: "", s: "header", locked: true },
-              4: { v: "B", s: "header", locked: true },
-              5: { v: "C", s: "header", locked: true },
-              6: { v: "A", s: "header", locked: true },
-              7: { v: "B", s: "header", locked: true },
-            },
-            // Row 2 (third-level headers, locked: true)
-            2: {
-              0: { v: "", s: "header", locked: true },
-              1: { v: "1", s: "header", locked: true },
-              2: { v: "2", s: "header", locked: true },
-              3: { v: "3", s: "header", locked: true },
-              4: { v: "", s: "header", locked: true },
-              5: { v: "", s: "header", locked: true },
-              6: { v: "", s: "header", locked: true },
-              7: { v: "", s: "header", locked: true },
-            },
+            mergeData: [
+              { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 }, // "No."
+              { startRow: 0, endRow: 0, startColumn: 1, endColumn: 5 }, // "Type"
+              { startRow: 1, endRow: 1, startColumn: 1, endColumn: 3 }, // "A" under Type
+              { startRow: 1, endRow: 2, startColumn: 4, endColumn: 4 }, // "B" under Type
+              { startRow: 1, endRow: 2, startColumn: 5, endColumn: 5 }, // "C" under Type
+              { startRow: 0, endRow: 0, startColumn: 6, endColumn: 7 }, // "Remarks"
+              { startRow: 1, endRow: 2, startColumn: 6, endColumn: 6 }, // "A" under Remarks
+              { startRow: 1, endRow: 2, startColumn: 7, endColumn: 7 }, // "B" under Remarks
+            ],
           },
-          mergeData: [
-            { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 }, // "No."
-            { startRow: 0, endRow: 0, startColumn: 1, endColumn: 5 }, // "Type"
-            { startRow: 1, endRow: 1, startColumn: 1, endColumn: 3 }, // "A" under Type
-            { startRow: 1, endRow: 2, startColumn: 4, endColumn: 4 }, // "B" under Type
-            { startRow: 1, endRow: 2, startColumn: 5, endColumn: 5 }, // "C" under Type
-            { startRow: 0, endRow: 0, startColumn: 6, endColumn: 7 }, // "Remarks"
-            { startRow: 1, endRow: 2, startColumn: 6, endColumn: 6 }, // "A" under Remarks
-            { startRow: 1, endRow: 2, startColumn: 7, endColumn: 7 }, // "B" under Remarks
-          ],
         },
-      },
-    });
+      });
 
-    FUniver.newAPI(univer);
+      const univerApi = FUniver.newAPI(univer);
+      const workbook = univerApi.getActiveWorkbook();
+      const sheet = workbook.getActiveSheet();
+      const unitId = workbook.getId();
+      const subUnitId = sheet.getSheetId();
+      const permission = workbook.getPermission();
+
+      const range = sheet.getRange("A1:H3");
+
+      const rangeProtectionPermissionEditPoint =
+        permission.permissionPointsDefinition
+          .RangeProtectionPermissionEditPoint;
+
+      const res = await permission.addRangeBaseProtection(unitId, subUnitId, [
+        range,
+      ]);
+
+      permission.setRangeProtectionPermissionPoint(
+        unitId,
+        subUnitId,
+        res.permissionId,
+        rangeProtectionPermissionEditPoint,
+        false
+      );
+    })();
   }, [testId]);
 
   return (
