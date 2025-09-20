@@ -52,6 +52,69 @@ import "@univerjs/sheets-formula/facade";
 import "@univerjs/sheets-numfmt/facade";
 import { toast } from "sonner";
 
+const cellData = {
+  0: {
+    0: { v: "No.", s: "header" },
+    1: { v: "Type", s: "header" },
+    2: { v: "", s: "header" },
+    3: { v: "", s: "header" },
+    4: { v: "", s: "header" },
+    5: { v: "", s: "header" },
+    6: { v: "Remarks", s: "header" },
+    7: { v: "", s: "header" },
+  },
+  1: {
+    0: { v: "", s: "header" },
+    1: { v: "A", s: "header" },
+    2: { v: "", s: "header" },
+    3: { v: "", s: "header" },
+    4: { v: "B", s: "header" },
+    5: { v: "C", s: "header" },
+    6: { v: "A", s: "header" },
+    7: { v: "B", s: "header" },
+  },
+  2: {
+    0: { v: "", s: "header" },
+    1: { v: "1", s: "header" },
+    2: { v: "2", s: "header" },
+    3: { v: "3", s: "header" },
+    4: { v: "", s: "header" },
+    5: { v: "", s: "header" },
+    6: { v: "", s: "header" },
+    7: { v: "", s: "header" },
+  },
+};
+
+const mergeData = [
+  { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 }, // "No."
+  { startRow: 0, endRow: 0, startColumn: 1, endColumn: 5 }, // "Type"
+  { startRow: 1, endRow: 1, startColumn: 1, endColumn: 3 }, // "A" under Type
+  { startRow: 1, endRow: 2, startColumn: 4, endColumn: 4 }, // "B" under Type
+  { startRow: 1, endRow: 2, startColumn: 5, endColumn: 5 }, // "C" under Type
+  { startRow: 0, endRow: 0, startColumn: 6, endColumn: 7 }, // "Remarks"
+  { startRow: 1, endRow: 2, startColumn: 6, endColumn: 6 }, // "A" under Remarks
+  { startRow: 1, endRow: 2, startColumn: 7, endColumn: 7 }, // "B" under Remarks
+];
+
+const columnCount = 8;
+const headerRange = "A1:H3";
+const defaultSelection = "A4:A4";
+
+const styles = {
+  header: {
+    ht: 2, // center horizontally
+    vt: 2, // middle vertically
+    bl: true, // bold
+    bg: { rgb: "#f2f2f2" },
+    bd: {
+      t: { s: 1, cl: { rgb: "#333" } },
+      b: { s: 1, cl: { rgb: "#333" } },
+      l: { s: 1, cl: { rgb: "#333" } },
+      r: { s: 1, cl: { rgb: "#333" } },
+    },
+  },
+};
+
 function LabTestEntry() {
   const { id: testId } = useParams();
   const sheetContainerRef = useRef(null);
@@ -99,72 +162,15 @@ function LabTestEntry() {
         id: "workbook-1",
         name: "Lab Report",
         sheetOrder: [testId],
-        styles: {
-          header: {
-            ht: 2, // center horizontally
-            vt: 2, // middle vertically
-            bl: true, // bold
-            bg: { rgb: "#f2f2f2" },
-            bd: {
-              t: { s: 1, cl: { rgb: "#333" } },
-              b: { s: 1, cl: { rgb: "#333" } },
-              l: { s: 1, cl: { rgb: "#333" } },
-              r: { s: 1, cl: { rgb: "#333" } },
-            },
-          },
-        },
-
+        styles,
         sheets: {
           [testId]: {
             id: testId,
             name: testId,
             rowCount: 100,
-            columnCount: 8,
-            cellData: {
-              // Row 0 (top headers)
-              0: {
-                0: { v: "No.", s: "header" },
-                1: { v: "Type", s: "header" },
-                2: { v: "", s: "header" },
-                3: { v: "", s: "header" },
-                4: { v: "", s: "header" },
-                5: { v: "", s: "header" },
-                6: { v: "Remarks", s: "header" },
-                7: { v: "", s: "header" },
-              },
-              // Row 1 (second-level headers)
-              1: {
-                0: { v: "", s: "header" },
-                1: { v: "A", s: "header" },
-                2: { v: "", s: "header" },
-                3: { v: "", s: "header" },
-                4: { v: "B", s: "header" },
-                5: { v: "C", s: "header" },
-                6: { v: "A", s: "header" },
-                7: { v: "B", s: "header" },
-              },
-              // Row 2 (third-level headers)
-              2: {
-                0: { v: "", s: "header" },
-                1: { v: "1", s: "header" },
-                2: { v: "2", s: "header" },
-                3: { v: "3", s: "header" },
-                4: { v: "", s: "header" },
-                5: { v: "", s: "header" },
-                6: { v: "", s: "header" },
-                7: { v: "", s: "header" },
-              },
-            },
-            mergeData: [
-              { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 }, // "No."
-              { startRow: 0, endRow: 0, startColumn: 1, endColumn: 5 }, // "Type"
-              { startRow: 1, endRow: 1, startColumn: 1, endColumn: 3 }, // "A" under Type
-              { startRow: 1, endRow: 2, startColumn: 4, endColumn: 4 }, // "B" under Type
-              { startRow: 1, endRow: 2, startColumn: 5, endColumn: 5 }, // "C" under Type
-              { startRow: 0, endRow: 0, startColumn: 6, endColumn: 7 }, // "Remarks"
-              { startRow: 1, endRow: 2, startColumn: 6, endColumn: 6 }, // "A" under Remarks
-              { startRow: 1, endRow: 2, startColumn: 7, endColumn: 7 }, // "B" under Remarks
-            ],
+            columnCount,
+            cellData,
+            mergeData,
           },
         },
       });
@@ -176,7 +182,7 @@ function LabTestEntry() {
       const subUnitId = sheet.getSheetId();
       const permission = workbook.getPermission();
 
-      const range = sheet.getRange("A1:H3");
+      const range = sheet.getRange(headerRange);
 
       const rangeProtectionPermissionEditPoint =
         permission.permissionPointsDefinition
@@ -205,6 +211,8 @@ function LabTestEntry() {
           throw new Error("Editing Permission is prohibited");
         }
       });
+
+      sheet.setActiveSelection(sheet.getRange(defaultSelection));
     })();
   }, [testId]);
 
