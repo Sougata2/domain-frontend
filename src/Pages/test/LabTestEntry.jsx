@@ -203,6 +203,11 @@ function LabTestEntry() {
       setTestWorkBook(workbook);
 
       univerApi.onBeforeCommandExecute((command) => {
+        if (command.id === "sheet.command.insert-sheet") {
+          toast.warning("Creation of new sheet is prohibited");
+          throw new Error("Creation of new sheet is prohibited");
+        }
+
         if (
           command.id ===
           "sheet.command.delete-range-protection-from-context-menu"
