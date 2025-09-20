@@ -178,7 +178,8 @@ function LabTestEntry() {
       const range = sheet.getRange("A1:H3");
 
       const rangeProtectionPermissionEditPoint =
-        permission.permissionPointsDefinition.WorksheetEditPermission;
+        permission.permissionPointsDefinition
+          .RangeProtectionPermissionEditPoint;
 
       const res = await permission.addRangeBaseProtection(unitId, subUnitId, [
         range,
