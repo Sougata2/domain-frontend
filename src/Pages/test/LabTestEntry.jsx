@@ -32,7 +32,7 @@ import SheetsUIEnUS from "@univerjs/sheets-ui/locale/en-US";
 import SheetsEnUS from "@univerjs/sheets/locale/en-US";
 import { UniverUIPlugin } from "@univerjs/ui";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 
 import UIEnUS from "@univerjs/ui/locale/en-US";
@@ -54,6 +54,8 @@ import "@univerjs/sheets-numfmt/facade";
 function LabTestEntry() {
   const { id: testId } = useParams();
   const sheetContainerRef = useRef(null);
+
+  const [testWorkBook, setTestWorkBook] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -176,8 +178,7 @@ function LabTestEntry() {
       const range = sheet.getRange("A1:H3");
 
       const rangeProtectionPermissionEditPoint =
-        permission.permissionPointsDefinition
-          .RangeProtectionPermissionEditPoint;
+        permission.permissionPointsDefinition.WorksheetEditPermission;
 
       const res = await permission.addRangeBaseProtection(unitId, subUnitId, [
         range,
@@ -190,8 +191,26 @@ function LabTestEntry() {
         rangeProtectionPermissionEditPoint,
         false
       );
+
+      setTestWorkBook(workbook);
     })();
   }, [testId]);
+
+  useEffect(() => {
+    const handler = async (e) => {
+      if (e.ctrlKey && e.key === "s" && testWorkBook !== null) {
+        e.preventDefault();
+        await testWorkBook.endEditingAsync(true);
+        const snap = testWorkBook.getActiveSheet().getSheet().getSnapshot();
+        console.log(snap.cellData);
+      }
+    };
+    document.addEventListener("keydown", handler);
+
+    return () => {
+      document.removeEventListener("keydown", handler);
+    };
+  }, [testWorkBook]);
 
   return (
     <div className="flex justify-center items-center h-[95%]">
@@ -200,7 +219,18 @@ function LabTestEntry() {
           <CardTitle>%TEST NAME%</CardTitle>
           <CardDescription>Enter the test data below</CardDescription>
           <CardAction>
-            <Button>Submit Report</Button>
+            <Button
+              onClick={async () => {
+                await testWorkBook.endEditingAsync(true);
+                const snap = testWorkBook
+                  .getActiveSheet()
+                  .getSheet()
+                  .getSnapshot();
+                console.log(snap);
+              }}
+            >
+              Submit Report
+            </Button>
           </CardAction>
         </CardHeader>
         <CardContent className={"h-full"}>
