@@ -50,6 +50,7 @@ import "@univerjs/sheets/facade";
 import "@univerjs/sheets-ui/facade";
 import "@univerjs/sheets-formula/facade";
 import "@univerjs/sheets-numfmt/facade";
+import { toast } from "sonner";
 
 function LabTestEntry() {
   const { id: testId } = useParams();
@@ -194,6 +195,16 @@ function LabTestEntry() {
       );
 
       setTestWorkBook(workbook);
+
+      univerApi.onBeforeCommandExecute((command) => {
+        if (
+          command.id ===
+          "sheet.command.delete-range-protection-from-context-menu"
+        ) {
+          toast.warning("Editing Permission is prohibited");
+          throw new Error("Editing Permission is prohibited");
+        }
+      });
     })();
   }, [testId]);
 
