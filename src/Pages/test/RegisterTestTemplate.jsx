@@ -46,6 +46,7 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { PiWarningCircleLight } from "react-icons/pi";
+import axios from "axios";
 
 const defaultValues = {
   name: "",
@@ -149,10 +150,27 @@ function RegisterTestTemplate() {
     })();
   }, []);
 
+  function checkForCellWithSpaces(cellData) {
+    for (const row in cellData) {
+      for (const value in cellData[row]) {
+        if (cellData[row][value].v.match(/\s+/)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   async function handleOnSubmit(data) {
     try {
       await templateWorkBook.endEditingAsync(true);
       const snap = templateWorkBook.getActiveSheet().getSheet().getSnapshot();
+      if (checkForCellWithSpaces(snap.cellData)) {
+        setTemplateError("Spaces are not allowed");
+        return;
+      } else if (!checkForCellWithSpaces(snap.cellData)) {
+        setTemplateError("");
+      }
       if (Object.keys(snap.cellData).length <= 0) {
         setTemplateError("Test template is required");
         return;
@@ -166,10 +184,10 @@ function RegisterTestTemplate() {
         mergeData: JSON.stringify(snap.mergeData),
       };
 
+      const _ = await axios.post("/lab-test-template", payload);
+      toast.success("Success", { description: "Lab Test Template registered" });
       reset(defaultValues);
       templateWorkBook.getActiveSheet().clear();
-
-      console.log(payload);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
