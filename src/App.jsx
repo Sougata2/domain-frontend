@@ -74,6 +74,7 @@ import JobView from "./Pages/Task/job/JobView";
 import LabTestEntry from "./Pages/test/LabTestEntry";
 import RegisterTestTemplate from "./Pages/test/RegisterTestTemplate";
 import ManageLabTestTemplates from "./Pages/test/ManageLabTestTemplates";
+import EditLabTestTemplate from "./Pages/test/EditLabTestTemplate";
 
 function App() {
   const dispatch = useDispatch();
@@ -233,6 +234,10 @@ function App() {
         <Route
           path={"/manage-lab-test-templates"}
           element={<ManageLabTestTemplates />}
+        />
+        <Route
+          path={"/edit-lab-test-template/:id"}
+          element={<EditLabTestTemplate />}
         />
       </Route>
     </Routes>
