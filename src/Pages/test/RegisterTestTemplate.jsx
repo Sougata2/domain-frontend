@@ -153,8 +153,6 @@ function RegisterTestTemplate() {
   function checkForCellWithSpaces(cellData) {
     for (const row in cellData) {
       for (const value in cellData[row]) {
-        console.log(cellData[row][value]);
-
         if (
           cellData[row][value]?.v &&
           /^[a-zA-Z]*$/.test(cellData[row][value]) &&
@@ -182,6 +180,14 @@ function RegisterTestTemplate() {
         return;
       } else if (Object.keys(snap.cellData).length > 0) {
         setTemplateError("");
+      }
+
+      for (const row in snap.cellData) {
+        for (const col in snap.cellData[row]) {
+          if (Object.keys(snap.cellData[row][col]).includes("v")) {
+            snap.cellData[row][col]["s"] = "header";
+          }
+        }
       }
 
       const payload = {
@@ -220,10 +226,10 @@ function RegisterTestTemplate() {
         <div className="flex flex-col gap-3 h-[26rem]">
           <Label>
             <span>Template</span>
-            {/* <span className="text-slate-500">
+            <span className="text-slate-500">
               ( <PiWarningCircleLight className="inline" /> only the template
               structure will be saved, not the style)
-            </span> */}
+            </span>
           </Label>
           <div
             ref={sheetContainerRef}

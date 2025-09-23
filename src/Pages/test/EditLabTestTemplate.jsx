@@ -200,8 +200,6 @@ function EditLabTestTemplate() {
   function checkForCellWithSpaces(cellData) {
     for (const row in cellData) {
       for (const value in cellData[row]) {
-        console.log(cellData[row][value]);
-
         if (
           cellData[row][value]?.v &&
           /^[a-zA-Z]*$/.test(cellData[row][value]) &&
@@ -231,6 +229,17 @@ function EditLabTestTemplate() {
         setTemplateError("");
       }
 
+      for (const row in snap.cellData) {
+        for (const col in snap.cellData[row]) {
+          if (
+            Object.keys(snap.cellData[row][col]).includes("v") &&
+            Object.keys(snap.cellData[row][col]).includes("s")
+          ) {
+            snap.cellData[row][col]["s"] = "header";
+          }
+        }
+      }
+
       const payload = {
         ...data,
         header: JSON.stringify(snap.cellData),
@@ -239,8 +248,8 @@ function EditLabTestTemplate() {
 
       const _ = await axios.put("/lab-test-template", payload);
       toast.info("Success", { description: "Lab Test Template Updated" });
-      reset(defaultValues);
       templateWorkBook.getActiveSheet().clear();
+      await fetchTemplate();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
