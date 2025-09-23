@@ -47,6 +47,7 @@ import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import FormInput from "@/DomainComponents/FormInput";
 import { Button } from "@/components/ui/button";
+import { PiWarningCircleLight } from "react-icons/pi";
 
 const defaultValues = {
   name: "",
@@ -65,7 +66,6 @@ const styles = {
       l: { s: 1, cl: { rgb: "#333" } },
       r: { s: 1, cl: { rgb: "#333" } },
     },
-    textIndent: 2,
   },
 };
 
@@ -275,10 +275,10 @@ function EditLabTestTemplate() {
         <div className="flex flex-col gap-3 h-[26rem]">
           <Label>
             <span>Template</span>
-            {/* <span className="text-slate-500">
+            <span className="text-slate-500">
               ( <PiWarningCircleLight className="inline" /> only the template
               structure will be saved, not the style)
-            </span> */}
+            </span>
           </Label>
           <div
             ref={sheetContainerRef}
