@@ -58,7 +58,6 @@ const styles = {
   header: {
     ht: 2, // center horizontally
     vt: 2, // middle vertically
-    bl: false, // bold
     bg: { rgb: "#f2f2f2" },
     bd: {
       t: { s: 1, cl: { rgb: "#333" } },
