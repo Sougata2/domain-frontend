@@ -39,7 +39,7 @@ function TestCard({ jobId }) {
     {
       accessorKey: "id",
       header: () => {
-        return <div>Actions</div>;
+        return <div></div>;
       },
       cell: ({ row }) => {
         return (
