@@ -32,7 +32,7 @@ import SheetsUIEnUS from "@univerjs/sheets-ui/locale/en-US";
 import SheetsEnUS from "@univerjs/sheets/locale/en-US";
 import { UniverUIPlugin } from "@univerjs/ui";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 
 import UIEnUS from "@univerjs/ui/locale/en-US";
@@ -51,60 +51,12 @@ import "@univerjs/sheets-ui/facade";
 import "@univerjs/sheets-formula/facade";
 import "@univerjs/sheets-numfmt/facade";
 import { toast } from "sonner";
-
-const cellData = {
-  0: {
-    0: { v: "No.", s: "header" },
-    1: { v: "Type", s: "header" },
-    2: { v: "", s: "header" },
-    3: { v: "", s: "header" },
-    4: { v: "", s: "header" },
-    5: { v: "", s: "header" },
-    6: { v: "Remarks", s: "header" },
-    7: { v: "", s: "header" },
-  },
-  1: {
-    0: { v: "", s: "header" },
-    1: { v: "A", s: "header" },
-    2: { v: "", s: "header" },
-    3: { v: "", s: "header" },
-    4: { v: "B", s: "header" },
-    5: { v: "C", s: "header" },
-    6: { v: "A", s: "header" },
-    7: { v: "B", s: "header" },
-  },
-  2: {
-    0: { v: "", s: "header" },
-    1: { v: "1", s: "header" },
-    2: { v: "2", s: "header" },
-    3: { v: "3", s: "header" },
-    4: { v: "", s: "header" },
-    5: { v: "", s: "header" },
-    6: { v: "", s: "header" },
-    7: { v: "", s: "header" },
-  },
-};
-
-const mergeData = [
-  { startRow: 0, endRow: 2, startColumn: 0, endColumn: 0 }, // "No."
-  { startRow: 0, endRow: 0, startColumn: 1, endColumn: 5 }, // "Type"
-  { startRow: 1, endRow: 1, startColumn: 1, endColumn: 3 }, // "A" under Type
-  { startRow: 1, endRow: 2, startColumn: 4, endColumn: 4 }, // "B" under Type
-  { startRow: 1, endRow: 2, startColumn: 5, endColumn: 5 }, // "C" under Type
-  { startRow: 0, endRow: 0, startColumn: 6, endColumn: 7 }, // "Remarks"
-  { startRow: 1, endRow: 2, startColumn: 6, endColumn: 6 }, // "A" under Remarks
-  { startRow: 1, endRow: 2, startColumn: 7, endColumn: 7 }, // "B" under Remarks
-];
-
-const columnCount = 8;
-const headerRange = "A1:H3";
-const defaultSelection = "A4:A4";
+import axios from "axios";
 
 const styles = {
   header: {
     ht: 2, // center horizontally
     vt: 2, // middle vertically
-    bl: true, // bold
     bg: { rgb: "#f2f2f2" },
     bd: {
       t: { s: 1, cl: { rgb: "#333" } },
@@ -116,10 +68,34 @@ const styles = {
 };
 
 function LabTestEntry() {
-  const { id: testId } = useParams();
+  const { id: templateId } = useParams();
   const sheetContainerRef = useRef(null);
 
   const [testWorkBook, setTestWorkBook] = useState(null);
+  const [template, setTemplate] = useState({
+    header: {},
+    mergeData: [],
+  });
+
+  const fetchTemplate = useCallback(async () => {
+    try {
+      const response = await axios.get(`/lab-test-template/${templateId}`);
+      const data = response.data;
+      setTemplate({
+        ...data,
+        header: JSON.parse(data.header),
+        mergeData: JSON.parse(data.mergeData),
+      });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [templateId]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchTemplate();
+    })();
+  }, [fetchTemplate]);
 
   useEffect(() => {
     (async () => {
@@ -160,17 +136,19 @@ function LabTestEntry() {
 
       univer.createUnit(UniverInstanceType.UNIVER_SHEET, {
         id: "workbook-1",
-        name: "Lab Report",
-        sheetOrder: [testId],
+        name: "test-template",
+        sheetOrder: ["sheet1"],
         styles,
         sheets: {
-          [testId]: {
-            id: testId,
-            name: testId,
+          sheet1: {
+            id: "sheet1",
+            name: "sheet1",
             rowCount: 100,
-            columnCount,
-            cellData,
-            mergeData,
+            columnCount: template.columnCount ?? 20,
+            cellData: {
+              ...template?.header,
+            },
+            mergeData: [...template.mergeData],
           },
         },
       });
@@ -182,7 +160,7 @@ function LabTestEntry() {
       const subUnitId = sheet.getSheetId();
       const permission = workbook.getPermission();
 
-      const range = sheet.getRange(headerRange);
+      const range = sheet.getRange(template.headerRange ?? "A1:A1");
 
       const rangeProtectionPermissionEditPoint =
         permission.permissionPointsDefinition
@@ -226,9 +204,20 @@ function LabTestEntry() {
         }
       });
 
-      sheet.setActiveSelection(sheet.getRange(defaultSelection));
+      sheet.setActiveSelection(
+        sheet.getRange(template.defaultSelection ?? "A1:A1")
+      );
     })();
-  }, [testId]);
+  }, [
+    template.cellData,
+    template.columnCount,
+    template.defaultSelection,
+    template?.header,
+    template.headerRange,
+    template.mergeData,
+    template.name,
+    templateId,
+  ]);
 
   useEffect(() => {
     const handler = async (e) => {
@@ -250,7 +239,7 @@ function LabTestEntry() {
     <div className="flex justify-center items-center h-[95%]">
       <Card className="flex w-[85%] h-full">
         <CardHeader>
-          <CardTitle>%TEST NAME%</CardTitle>
+          <CardTitle>{template.name}</CardTitle>
           <CardDescription>Enter the test data below</CardDescription>
           <CardAction>
             <Button
@@ -263,7 +252,7 @@ function LabTestEntry() {
                 console.log(snap);
               }}
             >
-              Submit Report
+              Save
             </Button>
           </CardAction>
         </CardHeader>
