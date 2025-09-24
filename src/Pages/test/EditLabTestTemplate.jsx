@@ -154,7 +154,7 @@ function EditLabTestTemplate() {
             id: "sheet1",
             name: "sheet1",
             rowCount: 10,
-            columnCount: 20,
+            columnCount: template.columnCount ?? 20,
             cellData: {
               ...template?.header,
             },
@@ -167,6 +167,25 @@ function EditLabTestTemplate() {
       const workbook = univerApi.getActiveWorkbook();
       const unitId = workbook.getId();
       const permission = workbook.getPermission();
+      const sheet = workbook.getActiveSheet();
+      const subUnitId = sheet.getSheetId();
+      const range = sheet.getRange(template.headerRange ?? "A1:A1");
+
+      const rangeProtectionPermissionEditPoint =
+        permission.permissionPointsDefinition
+          .RangeProtectionPermissionEditPoint;
+
+      const res = await permission.addRangeBaseProtection(unitId, subUnitId, [
+        range,
+      ]);
+
+      permission.setRangeProtectionPermissionPoint(
+        unitId,
+        subUnitId,
+        res.permissionId,
+        rangeProtectionPermissionEditPoint,
+        false
+      );
 
       const workbookCreateSheetPermission =
         permission.permissionPointsDefinition.WorkbookCreateSheetPermission;
@@ -193,8 +212,17 @@ function EditLabTestTemplate() {
           throw new Error("Editing Permission is prohibited");
         }
       });
+      sheet.setActiveSelection(
+        sheet.getRange(template.defaultSelection ?? "A1:A1")
+      );
     })();
-  }, [template.header, template.mergeData]);
+  }, [
+    template.columnCount,
+    template.defaultSelection,
+    template?.header,
+    template.headerRange,
+    template.mergeData,
+  ]);
 
   function checkForCellWithSpaces(cellData) {
     for (const row in cellData) {
