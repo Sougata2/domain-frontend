@@ -200,6 +200,15 @@ function LabTestEntry() {
         false
       );
 
+      const workbookCreateSheetPermission =
+        permission.permissionPointsDefinition.WorkbookCreateSheetPermission;
+
+      permission.setWorkbookPermissionPoint(
+        unitId,
+        workbookCreateSheetPermission,
+        false
+      );
+
       setTestWorkBook(workbook);
 
       univerApi.onBeforeCommandExecute((command) => {
