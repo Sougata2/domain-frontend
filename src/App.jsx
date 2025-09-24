@@ -75,6 +75,7 @@ import LabTestEntry from "./Pages/test/LabTestEntry";
 import RegisterTestTemplate from "./Pages/test/RegisterTestTemplate";
 import ManageLabTestTemplates from "./Pages/test/ManageLabTestTemplates";
 import EditLabTestTemplate from "./Pages/test/EditLabTestTemplate";
+import MapTestTemplateToSubService from "./Pages/test/MapTestTemplateToSubService";
 
 function App() {
   const dispatch = useDispatch();
@@ -238,6 +239,10 @@ function App() {
         <Route
           path={"/edit-lab-test-template/:id"}
           element={<EditLabTestTemplate />}
+        />
+        <Route
+          path={"/map-test-template-to-sub-service"}
+          element={<MapTestTemplateToSubService />}
         />
       </Route>
     </Routes>
