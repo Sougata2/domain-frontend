@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { Link } from "react-router";
 
 import DataTable from "@/DomainComponents/DataTable";
+import { GrDocumentTest } from "react-icons/gr";
 import axios from "axios";
 
 function TestCard({ jobId }) {
@@ -42,21 +43,9 @@ function TestCard({ jobId }) {
       },
       cell: ({ row }) => {
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Ellipsis />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <CiEdit />
-                  <Link to={`/lab-test-entry/${row.getValue("id")}`}>
-                    Enter Test Records
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Link to={`/lab-test-entry/${row.getValue("id")}`}>
+            <GrDocumentTest size={17} />
+          </Link>
         );
       },
     },
