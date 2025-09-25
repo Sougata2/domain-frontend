@@ -235,6 +235,29 @@ function LabTestEntry() {
     };
   }, [testWorkBook]);
 
+  async function handleSubmit() {
+    try {
+      await testWorkBook.endEditingAsync(true);
+      const snap = testWorkBook.getActiveSheet().getSheet().getSnapshot();
+      const headerRows = Object.keys(template.header).map((k) => Number(k));
+      const payload = [];
+      for (const key in snap.cellData) {
+        if (headerRows.includes(Number(key))) {
+          delete snap.cellData[Number(key)];
+        } else {
+          payload.push({
+            order: Number(key),
+            value: snap.cellData[Number(key)],
+            testTemplate: { id: Number(templateId) },
+          });
+        }
+      }
+      console.log(payload);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   return (
     <div className="flex justify-center items-center h-[95%]">
       <Card className="flex w-[85%] h-full">
@@ -242,18 +265,7 @@ function LabTestEntry() {
           <CardTitle>{template.name}</CardTitle>
           <CardDescription>Enter the test data below</CardDescription>
           <CardAction>
-            <Button
-              onClick={async () => {
-                await testWorkBook.endEditingAsync(true);
-                const snap = testWorkBook
-                  .getActiveSheet()
-                  .getSheet()
-                  .getSnapshot();
-                console.log(snap);
-              }}
-            >
-              Save
-            </Button>
+            <Button onClick={handleSubmit}>Save</Button>
           </CardAction>
         </CardHeader>
         <CardContent className={"h-full"}>
