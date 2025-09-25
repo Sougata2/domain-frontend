@@ -87,7 +87,7 @@ function JobView() {
               value={
                 <div className="flex gap-1.5">
                   {deviceDetails.activities?.map((a) => (
-                    <Badge>{a.name}</Badge>
+                    <Badge key={a.id}>{a.name}</Badge>
                   ))}
                 </div>
               }
@@ -97,7 +97,7 @@ function JobView() {
               value={
                 <div className="flex gap-1.5">
                   {deviceDetails.specifications?.map((s) => (
-                    <Badge>{s.name}</Badge>
+                    <Badge key={s.id}>{s.name}</Badge>
                   ))}
                 </div>
               }
