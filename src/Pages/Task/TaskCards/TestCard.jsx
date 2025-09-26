@@ -35,7 +35,7 @@ function TestCard({ jobId }) {
       },
       cell: ({ row }) => {
         return (
-          <Link to={`/lab-test-entry/${row.getValue("id")}`}>
+          <Link to={`/lab-test-entry/${jobId}/${row.getValue("id")}`}>
             <GrDocumentTest size={17} />
           </Link>
         );

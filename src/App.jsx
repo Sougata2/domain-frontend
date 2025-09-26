@@ -227,7 +227,10 @@ function App() {
         />
         <Route path={"/job-list"} element={<JobList />} />
         <Route path={"/job-view/:id"} element={<JobView />} />
-        <Route path={"/lab-test-entry/:id"} element={<LabTestEntry />} />
+        <Route
+          path={"/lab-test-entry/:jobId/:templateId"}
+          element={<LabTestEntry />}
+        />
         <Route
           path={"register-test-template"}
           element={<RegisterTestTemplate />}

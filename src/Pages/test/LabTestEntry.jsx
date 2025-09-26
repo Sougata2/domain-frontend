@@ -68,7 +68,7 @@ const styles = {
 };
 
 function LabTestEntry() {
-  const { id: templateId } = useParams();
+  const { jobId, templateId } = useParams();
   const sheetContainerRef = useRef(null);
 
   const [testWorkBook, setTestWorkBook] = useState(null);
@@ -240,18 +240,17 @@ function LabTestEntry() {
       await testWorkBook.endEditingAsync(true);
       const snap = testWorkBook.getActiveSheet().getSheet().getSnapshot();
       const headerRows = Object.keys(template.header).map((k) => Number(k));
-      const payload = [];
       for (const key in snap.cellData) {
         if (headerRows.includes(Number(key))) {
           delete snap.cellData[Number(key)];
-        } else {
-          payload.push({
-            order: Number(key),
-            value: snap.cellData[Number(key)],
-            testTemplate: { id: Number(templateId) },
-          });
         }
       }
+      const payload = {
+        job: { id: Number(jobId) },
+        template: { id: Number(templateId) },
+        cellData: snap.cellData,
+      };
+
       console.log(payload);
     } catch (error) {
       toast.error(error.message);
