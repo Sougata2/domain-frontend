@@ -248,10 +248,12 @@ function LabTestEntry() {
       const payload = {
         job: { id: Number(jobId) },
         template: { id: Number(templateId) },
-        cellData: snap.cellData,
+        cellData: JSON.stringify(snap.cellData),
       };
 
-      console.log(payload);
+      const response = await axios.post("/lab-test-record", payload);
+      const _ = response.data;
+      toast.success("Success", { description: "Test Record Saved" });
     } catch (error) {
       toast.error(error.message);
     }
