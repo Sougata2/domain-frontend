@@ -72,6 +72,7 @@ function LabTestEntry() {
   const sheetContainerRef = useRef(null);
 
   const [testWorkBook, setTestWorkBook] = useState(null);
+  const [testRecords, setTestRecords] = useState({});
   const [template, setTemplate] = useState({
     header: {},
     mergeData: [],
@@ -91,11 +92,30 @@ function LabTestEntry() {
     }
   }, [templateId]);
 
+  const fetchRecords = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/lab-test-record/by-template-and-job-id?template=${templateId}&job=${jobId}`
+      );
+      const data = response.data;
+      setTestRecords({ ...data, cellData: JSON.parse(data.cellData) });
+    } catch (error) {
+      if (error.status !== 404)
+        toast.error("Error", { description: error.message });
+    }
+  }, [jobId, templateId]);
+
   useEffect(() => {
     (async () => {
       await fetchTemplate();
     })();
   }, [fetchTemplate]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchRecords();
+    })();
+  }, [fetchRecords]);
 
   useEffect(() => {
     (async () => {
@@ -143,10 +163,10 @@ function LabTestEntry() {
           sheet1: {
             id: "sheet1",
             name: "sheet1",
-            rowCount: 100,
             columnCount: template.columnCount ?? 20,
             cellData: {
               ...template?.header,
+              ...testRecords.cellData,
             },
             mergeData: [...template.mergeData],
           },
@@ -196,8 +216,11 @@ function LabTestEntry() {
         }
 
         if (
-          command.id ===
-          "sheet.command.delete-range-protection-from-context-menu"
+          [
+            "sheet.command.delete-range-protection-from-context-menu",
+            "sheet.command.set-range-protection-from-context-menu",
+            "sheet.command.view-sheet-permission-from-context-menu",
+          ].includes(command.id)
         ) {
           toast.warning("Editing Permission is prohibited");
           throw new Error("Editing Permission is prohibited");
@@ -208,16 +231,7 @@ function LabTestEntry() {
         sheet.getRange(template.defaultSelection ?? "A1:A1")
       );
     })();
-  }, [
-    template.cellData,
-    template.columnCount,
-    template.defaultSelection,
-    template?.header,
-    template.headerRange,
-    template.mergeData,
-    template.name,
-    templateId,
-  ]);
+  }, [testRecords, template, templateId]);
 
   useEffect(() => {
     const handler = async (e) => {
@@ -246,14 +260,21 @@ function LabTestEntry() {
         }
       }
       const payload = {
+        ...(testRecords?.id ? { id: testRecords.id } : {}),
         job: { id: Number(jobId) },
         template: { id: Number(templateId) },
         cellData: JSON.stringify(snap.cellData),
       };
 
-      const response = await axios.post("/lab-test-record", payload);
-      const _ = response.data;
-      toast.success("Success", { description: "Test Record Saved" });
+      if (testRecords?.id) {
+        await axios.put("/lab-test-record", payload);
+        toast.info("Success", { description: "Test Record Updated" });
+      } else {
+        await axios.post("/lab-test-record", payload);
+        toast.success("Success", { description: "Test Record Saved" });
+      }
+      await fetchTemplate();
+      await fetchRecords();
     } catch (error) {
       toast.error(error.message);
     }
