@@ -29,6 +29,24 @@ function TestCard({ jobId }) {
       },
     },
     {
+      accessorKey: "recordCount",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Test Record Count
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div className="ps-3">{row.getValue("recordCount")}</div>;
+      },
+    },
+    {
       accessorKey: "id",
       header: () => {
         return <div></div>;
@@ -54,11 +72,29 @@ function TestCard({ jobId }) {
     }
   }, [jobId]);
 
+  const fetchRecordCount = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `/lab-test-record/get-record-count/${jobId}`
+      );
+      const data = response.data;
+      setTemplates((prevState) => {
+        return prevState.map((t) => ({
+          ...t,
+          recordCount: Number(data[t.id] ?? 0),
+        }));
+      });
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [jobId]);
+
   useEffect(() => {
     (async () => {
       await fetchTemplates();
+      await fetchRecordCount();
     })();
-  }, [fetchTemplates]);
+  }, [fetchRecordCount, fetchTemplates]);
 
   return (
     <div className="flex flex-col">
