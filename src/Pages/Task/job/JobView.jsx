@@ -109,8 +109,8 @@ function JobView() {
       {jobDetails.assignee?.id === assignerId && (
         <Card className={"w-3xl"}>
           <CardHeader>
-            <CardTitle>Task Action</CardTitle>
-            <CardDescription>take action for this application</CardDescription>
+            <CardTitle>Job Action</CardTitle>
+            <CardDescription>take action for this Job</CardDescription>
           </CardHeader>
           <CardContent>
             <TaskCardProvider
