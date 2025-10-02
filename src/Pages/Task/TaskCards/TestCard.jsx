@@ -1,14 +1,17 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { GrDocumentTest } from "react-icons/gr";
 import { ArrowUpDown } from "lucide-react";
+import { useSelector } from "react-redux";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Link } from "react-router";
 
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
 
 function TestCard({ jobId }) {
+  const navigate = useNavigate();
+  const { id: assignerId } = useSelector((state) => state.user);
   const columns = [
     {
       accessorKey: "name",
@@ -96,11 +99,30 @@ function TestCard({ jobId }) {
     })();
   }, [fetchRecordCount, fetchTemplates]);
 
+  async function handleSubmitReport() {
+    try {
+      const response = await axios.get(`/workflow-action/by-job-id/${jobId}`);
+      const data = response.data;
+
+      const payload = {
+        job: { id: jobId },
+        workFlowAction: { id: data[0].id },
+        assigner: { id: assignerId },
+      };
+
+      await axios.post("/job/do-next", payload);
+      toast.success("Success", { description: "Test Report Submitted" });
+      navigate("/job-list");
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
   return (
     <div className="flex flex-col">
       <div className="flex justify-between">
         <div className="text-xl font-bold">Test Report</div>
-        <Button>Submit Report</Button>
+        <Button onClick={handleSubmitReport}>Submit Report</Button>
       </div>
       <div className="w-full">
         <DataTable
