@@ -72,8 +72,6 @@ function LabTestEntry() {
   const [searchParams] = useSearchParams();
   const sheetContainerRef = useRef(null);
 
-  console.log(searchParams.get("view"));
-
   const [testWorkBook, setTestWorkBook] = useState(null);
   const [testRecords, setTestRecords] = useState({});
   const [template, setTemplate] = useState({
