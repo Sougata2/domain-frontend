@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
 
-function TestCard({ jobId }) {
+function TestCard({ jobId, view }) {
   const navigate = useNavigate();
   const { id: assignerId } = useSelector((state) => state.user);
   const columns = [
@@ -55,8 +55,11 @@ function TestCard({ jobId }) {
         return <div></div>;
       },
       cell: ({ row }) => {
+        const link = view
+          ? `/lab-test-entry/${jobId}/${row.getValue("id")}?view=true`
+          : `/lab-test-entry/${jobId}/${row.getValue("id")}`;
         return (
-          <Link to={`/lab-test-entry/${jobId}/${row.getValue("id")}`}>
+          <Link to={link}>
             <GrDocumentTest size={17} />
           </Link>
         );

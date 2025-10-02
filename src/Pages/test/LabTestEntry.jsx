@@ -33,7 +33,7 @@ import SheetsEnUS from "@univerjs/sheets/locale/en-US";
 import { UniverUIPlugin } from "@univerjs/ui";
 import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 
 import UIEnUS from "@univerjs/ui/locale/en-US";
 
@@ -69,7 +69,10 @@ const styles = {
 
 function LabTestEntry() {
   const { jobId, templateId } = useParams();
+  const [searchParams] = useSearchParams();
   const sheetContainerRef = useRef(null);
+
+  console.log(searchParams.get("view"));
 
   const [testWorkBook, setTestWorkBook] = useState(null);
   const [testRecords, setTestRecords] = useState({});
@@ -207,6 +210,16 @@ function LabTestEntry() {
         false
       );
 
+      if (searchParams.get("view")) {
+        const workbookEditablePermission =
+          permission.permissionPointsDefinition.WorkbookEditablePermission;
+        permission.setWorkbookPermissionPoint(
+          unitId,
+          workbookEditablePermission,
+          false
+        );
+      }
+
       setTestWorkBook(workbook);
 
       univerApi.onBeforeCommandExecute((command) => {
@@ -231,7 +244,7 @@ function LabTestEntry() {
         sheet.getRange(template.defaultSelection ?? "A1:A1")
       );
     })();
-  }, [testRecords, template, templateId]);
+  }, [testRecords, template, templateId, searchParams]);
 
   useEffect(() => {
     const handler = async (e) => {
@@ -286,9 +299,11 @@ function LabTestEntry() {
         <CardHeader>
           <CardTitle>{template.name}</CardTitle>
           <CardDescription>Enter the test data below</CardDescription>
-          <CardAction>
-            <Button onClick={handleSubmit}>Save</Button>
-          </CardAction>
+          {!searchParams.get("view") && (
+            <CardAction>
+              <Button onClick={handleSubmit}>Save</Button>
+            </CardAction>
+          )}
         </CardHeader>
         <CardContent className={"h-full"}>
           <div ref={sheetContainerRef} className="h-full w-full" />

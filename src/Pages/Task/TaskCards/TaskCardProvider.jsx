@@ -18,6 +18,8 @@ function TaskCardProvider({ referenceNumber, jobId, actionType }) {
       return <PaymentCard referenceNumber={referenceNumber} />;
     case "TEST_CARD":
       return <TestCard jobId={jobId} />;
+    case "TEST_REPORT_VIEW":
+      return <TestCard jobId={jobId} view={true} />;
     case "NONE":
       return <div>Action form not decided yet</div>;
     default:
