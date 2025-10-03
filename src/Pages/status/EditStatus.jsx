@@ -22,6 +22,7 @@ export default function EditStatus() {
   const defaultValues = {
     name: "",
     description: "",
+    postDescription: "",
   };
 
   const { id: statusId } = useParams();
@@ -58,11 +59,13 @@ export default function EditStatus() {
 
   async function submitHandler(payload) {
     try {
-      const { id, name, description, actionType, ..._ } = payload;
+      const { id, name, description, actionType, postDescription, ..._ } =
+        payload;
       const response = await axios.put("/status", {
         id,
         name,
         description,
+        postDescription,
         actionType: actionType.value,
       });
       const data = response.data;
@@ -106,6 +109,18 @@ export default function EditStatus() {
             required: {
               value: true,
               message: "Status Description is required",
+            },
+          }}
+        />
+        <FormInput
+          label={"Status Post Description"}
+          name={"postDescription"}
+          register={register}
+          error={errors.postDescription}
+          validation={{
+            required: {
+              value: true,
+              message: "Status Post Description is required",
             },
           }}
         />

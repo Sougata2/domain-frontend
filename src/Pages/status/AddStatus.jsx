@@ -19,6 +19,7 @@ export default function AddStatus() {
   const defaultValues = {
     name: "",
     description: "",
+    postDescription: "",
     actionType: "",
   };
 
@@ -80,6 +81,18 @@ export default function AddStatus() {
             required: {
               value: true,
               message: "Status Description is required",
+            },
+          }}
+        />
+        <FormInput
+          label={"Status Post Description"}
+          name={"postDescription"}
+          register={register}
+          error={errors.postDescription}
+          validation={{
+            required: {
+              value: true,
+              message: "Status Post Description is required",
             },
           }}
         />

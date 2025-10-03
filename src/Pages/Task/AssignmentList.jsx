@@ -36,7 +36,7 @@ function AssignmentList() {
         cell: (row) => <div>{row.getValue()}</div>,
       },
       {
-        accessorKey: "status.description",
+        accessorKey: "status.postDescription",
         header: () => <div>Status</div>,
         cell: (row) => (
           <div>

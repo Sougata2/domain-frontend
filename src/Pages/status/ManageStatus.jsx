@@ -55,6 +55,24 @@ export default function ManageStatus() {
       },
     },
     {
+      accessorKey: "postDescription",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Status Post Description
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.getValue("postDescription")}</div>;
+      },
+    },
+    {
       accessorKey: "actionType",
       header: ({ column }) => {
         return (
