@@ -1,4 +1,5 @@
 import TanstackTable from "@/components/TanstackTable";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +25,13 @@ function JobList() {
       {
         accessorKey: "status.postDescription",
         header: () => <div>Status</div>,
-        cell: (row) => <div>{row.getValue()}</div>,
+        cell: (row) => (
+          <div>
+            <Badge variant={"secondary"} className={"capitalize"}>
+              {row.getValue()}
+            </Badge>
+          </div>
+        ),
       },
       {
         accessorKey: "lab.name",
