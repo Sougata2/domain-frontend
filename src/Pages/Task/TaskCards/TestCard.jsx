@@ -67,6 +67,7 @@ function TestCard({ jobId, view }) {
     },
   ];
   const [templates, setTemplates] = useState([]);
+  const [workFlowAction, setWorkFlowAction] = useState([]);
 
   const fetchTemplates = useCallback(async () => {
     try {
@@ -95,12 +96,23 @@ function TestCard({ jobId, view }) {
     }
   }, [jobId]);
 
+  const fetchWorkFlowAction = useCallback(async () => {
+    try {
+      const response = await axios.get(`/workflow-action/by-job-id/${jobId}`);
+      const data = response.data;
+      setWorkFlowAction(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [jobId]);
+
   useEffect(() => {
     (async () => {
       await fetchTemplates();
       await fetchRecordCount();
+      await fetchWorkFlowAction();
     })();
-  }, [fetchRecordCount, fetchTemplates]);
+  }, [fetchRecordCount, fetchTemplates, fetchWorkFlowAction]);
 
   async function handleSubmitReport() {
     try {
@@ -125,7 +137,7 @@ function TestCard({ jobId, view }) {
     <div className="flex flex-col">
       <div className="flex justify-between">
         <div className="text-xl font-bold">Test Report</div>
-        <Button onClick={handleSubmitReport}>Submit Report</Button>
+        <Button onClick={handleSubmitReport}>{workFlowAction[0]?.name}</Button>
       </div>
       <div className="w-full">
         <DataTable
