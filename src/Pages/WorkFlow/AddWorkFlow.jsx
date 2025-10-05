@@ -49,7 +49,7 @@ function AddWorkFlow() {
       const response = await axios.get("/status/all");
       setStatusOptions(
         response.data.map((d) => ({
-          label: `${d.name} [${d.description}]`,
+          label: `${d.name} [${d.postDescription}]`,
           value: d,
         }))
       );
@@ -65,7 +65,10 @@ function AddWorkFlow() {
       );
       const data = response.data;
       setTargetStatusOptions(
-        data.map((d) => ({ label: `${d.name} [${d.description}]`, value: d }))
+        data.map((d) => ({
+          label: `${d.name} [${d.postDescription}]`,
+          value: d,
+        }))
       );
     } catch (error) {
       toast.error("Error", { description: error.message });
