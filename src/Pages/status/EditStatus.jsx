@@ -21,7 +21,6 @@ const typeOptions = [
 export default function EditStatus() {
   const defaultValues = {
     name: "",
-    description: "",
     postDescription: "",
   };
 
@@ -59,12 +58,10 @@ export default function EditStatus() {
 
   async function submitHandler(payload) {
     try {
-      const { id, name, description, actionType, postDescription, ..._ } =
-        payload;
+      const { id, name, actionType, postDescription, ..._ } = payload;
       const response = await axios.put("/status", {
         id,
         name,
-        description,
         postDescription,
         actionType: actionType.value,
       });
@@ -97,18 +94,6 @@ export default function EditStatus() {
             pattern: {
               value: /^[A-Z]+$/,
               message: "Status Name must be in Caps",
-            },
-          }}
-        />
-        <FormInput
-          label={"Status Description"}
-          name={"description"}
-          register={register}
-          error={errors.description}
-          validation={{
-            required: {
-              value: true,
-              message: "Status Description is required",
             },
           }}
         />

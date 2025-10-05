@@ -18,7 +18,6 @@ const typeOptions = [
 export default function AddStatus() {
   const defaultValues = {
     name: "",
-    description: "",
     postDescription: "",
     actionType: "",
   };
@@ -69,18 +68,6 @@ export default function AddStatus() {
             pattern: {
               value: /^[A-Z]+$/,
               message: "Status Name must be in Caps",
-            },
-          }}
-        />
-        <FormInput
-          label={"Status Description"}
-          name={"description"}
-          register={register}
-          error={errors.description}
-          validation={{
-            required: {
-              value: true,
-              message: "Status Description is required",
             },
           }}
         />
