@@ -52,7 +52,7 @@ function EditWorkFlow() {
       const response = await axios.get("/status/all");
       setStatusOptions(
         response.data.map((d) => ({
-          label: `${d.name} [${d.description}]`,
+          label: `${d.name} [${d.postDescription}]`,
           value: d.id,
         }))
       );
@@ -69,7 +69,7 @@ function EditWorkFlow() {
       const data = response.data;
       setTargetStatusOptions(
         data.map((d) => ({
-          label: `${d.name} [${d.description}]`,
+          label: `${d.name} [${d.postDescription}]`,
           value: d.id,
         }))
       );
