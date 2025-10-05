@@ -3,6 +3,7 @@ import ActionCard from "./ActionCard";
 import ActionCardWithUpload from "./ActionCardWithUpload";
 import PaymentCard from "./PaymentCard";
 import TestCard from "./TestCard";
+import TestReportValidateCard from "./TestReportValidateCard";
 
 function TaskCardProvider({ referenceNumber, jobId, actionType }) {
   switch (actionType) {
@@ -19,7 +20,7 @@ function TaskCardProvider({ referenceNumber, jobId, actionType }) {
     case "TEST_CARD":
       return <TestCard jobId={jobId} />;
     case "TEST_REPORT_VIEW":
-      return <TestCard jobId={jobId} view={true} />;
+      return <TestReportValidateCard jobId={jobId} />;
     case "NONE":
       return <div>Action form not decided yet</div>;
     default:
