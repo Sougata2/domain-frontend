@@ -96,7 +96,7 @@ function EditWorkFlow() {
         ...data,
         status: { label: data.status.name, value: data.status.id },
         targetStatus: {
-          label: `${data.targetStatus.name} [${data.targetStatus.description}]`,
+          label: `${data.targetStatus.name} [${data.targetStatus.postDescription}]`,
           value: data.targetStatus.id,
         },
         targetRole: { label: data.targetRole.name, value: data.targetRole.id },
