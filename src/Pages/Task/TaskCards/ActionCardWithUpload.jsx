@@ -112,33 +112,40 @@ function ActionCardWithUpload({ referenceNumber, jobId }) {
         assignee: { id: data.assignee.value.id },
       };
 
-      const file = payload.file[0];
-      const formData = new FormData();
-      formData.append("file", file);
+      if (payload.file.length > 0) {
+        const file = payload.file[0];
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const uploadResponse = await axios.post("/file/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+        const uploadResponse = await axios.post("/file/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
-      const uploadResponseData = uploadResponse.data;
-      if (uploadResponseData) {
-        payload.file = { id: uploadResponseData.id };
-
-        if (jobId) {
-          await axios.post("/job/do-next", payload);
+        const uploadResponseData = uploadResponse.data;
+        if (uploadResponseData) {
+          payload.file = { id: uploadResponseData.id };
         } else {
-          await axios.post("/application/do-next", payload);
-        }
-        toast.success("Success", { description: "Task Submitted" });
-        if (jobId) {
-          navigate("/job-list");
-        } else {
-          navigate("/assignee-list");
+          payload.file = null;
+          throw new Error(
+            "Something went wrong, document could not be uploaded"
+          );
         }
       } else {
-        throw new Error("Something went wrong, document could not be uploaded");
+        payload.file = null;
+      }
+
+      if (jobId) {
+        await axios.post("/job/do-next", payload);
+      } else {
+        await axios.post("/application/do-next", payload);
+      }
+      toast.success("Success", { description: "Task Submitted" });
+      if (jobId) {
+        navigate("/job-list");
+      } else {
+        navigate("/assignee-list");
       }
     } catch (error) {
       toast.error("Error", { description: error.message });
