@@ -228,7 +228,9 @@ function CreateJobCard({ referenceNumber }) {
               <div>
                 {deviceJobMap[device.id]?.status.name !== "JCG" && (
                   <div>
-                    <Button disabled={true}>Forwarded For Testing</Button>
+                    <Button disabled={true} className="capitalize">
+                      {deviceJobMap[device.id]?.status.postDescription}
+                    </Button>
                   </div>
                 )}
                 {deviceJobMap[device.id]?.status.name === "JCG" && (
