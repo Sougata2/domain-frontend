@@ -76,7 +76,7 @@ function ApplicationList() {
       cell: ({ row }) => {
         return (
           <div className="capitalize ps-3">
-            {row.getValue("status")?.description}{" "}
+            {row.getValue("status")?.postDescription}{" "}
             {status === "AS" && row.original.assignee.id === userId && (
               <Badge
                 variant={"secondary"}
