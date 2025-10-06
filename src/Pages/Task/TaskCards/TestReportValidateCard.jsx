@@ -272,7 +272,7 @@ function TestReportValidateCard({ jobId }) {
                 name={"file"}
                 validation={{
                   required: {
-                    value: false,
+                    value: true,
                     message: "Document is required",
                   },
                 }}
