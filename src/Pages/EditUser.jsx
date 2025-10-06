@@ -51,7 +51,10 @@ export default function EditUser() {
     e.preventDefault();
     try {
       const payload = {
-        ...formData,
+        id: formData.id,
+        email: formData.email,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
       };
 
       const response = await axios.put("/user", payload);
