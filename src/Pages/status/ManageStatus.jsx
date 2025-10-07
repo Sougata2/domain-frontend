@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -6,15 +5,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { useCallback, useEffect, useState } from "react";
+import { ArrowUpDown, Ellipsis } from "lucide-react";
+import { LuTrash } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import { CiEdit } from "react-icons/ci";
+import { toast } from "sonner";
+import { Link } from "react-router";
+
 import ConfirmationAlert from "@/DomainComponents/ConfirmationAlert";
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
-import { ArrowUpDown, Ellipsis } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import { CiEdit } from "react-icons/ci";
-import { LuTrash } from "react-icons/lu";
-import { Link } from "react-router";
-import { toast } from "sonner";
 
 export default function ManageStatus() {
   const columns = [
@@ -52,6 +54,46 @@ export default function ManageStatus() {
       },
       cell: ({ row }) => {
         return <div>{row.getValue("postDescription")}</div>;
+      },
+    },
+    {
+      accessorKey: "applicationType",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Application Type
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div>{row.getValue("applicationType")}</div>;
+      },
+    },
+    {
+      accessorKey: "isFinal",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Is Final
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div>
+            {row.getValue("isFinal") === true && <IoMdCheckmarkCircleOutline />}
+          </div>
+        );
       },
     },
     {
@@ -155,7 +197,7 @@ export default function ManageStatus() {
         <DataTable
           columns={columns}
           data={statuses}
-          options={{ searchField: "description" }}
+          options={{ searchField: "postDescription" }}
         />
       </div>
     </div>
