@@ -19,20 +19,24 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useCallback, useEffect, useState } from "react";
+import { VscCircleSlash } from "react-icons/vsc";
 import { FaArrowRight } from "react-icons/fa6";
+import { ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
 import PreviewDataBody from "@/DomainComponents/PreviewDataBody";
 import PreviewDataCell from "@/DomainComponents/PreviewDataCell";
+import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
 
 export function Confirm({ handleConfirm }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant={"link"}>Generate</Button>
+        <Button variant={"outline"}>Generate</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -52,10 +56,110 @@ export function Confirm({ handleConfirm }) {
 }
 
 function CreateJobCard({ referenceNumber }) {
-  const [devices, setDevices] = useState([]);
-  const [jobs, setJobs] = useState([]);
+  const columns = [
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Device Name
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div className="ps-3">{row.getValue("name")}</div>;
+      },
+    },
+    {
+      accessorKey: "job",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Job Status
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="capitalize">
+            <Badge variant={"secondary"}>
+              {row.getValue("job").status?.postDescription ?? (
+                <div>
+                  <VscCircleSlash size={17} />
+                </div>
+              )}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "jobUpdatedAt",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Updated At
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="ps-3">
+            {row.getValue("jobUpdatedAt") &&
+              format(new Date(row.getValue("jobUpdatedAt")), "dd-MM-yyyy")}
+            {!row.getValue("jobUpdatedAt") && <VscCircleSlash size={17} />}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "id",
+      header: () => {
+        return <div>Action</div>;
+      },
+      cell: ({ row }) => {
+        const { original } = row;
+        return (
+          <div>
+            {!["JCG", "FFR", undefined].includes(
+              deviceJobMap[row.getValue("id")]?.status.name
+            ) && <VscCircleSlash size={17} />}
+            {!deviceJobMap[row.getValue("id")] && (
+              <Confirm handleConfirm={() => handleCreateJobCard(original)} />
+            )}
+            {deviceJobMap[row.getValue("id")]?.status.name === "JCG" && (
+              <Button
+                variant={"secondary"}
+                onClick={() => handleDoNext(original)}
+              >
+                Proceed For Testing
+              </Button>
+            )}
+          </div>
+        );
+      },
+    },
+  ];
+
   const [applicationData, setApplicationData] = useState("");
   const [deviceJobMap, setDeviceJobMap] = useState("");
+  const [devices, setDevices] = useState([]);
+  const [jobs, setJobs] = useState([]);
 
   const fetchApplicationData = useCallback(async () => {
     try {
@@ -171,87 +275,103 @@ function CreateJobCard({ referenceNumber }) {
 
   return (
     <div className="flex flex-col gap-8 justify-center items-center">
-      {devices.map((device) => (
-        <Card key={device.id} className={"w-full"}>
-          <CardHeader>
-            <CardTitle>Job Card</CardTitle>
-            <CardDescription>create job card for this device</CardDescription>
-            <CardAction>
-              {device.job === null && (
-                <Confirm handleConfirm={() => handleCreateJobCard(device)} />
-              )}
-              {device.job !== null && (
-                <Badge variant={"secondary"}>Job Generated</Badge>
-              )}
-            </CardAction>
-          </CardHeader>
-          <CardContent>
-            <PreviewDataBody>
-              <PreviewDataCell label={"Device Name"} value={device.name} />
-              <PreviewDataCell
-                label={"Device Height"}
-                value={`${device.height} ${device.heightUnit}`}
-              />
-              <PreviewDataCell
-                label={"Device Weight"}
-                value={`${device.weight} ${device.weightUnit}`}
-              />
-              <PreviewDataCell
-                label={"Device Length"}
-                value={`${device.length} ${device.lengthUnit}`}
-              />
-              <PreviewDataCell label={"Quantity"} value={device.quantity} />
-              <PreviewDataCell
-                label={"Activities"}
-                value={
-                  <div className="flex gap-2">
-                    {device.activities.map((a) => (
-                      <Badge key={a.name}>{a.name}</Badge>
-                    ))}
-                  </div>
-                }
-              />
-              <PreviewDataCell
-                label={"Specifications"}
-                value={
-                  <div className="flex gap-2">
-                    {device.specifications.map((s) => (
-                      <Badge key={s.name}>{s.name}</Badge>
-                    ))}
-                  </div>
-                }
-              />
-            </PreviewDataBody>
-          </CardContent>
-          <CardFooter className={"flex justify-end"}>
-            {device.job !== null && (
-              <div>
-                {deviceJobMap[device.id]?.status.name !== "JCG" && (
-                  <div>
-                    <Button disabled={true} className="capitalize">
-                      {deviceJobMap[device.id]?.status.postDescription}
-                    </Button>
-                  </div>
+      <div className="w-full">
+        <DataTable
+          columns={columns}
+          data={devices.map((d) => {
+            const {
+              device: _ = {},
+              updatedAt = null,
+              ...rest
+            } = deviceJobMap[d.id] || {};
+            return { ...d, jobUpdatedAt: updatedAt, job: { ...rest } };
+          })}
+          options={{ searchField: "name" }}
+        />
+      </div>
+      {
+        !devices.map((device) => (
+          <Card key={device.id} className={"w-full"}>
+            <CardHeader>
+              <CardTitle>Job Card</CardTitle>
+              <CardDescription>create job card for this device</CardDescription>
+              <CardAction>
+                {device.job === null && (
+                  <Confirm handleConfirm={() => handleCreateJobCard(device)} />
                 )}
-                {deviceJobMap[device.id]?.status.name === "JCG" && (
-                  <div
-                    onClick={() => handleDoNext(device)}
-                    className="flex items-center gap-3 group bg-primary hover:bg-primary/90 text-white rounded-md py-2 px-3 cursor-pointer"
-                  >
-                    <div>Proceed For Testing</div>
-                    <div>
-                      <FaArrowRight
-                        size={20}
-                        className="mt-[3px] font-bold transform transition-transform duration-200 group-hover:translate-x-1"
-                      />
+                {device.job !== null && (
+                  <Badge variant={"secondary"}>Job Generated</Badge>
+                )}
+              </CardAction>
+            </CardHeader>
+            <CardContent>
+              <PreviewDataBody>
+                <PreviewDataCell label={"Device Name"} value={device.name} />
+                <PreviewDataCell
+                  label={"Device Height"}
+                  value={`${device.height} ${device.heightUnit}`}
+                />
+                <PreviewDataCell
+                  label={"Device Weight"}
+                  value={`${device.weight} ${device.weightUnit}`}
+                />
+                <PreviewDataCell
+                  label={"Device Length"}
+                  value={`${device.length} ${device.lengthUnit}`}
+                />
+                <PreviewDataCell label={"Quantity"} value={device.quantity} />
+                <PreviewDataCell
+                  label={"Activities"}
+                  value={
+                    <div className="flex gap-2">
+                      {device.activities.map((a) => (
+                        <Badge key={a.name}>{a.name}</Badge>
+                      ))}
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </CardFooter>
-        </Card>
-      ))}
+                  }
+                />
+                <PreviewDataCell
+                  label={"Specifications"}
+                  value={
+                    <div className="flex gap-2">
+                      {device.specifications.map((s) => (
+                        <Badge key={s.name}>{s.name}</Badge>
+                      ))}
+                    </div>
+                  }
+                />
+              </PreviewDataBody>
+            </CardContent>
+            <CardFooter className={"flex justify-end"}>
+              {device.job !== null && (
+                <div>
+                  {deviceJobMap[device.id]?.status.name !== "JCG" && (
+                    <div>
+                      <Button disabled={true} className="capitalize">
+                        {deviceJobMap[device.id]?.status.postDescription}
+                      </Button>
+                    </div>
+                  )}
+                  {deviceJobMap[device.id]?.status.name === "JCG" && (
+                    <div
+                      onClick={() => handleDoNext(device)}
+                      className="flex items-center gap-3 group bg-primary hover:bg-primary/90 text-white rounded-md py-2 px-3 cursor-pointer"
+                    >
+                      <div>Proceed For Testing</div>
+                      <div>
+                        <FaArrowRight
+                          size={20}
+                          className="mt-[3px] font-bold transform transition-transform duration-200 group-hover:translate-x-1"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardFooter>
+          </Card>
+        ))
+      }
     </div>
   );
 }
