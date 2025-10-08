@@ -20,6 +20,8 @@ export default function AddStatus() {
     name: "",
     postDescription: "",
     actionType: "",
+    applicationType: "",
+    isFinal: "",
   };
 
   const {
@@ -93,6 +95,38 @@ export default function AddStatus() {
             required: {
               value: true,
               message: "Action Type is required",
+            },
+          }}
+        />
+        <FormSelect
+          control={control}
+          name={"applicationType"}
+          label={"Application Type"}
+          error={errors.applicationType}
+          options={[
+            { label: "Application", value: "APPLICATION" },
+            { label: "Job", value: "JOB" },
+          ]}
+          validations={{
+            required: {
+              value: true,
+              message: "Application Type is required",
+            },
+          }}
+        />
+        <FormSelect
+          control={control}
+          name={"isFinal"}
+          label={"Final Status"}
+          error={errors.isFinal}
+          options={[
+            { label: "True", value: true },
+            { label: "False", value: false },
+          ]}
+          validations={{
+            required: {
+              value: true,
+              message: "Final Status is required",
             },
           }}
         />

@@ -90,8 +90,13 @@ export default function ManageStatus() {
       },
       cell: ({ row }) => {
         return (
-          <div>
-            {row.getValue("isFinal") === true && <IoMdCheckmarkCircleOutline />}
+          <div className="flex justify-center">
+            {row.getValue("isFinal") === true && (
+              <IoMdCheckmarkCircleOutline
+                size={17}
+                className="text-emerald-500"
+              />
+            )}
           </div>
         );
       },
