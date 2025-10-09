@@ -31,6 +31,7 @@ import PreviewDataBody from "@/DomainComponents/PreviewDataBody";
 import PreviewDataCell from "@/DomainComponents/PreviewDataCell";
 import DataTable from "@/DomainComponents/DataTable";
 import axios from "axios";
+import ActionCard from "../TaskCards/ActionCard";
 
 export function Confirm({ handleConfirm }) {
   return (
@@ -156,6 +157,7 @@ function CreateJobCard({ referenceNumber }) {
     },
   ];
 
+  const [jobFlowCompleted, setJobFlowCompleted] = useState(true);
   const [applicationData, setApplicationData] = useState("");
   const [deviceJobMap, setDeviceJobMap] = useState("");
   const [devices, setDevices] = useState([]);
@@ -231,6 +233,15 @@ function CreateJobCard({ referenceNumber }) {
     mapDeviceToJob();
   }, [mapDeviceToJob]);
 
+  useEffect(() => {
+    for (const key in deviceJobMap) {
+      const job = deviceJobMap[key];
+      if (!job.status.isFinal) {
+        setJobFlowCompleted(false);
+      }
+    }
+  }, [deviceJobMap]);
+
   async function handleCreateJobCard(device) {
     try {
       const payload = {
@@ -288,6 +299,11 @@ function CreateJobCard({ referenceNumber }) {
           })}
           options={{ searchField: "name" }}
         />
+        {jobFlowCompleted && (
+          <div>
+            <ActionCard referenceNumber={referenceNumber} />
+          </div>
+        )}
       </div>
       {
         !devices.map((device) => (
