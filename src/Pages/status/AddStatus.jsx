@@ -39,6 +39,8 @@ export default function AddStatus() {
       const response = await axios.post("/status", {
         ...payload,
         actionType: payload.actionType.value,
+        applicationType: payload.applicationType.value,
+        isFinal: payload.isFinal.value,
       });
       const data = response.data;
 
