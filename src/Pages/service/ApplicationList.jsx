@@ -77,14 +77,16 @@ function ApplicationList() {
         return (
           <div className="capitalize ps-3">
             {row.getValue("status")?.postDescription}{" "}
-            {status === "AS" && row.original.assignee.id === userId && (
-              <Badge
-                variant={"secondary"}
-                className="bg-amber-200 text-amber-600 dark:bg-amber-300"
-              >
-                Action Required
-              </Badge>
-            )}
+            {status === "AS" &&
+              row.original.assignee.id === userId &&
+              !row.original.status.isFinal && (
+                <Badge
+                  variant={"secondary"}
+                  className="bg-amber-200 text-amber-600 dark:bg-amber-300"
+                >
+                  Action Required
+                </Badge>
+              )}
           </div>
         );
       },
