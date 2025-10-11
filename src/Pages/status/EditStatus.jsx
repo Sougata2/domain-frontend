@@ -10,6 +10,7 @@ import axios from "axios";
 
 const typeOptions = [
   { label: "ACTION_WITH_UPLOAD", value: "ACTION_WITH_UPLOAD" },
+  { label: "ISSUE_CERTIFICATE", value: "ISSUE_CERTIFICATE" },
   { label: "TEST_REPORT_VIEW", value: "TEST_REPORT_VIEW" },
   { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
   { label: "TEST_CARD", value: "TEST_CARD" },
