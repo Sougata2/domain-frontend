@@ -1,6 +1,7 @@
 import CreateJobCard from "../job/CreateJobCard";
 import ActionCard from "./ActionCard";
 import ActionCardWithUpload from "./ActionCardWithUpload";
+import IssueCertificateCard from "./IssueCertificateCard";
 import PaymentCard from "./PaymentCard";
 import TestCard from "./TestCard";
 import TestReportValidateCard from "./TestReportValidateCard";
@@ -15,6 +16,8 @@ function TaskCardProvider({ referenceNumber, jobId, actionType }) {
       );
     case "CREATE_JOB_CARD":
       return <CreateJobCard referenceNumber={referenceNumber} />;
+    case "ISSUE_CERTIFICATE":
+      return <IssueCertificateCard referenceNumber={referenceNumber} />;
     case "PAYMENT":
       return <PaymentCard referenceNumber={referenceNumber} />;
     case "TEST_CARD":
