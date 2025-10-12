@@ -1,25 +1,28 @@
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
   DialogDescription,
+  DialogContent,
+  DialogTrigger,
   DialogFooter,
   DialogHeader,
+  DialogClose,
   DialogTitle,
-  DialogTrigger,
+  Dialog,
 } from "@/components/ui/dialog";
-import DataTable from "@/DomainComponents/DataTable";
-import Download from "@/DomainComponents/Download";
+import { useCallback, useEffect, useState } from "react";
+import { HiOutlineTrash } from "react-icons/hi2";
+import { ArrowUpDown } from "lucide-react";
+import { useParams } from "react-router";
+import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+
 import FormFileInput from "@/DomainComponents/FormComponents/FormFileInput";
 import FormTextarea from "@/DomainComponents/FormComponents/FormTextarea";
+import ActionCard from "./ActionCard";
+import DataTable from "@/DomainComponents/DataTable";
 import FormInput from "@/DomainComponents/FormInput";
-import { ArrowUpDown } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { useParams } from "react-router";
-import { toast } from "sonner";
-import { FiPlus } from "react-icons/fi";
-import { useState } from "react";
+import Download from "@/DomainComponents/Download";
+import axios from "axios";
 
 const defaultValues = {
   file: "",
@@ -30,14 +33,32 @@ const defaultValues = {
 function IssueCertificateCard() {
   const { referenceNumber } = useParams();
   const {
+    formState: { errors },
+    handleSubmit,
+    clearErrors,
     register,
     reset,
-    clearErrors,
-    handleSubmit,
-    formState: { errors },
   } = useForm({ defaultValues });
 
   const columns = [
+    {
+      accessorKey: "certificateNumber",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Certificate Number
+            <ArrowUpDown />
+          </Button>
+        );
+      },
+      cell: ({ row }) => {
+        return <div className="ps-3">{row.getValue("certificateNumber")}</div>;
+      },
+    },
     {
       accessorKey: "name",
       header: ({ column }) => {
@@ -89,15 +110,91 @@ function IssueCertificateCard() {
         );
       },
     },
+    {
+      accessorKey: "id",
+      header: () => {
+        return <div></div>;
+      },
+      cell: ({ row }) => {
+        return (
+          <div className="ps-3">
+            <div>
+              <HiOutlineTrash
+                onClick={() => handleDelete(row.getValue("id"))}
+                size={20}
+                className="text-red-400"
+              />
+            </div>
+          </div>
+        );
+      },
+    },
   ];
 
   const [open, setOpen] = useState(false);
+  const [certificates, setCertificates] = useState([]);
+
+  const fetchCertificates = useCallback(async () => {
+    try {
+      const response = await axios.get(
+        `certificate/by-reference-number/${referenceNumber}`
+      );
+      const data = response.data;
+      setCertificates(data);
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, [referenceNumber]);
+
+  useEffect(() => {
+    (async () => {
+      await fetchCertificates();
+    })();
+  }, [fetchCertificates]);
 
   async function handleOnSubmit(data) {
     try {
-      console.log(data);
-      setOpen(false);
+      data = { ...data, application: { referenceNumber } };
+      if (data.file.length > 0) {
+        const file = data.file[0];
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const uploadResponse = await axios.post("/file/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        const uploadResponseData = uploadResponse.data;
+        if (uploadResponseData) {
+          data.file = { id: uploadResponseData.id };
+        } else {
+          data.file = null;
+          throw new Error(
+            "Something went wrong, document could not be uploaded"
+          );
+        }
+      } else {
+        data.file = null;
+      }
+
+      await axios.post("/certificate", data);
       toast.success("Success", { description: "Certificate Issued" });
+
+      setOpen(false);
+      reset(defaultValues);
+      await fetchCertificates();
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }
+
+  async function handleDelete(id) {
+    try {
+      await axios.delete("/certificate", { data: { id } });
+      toast.warning("Revoked", { description: "Certficate revoked" });
+      await fetchCertificates();
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
@@ -105,12 +202,19 @@ function IssueCertificateCard() {
 
   return (
     <div className="relative">
-      <div>
-        <DataTable
-          columns={columns}
-          data={[]}
-          options={{ searchField: "name" }}
-        />
+      <div className="flex flex-col gap-4">
+        <div>
+          <DataTable
+            columns={columns}
+            data={certificates}
+            options={{ searchField: "certificateNumber" }}
+          />
+        </div>
+        {certificates.length > 0 && (
+          <div>
+            <ActionCard referenceNumber={referenceNumber} />
+          </div>
+        )}
       </div>
       <div className="absolute top-3.5 right-0">
         <Dialog open={open} onOpenChange={setOpen}>
