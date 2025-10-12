@@ -137,13 +137,17 @@ function CreateJobCard({ referenceNumber }) {
         const { original } = row;
         return (
           <div>
-            {!["JCG", "FFR"].includes(
-              deviceJobMap[row.getValue("id")]?.job?.status?.name
-            ) && <VscCircleSlash size={17} />}
+            {deviceJobMap[row.getValue("id")] !== null && (
+              <div>
+                {!["JCG"].includes(
+                  deviceJobMap[row.getValue("id")]?.status?.name
+                ) && <VscCircleSlash size={17} />}
+              </div>
+            )}
             {!deviceJobMap[row.getValue("id")] && (
               <Confirm handleConfirm={() => handleCreateJobCard(original)} />
             )}
-            {deviceJobMap[row.getValue("id")]?.status.name === "JCG" && (
+            {deviceJobMap[row.getValue("id")]?.status?.name === "JCG" && (
               <Button
                 variant={"secondary"}
                 onClick={() => handleDoNext(original)}
@@ -157,7 +161,7 @@ function CreateJobCard({ referenceNumber }) {
     },
   ];
 
-  const [jobFlowCompleted, setJobFlowCompleted] = useState(true);
+  const [jobFlowCompleted, setJobFlowCompleted] = useState(false);
   const [applicationData, setApplicationData] = useState("");
   const [deviceJobMap, setDeviceJobMap] = useState("");
   const [devices, setDevices] = useState([]);
@@ -234,12 +238,15 @@ function CreateJobCard({ referenceNumber }) {
   }, [mapDeviceToJob]);
 
   useEffect(() => {
+    let isCompleted = true;
     for (const key in deviceJobMap) {
       const job = deviceJobMap[key];
-      if (!job.status.isFinal) {
-        setJobFlowCompleted(false);
+      if (!job?.status.isFinal) {
+        isCompleted = false;
+        break;
       }
     }
+    setJobFlowCompleted(isCompleted);
   }, [deviceJobMap]);
 
   async function handleCreateJobCard(device) {
@@ -299,7 +306,7 @@ function CreateJobCard({ referenceNumber }) {
           })}
           options={{ searchField: "name" }}
         />
-        {jobFlowCompleted && (
+        {jobFlowCompleted === true && (
           <div>
             <ActionCard referenceNumber={referenceNumber} />
           </div>
