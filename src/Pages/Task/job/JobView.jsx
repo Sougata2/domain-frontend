@@ -85,7 +85,7 @@ function JobView() {
             <PreviewDataCell
               label={"Activities"}
               value={
-                <div className="flex gap-1.5">
+                <div className="flex gap-1.5 flex-wrap">
                   {deviceDetails.activities?.map((a) => (
                     <Badge key={a.id}>{a.name}</Badge>
                   ))}
@@ -95,7 +95,7 @@ function JobView() {
             <PreviewDataCell
               label={"Specifications"}
               value={
-                <div className="flex gap-1.5">
+                <div className="flex gap-1.5 flex-wrap">
                   {deviceDetails.specifications?.map((s) => (
                     <Badge key={s.id}>{s.name}</Badge>
                   ))}
