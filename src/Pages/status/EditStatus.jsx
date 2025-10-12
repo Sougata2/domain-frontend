@@ -13,6 +13,7 @@ const typeOptions = [
   { label: "ISSUE_CERTIFICATE", value: "ISSUE_CERTIFICATE" },
   { label: "TEST_REPORT_VIEW", value: "TEST_REPORT_VIEW" },
   { label: "CREATE_JOB_CARD", value: "CREATE_JOB_CARD" },
+  { label: "COMPLETED", value: "COMPLETED" },
   { label: "TEST_CARD", value: "TEST_CARD" },
   { label: "PAYMENT", value: "PAYMENT" },
   { label: "ACTION", value: "ACTION" },
