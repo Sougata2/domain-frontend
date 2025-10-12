@@ -9,7 +9,7 @@ export default function Layout() {
       <AlertBox />
       <SidebarProvider>
         <AppSidebar />
-        <main className="w-full">
+        <main className="w-full pb-4">
           <SidebarTrigger />
           <Outlet />
         </main>
