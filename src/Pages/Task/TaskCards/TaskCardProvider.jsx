@@ -1,6 +1,7 @@
 import CreateJobCard from "../job/CreateJobCard";
 import ActionCard from "./ActionCard";
 import ActionCardWithUpload from "./ActionCardWithUpload";
+import ApplicationCompletedCard from "./ApplicationCompletedCard";
 import IssueCertificateCard from "./IssueCertificateCard";
 import PaymentCard from "./PaymentCard";
 import TestCard from "./TestCard";
@@ -26,6 +27,8 @@ function TaskCardProvider({ referenceNumber, jobId, actionType }) {
       return <TestReportValidateCard jobId={jobId} />;
     case "NONE":
       return <div>Action form not decided yet</div>;
+    case "COMPLETED":
+      return <ApplicationCompletedCard />;
     default:
       return <div>Action form not decided yet</div>;
   }
