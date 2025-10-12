@@ -137,8 +137,8 @@ function CreateJobCard({ referenceNumber }) {
         const { original } = row;
         return (
           <div>
-            {!["JCG", "FFR", undefined].includes(
-              deviceJobMap[row.getValue("id")]?.status.name
+            {!["JCG", "FFR"].includes(
+              deviceJobMap[row.getValue("id")]?.job?.status?.name
             ) && <VscCircleSlash size={17} />}
             {!deviceJobMap[row.getValue("id")] && (
               <Confirm handleConfirm={() => handleCreateJobCard(original)} />
