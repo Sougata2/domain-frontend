@@ -238,15 +238,15 @@ function CreateJobCard({ referenceNumber }) {
   }, [mapDeviceToJob]);
 
   useEffect(() => {
-    let isCompleted = true;
-    for (const key in deviceJobMap) {
-      const job = deviceJobMap[key];
-      if (!job?.status.isFinal) {
-        isCompleted = false;
-        break;
+    const arr = Object.keys(deviceJobMap).map((k) => {
+      const key = Number(k);
+      if (deviceJobMap[key] && deviceJobMap?.status) {
+        return deviceJobMap[key].status.isFinal;
       }
-    }
-    setJobFlowCompleted(isCompleted);
+      return false;
+    });
+
+    if (arr.length > 0) setJobFlowCompleted(arr.every((v) => v === true));
   }, [deviceJobMap]);
 
   async function handleCreateJobCard(device) {
@@ -306,7 +306,7 @@ function CreateJobCard({ referenceNumber }) {
           })}
           options={{ searchField: "name" }}
         />
-        {jobFlowCompleted === true && (
+        {jobFlowCompleted && (
           <div>
             <ActionCard referenceNumber={referenceNumber} />
           </div>
