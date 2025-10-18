@@ -240,7 +240,7 @@ function CreateJobCard({ referenceNumber }) {
   useEffect(() => {
     const arr = Object.keys(deviceJobMap).map((k) => {
       const key = Number(k);
-      if (deviceJobMap[key] && deviceJobMap?.status) {
+      if (deviceJobMap[key]) {
         return deviceJobMap[key].status.isFinal;
       }
       return false;
