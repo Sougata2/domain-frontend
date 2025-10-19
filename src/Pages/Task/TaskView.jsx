@@ -14,6 +14,7 @@ import { useParams } from "react-router";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
+import ApplicationHistory from "./components/ApplicationHistory";
 import TaskCardProvider from "./TaskCards/TaskCardProvider";
 import TaskDetails from "./TaskDetails";
 import axios from "axios";
@@ -66,6 +67,9 @@ function TaskView() {
             {openDetails && <TaskDetails applicationData={applicationData} />}
           </CardContent>
         </Card>
+        {/* ===============History Table======================= */}
+        <ApplicationHistory referenceNumber={referenceNumber} />
+        {/* ===============History Table======================= */}
         {applicationData?.assignee?.id === assignerId && (
           <Card>
             <CardHeader>
