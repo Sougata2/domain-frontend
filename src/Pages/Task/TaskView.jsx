@@ -16,9 +16,9 @@ import { toast } from "sonner";
 
 import ApplicationHistory from "./components/ApplicationHistory";
 import TaskCardProvider from "./TaskCards/TaskCardProvider";
+import Certificates from "./components/Certificates";
 import TaskDetails from "./TaskDetails";
 import axios from "axios";
-import Certificates from "./components/Certificates";
 
 function TaskView() {
   const { referenceNumber } = useParams();
