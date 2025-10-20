@@ -149,7 +149,7 @@ function CreateJobCard({ referenceNumber }) {
             )}
             {deviceJobMap[row.getValue("id")]?.status?.name === "JCG" && (
               <Button
-                variant={"secondary"}
+                variant={"outline"}
                 onClick={() => handleDoNext(original)}
               >
                 Proceed For Testing
