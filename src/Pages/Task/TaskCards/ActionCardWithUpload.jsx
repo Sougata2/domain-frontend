@@ -196,7 +196,7 @@ function ActionCardWithUpload({ referenceNumber, jobId }) {
             name={"file"}
             validation={{
               required: {
-                value: false,
+                value: true,
                 message: "Document is required",
               },
             }}
