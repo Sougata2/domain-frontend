@@ -19,6 +19,7 @@ import TaskCardProvider from "./TaskCards/TaskCardProvider";
 import Certificates from "./components/Certificates";
 import TaskDetails from "./TaskDetails";
 import axios from "axios";
+import Jobs from "./components/Jobs";
 
 function TaskView() {
   const { referenceNumber } = useParams();
@@ -71,6 +72,10 @@ function TaskView() {
         {/* ===============History Table======================= */}
         <ApplicationHistory referenceNumber={referenceNumber} />
         {/* ===============History Table======================= */}
+
+        {/* =============== Job ======================= */}
+        <Jobs referenceNumber={referenceNumber} />
+        {/* =============== Job ======================= */}
 
         {/* =============== Certificates ======================= */}
         <Certificates referenceNumber={referenceNumber} />
