@@ -76,6 +76,9 @@ import RegisterTestTemplate from "./Pages/test/RegisterTestTemplate";
 import ManageLabTestTemplates from "./Pages/test/ManageLabTestTemplates";
 import EditLabTestTemplate from "./Pages/test/EditLabTestTemplate";
 import MapTestTemplateToSubService from "./Pages/test/MapTestTemplateToSubService";
+import MapComponentToRole from "./Pages/component/MapComponentToRole";
+import AddComponent from "./Pages/component/AddComponent";
+import EditComponent from "./Pages/component/EditComponent";
 
 function App() {
   const dispatch = useDispatch();
@@ -247,6 +250,9 @@ function App() {
           path={"/map-test-template-to-sub-service"}
           element={<MapTestTemplateToSubService />}
         />
+        <Route path="map-component-to-role" element={<MapComponentToRole />} />
+        <Route path="add-component" element={<AddComponent />} />
+        <Route path="edit-component/:id" element={<EditComponent />} />
       </Route>
     </Routes>
   );
