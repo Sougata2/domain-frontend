@@ -20,10 +20,11 @@ import Certificates from "./components/Certificates";
 import TaskDetails from "./TaskDetails";
 import axios from "axios";
 import Jobs from "./components/Jobs";
+import TaskViewComponent from "./TaskViewComponent";
 
 function TaskView() {
   const { referenceNumber } = useParams();
-  const { id: assignerId } = useSelector((state) => state.user);
+  const { id: assignerId, defaultRole } = useSelector((state) => state.user);
 
   const [openDetails, setOpenDetails] = useState(true);
   const [applicationData, setApplicationData] = useState("");
@@ -69,17 +70,12 @@ function TaskView() {
             {openDetails && <TaskDetails applicationData={applicationData} />}
           </CardContent>
         </Card>
-        {/* ===============History Table======================= */}
-        <ApplicationHistory referenceNumber={referenceNumber} />
-        {/* ===============History Table======================= */}
 
-        {/* =============== Job ======================= */}
-        <Jobs referenceNumber={referenceNumber} />
-        {/* =============== Job ======================= */}
-
-        {/* =============== Certificates ======================= */}
-        <Certificates referenceNumber={referenceNumber} />
-        {/* =============== Certificates ======================= */}
+        <TaskViewComponent
+          referenceNumber={referenceNumber}
+          type={"APPLICATION"}
+          role={defaultRole}
+        />
 
         {applicationData?.assignee?.id === assignerId && (
           <Card>
