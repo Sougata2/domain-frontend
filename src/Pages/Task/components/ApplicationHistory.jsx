@@ -64,6 +64,9 @@ function ApplicationHistory({ referenceNumber }) {
       await fetchWorkFlowHistory();
     })();
   }, [fetchWorkFlowHistory]);
+
+  if (!workflowHistory.length) return;
+
   return (
     <Card>
       <CardHeader>

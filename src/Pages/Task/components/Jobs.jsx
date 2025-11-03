@@ -33,7 +33,7 @@ function Jobs({ referenceNumber }) {
     })();
   }, [fetchDevicesWithJobs]);
 
-  console.log(data);
+  if (!data.length) return;
 
   return (
     <Card>

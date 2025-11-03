@@ -106,6 +106,8 @@ function Certificates({ referenceNumber }) {
     })();
   }, [fetchCertificates]);
 
+  if (!certificates.length) return;
+
   return (
     <Card>
       <CardHeader>
