@@ -302,7 +302,9 @@ function ApplicationSubmitSection() {
         <Button disabled={true}>Application Submitted</Button>
       )}
       {applicationData.status?.name === "AG" && (
-        <Button onClick={submitApplication}>Submit Application</Button>
+        <Button onClick={submitApplication} disabled={!workFlowActionData?.id}>
+          Submit Application
+        </Button>
       )}
     </div>
   );
