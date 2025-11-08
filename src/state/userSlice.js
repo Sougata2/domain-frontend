@@ -24,6 +24,7 @@ const userSlice = createSlice({
     setName: (state, action) => {
       state.name = action.payload;
     },
+    reset: () => initialState,
   },
   extraReducers: (builder) => {
     builder
@@ -71,5 +72,5 @@ export const validateToken = createAsyncThunk(
   }
 );
 
-export const { setUserName, setId, setName } = userSlice.actions;
+export const { setUserName, setId, setName, reset } = userSlice.actions;
 export default userSlice.reducer;

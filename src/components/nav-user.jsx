@@ -22,9 +22,12 @@ import {
 } from "@/components/ui/sidebar";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { reset } from "@/state/userSlice";
 
 export function NavUser({ user }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { isMobile } = useSidebar();
 
   return (
@@ -89,6 +92,7 @@ export function NavUser({ user }) {
               onClick={() => {
                 Cookies.remove("Authorization");
                 navigate("/login");
+                dispatch(reset());
               }}
             >
               <IoLogOutOutline />
