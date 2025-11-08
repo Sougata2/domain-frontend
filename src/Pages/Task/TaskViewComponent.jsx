@@ -30,7 +30,7 @@ function TaskViewComponent({ referenceNumber, role, type }) {
   }, [fetchComponent, role]);
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-10">
       {components.map((c) => {
         const DynamicComponent = loadComponent(c.name);
         return (
