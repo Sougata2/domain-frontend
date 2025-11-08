@@ -90,7 +90,7 @@ export default function NewRequest() {
         service: { id: data.service },
         subService: { id: data.subService },
         applicant: { id: userId },
-        status: { id: 1 },
+        status: { name: "AG" },
       };
       const response = await axios.post("/application", payload);
       toast.success("Success", { description: "Application Generated" });
