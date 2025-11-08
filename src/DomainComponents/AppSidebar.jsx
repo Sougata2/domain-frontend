@@ -18,10 +18,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { capitalize } from "@/utility/helpers";
 import { useEffect } from "react";
 import { fetchDefaultRole } from "@/state/userSlice";
+import { Spinner } from "@/components/ui/spinner";
 import profileImage from "../assets/images/profile-image.jfif";
 
 export function AppSidebar() {
-  const { id, name, username, menus } = useSelector((state) => state.user);
+  const { id, name, username, menus, isLoading } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
   useEffect(() => {
     if (id) {
@@ -47,12 +50,18 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          {menus.map((menu) => (
-            <RecursiveSidebarMenu menu={menu} key={menu.id} />
-          ))}
-        </SidebarGroup>
+        {isLoading ? (
+          <div className="flex justify-center items-center mt-10">
+            <Spinner className={"size-6"} />
+          </div>
+        ) : (
+          <SidebarGroup>
+            <SidebarGroupLabel>Application</SidebarGroupLabel>
+            {menus.map((menu) => (
+              <RecursiveSidebarMenu menu={menu} key={menu.id} />
+            ))}
+          </SidebarGroup>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <ModeToggle />
