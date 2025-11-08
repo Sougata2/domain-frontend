@@ -57,24 +57,6 @@ export default function ManageStatus() {
       },
     },
     {
-      accessorKey: "applicationType",
-      header: ({ column }) => {
-        return (
-          <Button
-            variant="ghost"
-            type="button"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          >
-            Application Type
-            <ArrowUpDown />
-          </Button>
-        );
-      },
-      cell: ({ row }) => {
-        return <div>{row.getValue("applicationType")}</div>;
-      },
-    },
-    {
       accessorKey: "isFinal",
       header: ({ column }) => {
         return (

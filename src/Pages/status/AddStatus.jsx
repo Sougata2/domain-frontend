@@ -22,7 +22,6 @@ export default function AddStatus() {
     name: "",
     postDescription: "",
     actionType: "",
-    applicationType: "",
     isFinal: "",
   };
 
@@ -41,7 +40,6 @@ export default function AddStatus() {
       const response = await axios.post("/status", {
         ...payload,
         actionType: payload.actionType.value,
-        applicationType: payload.applicationType.value,
         isFinal: payload.isFinal.value,
       });
       const data = response.data;
@@ -99,22 +97,6 @@ export default function AddStatus() {
             required: {
               value: true,
               message: "Action Type is required",
-            },
-          }}
-        />
-        <FormSelect
-          control={control}
-          name={"applicationType"}
-          label={"Application Type"}
-          error={errors.applicationType}
-          options={[
-            { label: "Application", value: "APPLICATION" },
-            { label: "Job", value: "JOB" },
-          ]}
-          validations={{
-            required: {
-              value: true,
-              message: "Application Type is required",
             },
           }}
         />

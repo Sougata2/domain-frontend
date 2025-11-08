@@ -25,7 +25,6 @@ export default function EditStatus() {
     name: "",
     postDescription: "",
     actionType: "",
-    applicationType: "",
     isFinal: "",
   };
 
@@ -49,10 +48,6 @@ export default function EditStatus() {
         actionType: data.actionType
           ? { label: data.actionType, value: data.actionType }
           : null,
-        applicationType: {
-          label: data.applicationType,
-          value: data.applicationType,
-        },
         isFinal: {
           label: data.isFinal ? "True" : "False",
           value: data.isFinal,
@@ -71,21 +66,12 @@ export default function EditStatus() {
 
   async function submitHandler(payload) {
     try {
-      const {
-        id,
-        name,
-        actionType,
-        postDescription,
-        applicationType,
-        isFinal,
-        ..._
-      } = payload;
+      const { id, name, actionType, postDescription, isFinal, ..._ } = payload;
       const response = await axios.put("/status", {
         id,
         name,
         postDescription,
         actionType: actionType.value,
-        applicationType: applicationType.value,
         isFinal: isFinal.value,
       });
       const data = response.data;
@@ -138,22 +124,6 @@ export default function EditStatus() {
           label={"Action Type"}
           error={errors.actionType}
           options={typeOptions}
-          validations={{
-            required: {
-              value: true,
-              message: "Action Type is required",
-            },
-          }}
-        />
-        <FormSelect
-          control={control}
-          name={"applicationType"}
-          label={"Application Type"}
-          error={errors.applicationType}
-          options={[
-            { label: "APPLICATION", value: "APPLICATION" },
-            { label: "JOB", value: "JOB" },
-          ]}
           validations={{
             required: {
               value: true,
