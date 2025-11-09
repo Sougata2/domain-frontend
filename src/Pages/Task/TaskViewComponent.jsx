@@ -6,7 +6,7 @@ import axios from "axios";
 
 const loadComponent = (name) => lazy(() => import(`./components/${name}.jsx`));
 
-function TaskViewComponent({ referenceNumber, role, status, type }) {
+function TaskViewComponent({ referenceNumber, jobId, role, status, type }) {
   const [components, setComponents] = useState([]);
 
   const fetchComponent = useCallback(async () => {
@@ -35,7 +35,10 @@ function TaskViewComponent({ referenceNumber, role, status, type }) {
         const DynamicComponent = loadComponent(c.name);
         return (
           <Suspense fallback={<Spinner />} key={c.id}>
-            <DynamicComponent referenceNumber={referenceNumber} />
+            {referenceNumber && (
+              <DynamicComponent referenceNumber={referenceNumber} />
+            )}
+            {jobId && <DynamicComponent jobId={jobId} />}
           </Suspense>
         );
       })}
