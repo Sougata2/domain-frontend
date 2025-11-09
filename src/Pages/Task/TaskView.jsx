@@ -46,8 +46,6 @@ function TaskView() {
     })();
   }, [fetchApplication]);
 
-  // console.log(applicationData.status.name);
-
   return (
     <div className="flex justify-center items-center">
       <div className="min-w-3xl  max-w-5xl flex flex-col gap-10">
