@@ -6,28 +6,28 @@ import axios from "axios";
 
 const loadComponent = (name) => lazy(() => import(`./components/${name}.jsx`));
 
-function TaskViewComponent({ referenceNumber, role, type }) {
+function TaskViewComponent({ referenceNumber, role, status, type }) {
   const [components, setComponents] = useState([]);
 
   const fetchComponent = useCallback(async () => {
     try {
       const response = await axios.get(
-        `/view-component/by-role-and-application-type?role=${role}&type=${type}`
+        `/view-component/by-role-status-and-application-type?role=${role}&type=${type}&status=${status}`
       );
       const data = response.data;
       setComponents(data);
     } catch (error) {
       toast.error("Error", { description: error.message });
     }
-  }, [role, type]);
+  }, [role, status, type]);
 
   useEffect(() => {
-    if (role) {
+    if (role && status) {
       (async () => {
         await fetchComponent();
       })();
     }
-  }, [fetchComponent, role]);
+  }, [fetchComponent, role, status]);
 
   return (
     <div className="flex flex-col gap-10">
