@@ -11,8 +11,10 @@ const animatedComponents = makeAnimated();
 function MapComponentToRole() {
   const [selectedComponent, setSelectedComponent] = useState("");
   const [selectedRoles, setSelectedRoles] = useState([]);
+  const [selectedStatuses, setSelectedStatuses] = useState([]);
   const [componentOptions, setComponentOptions] = useState([]);
   const [roleOptions, setRoleOptions] = useState([]);
+  const [statusOptions, setStatusOptions] = useState([]);
 
   const fetchComponents = useCallback(async () => {
     try {
@@ -34,12 +36,23 @@ function MapComponentToRole() {
     }
   }, []);
 
+  const fetchStatues = useCallback(async () => {
+    try {
+      const response = await axios.get("/status/all");
+      const data = response.data;
+      setStatusOptions(data.map((d) => ({ label: d.name, value: d.id })));
+    } catch (error) {
+      toast.error("Error", { description: error.message });
+    }
+  }, []);
+
   useEffect(() => {
     (async () => {
       await fetchRoles();
+      await fetchStatues();
       await fetchComponents();
     })();
-  }, [fetchComponents, fetchRoles]);
+  }, [fetchComponents, fetchRoles, fetchStatues]);
 
   useEffect(() => {
     if (selectedComponent?.value?.roles) {
@@ -52,6 +65,17 @@ function MapComponentToRole() {
     } else {
       setSelectedRoles([]);
     }
+
+    if (selectedComponent?.value?.roles) {
+      setSelectedStatuses(
+        selectedComponent.value.statuses.map((s) => ({
+          label: s.name,
+          value: s.id,
+        }))
+      );
+    } else {
+      setSelectedStatuses([]);
+    }
   }, [selectedComponent]);
 
   async function handleSubmit() {
@@ -59,6 +83,7 @@ function MapComponentToRole() {
       const payload = {
         id: selectedComponent.value.id,
         roles: selectedRoles.map((sc) => ({ id: sc.value })),
+        statuses: selectedStatuses.map((ss) => ({ id: ss.value })),
       };
       await axios.put("/view-component", payload);
       toast.info("Success", { description: "Mapped Role(s) To Component" });
@@ -89,6 +114,17 @@ function MapComponentToRole() {
           isDisabled={!selectedComponent || !roleOptions.length}
           value={selectedRoles}
           onChange={(e) => setSelectedRoles(e)}
+        />
+        <Select
+          isMulti={true}
+          closeMenuOnSelect={false}
+          components={animatedComponents}
+          placeholder={"Select Status"}
+          hideSelectedOptions
+          options={statusOptions}
+          isDisabled={!selectedComponent || !statusOptions.length}
+          value={selectedStatuses}
+          onChange={(e) => setSelectedStatuses(e)}
         />
         <div className="flex justify-end">
           <Button onClick={handleSubmit}>Save</Button>
