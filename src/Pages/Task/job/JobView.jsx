@@ -15,10 +15,11 @@ import PreviewDataCell from "@/DomainComponents/PreviewDataCell";
 import { Badge } from "@/components/ui/badge";
 import { useSelector } from "react-redux";
 import TaskCardProvider from "../TaskCards/TaskCardProvider";
+import TaskViewComponent from "../TaskViewComponent";
 
 function JobView() {
   const { id } = useParams();
-  const { id: assignerId } = useSelector((state) => state.user);
+  const { id: assignerId, defaultRole } = useSelector((state) => state.user);
   const [jobDetails, setJobDetails] = useState("");
   const [deviceDetails, setDeviceDetails] = useState("");
 
@@ -57,69 +58,82 @@ function JobView() {
   }, [fetchDeviceDetails, jobDetails]);
 
   return (
-    <div className="flex flex-col justify-center items-center gap-10">
-      <Card className={"w-3xl"}>
-        <CardHeader>
-          <CardTitle>Device Details</CardTitle>
-          <CardDescription>device details for this job</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <PreviewDataBody>
-            <PreviewDataCell label={"Device Name"} value={deviceDetails.name} />
-            <PreviewDataCell
-              label={"Height"}
-              value={`${deviceDetails.height} ${deviceDetails.heightUnit}`}
-            />
-            <PreviewDataCell
-              label={"Weight"}
-              value={`${deviceDetails.weight} ${deviceDetails.weightUnit}`}
-            />
-            <PreviewDataCell
-              label={"Length"}
-              value={`${deviceDetails.length} ${deviceDetails.lengthUnit}`}
-            />
-            <PreviewDataCell
-              label={"Quantity"}
-              value={deviceDetails.quantity}
-            />
-            <PreviewDataCell
-              label={"Activities"}
-              value={
-                <div className="flex gap-1.5 flex-wrap">
-                  {deviceDetails.activities?.map((a) => (
-                    <Badge key={a.id}>{a.name}</Badge>
-                  ))}
-                </div>
-              }
-            />
-            <PreviewDataCell
-              label={"Specifications"}
-              value={
-                <div className="flex gap-1.5 flex-wrap">
-                  {deviceDetails.specifications?.map((s) => (
-                    <Badge key={s.id}>{s.name}</Badge>
-                  ))}
-                </div>
-              }
-            />
-          </PreviewDataBody>
-        </CardContent>
-        <CardFooter></CardFooter>
-      </Card>
-      {jobDetails.assignee?.id === assignerId && (
-        <Card className={"w-3xl"}>
+    <div className="flex justify-center items-center">
+      <div className="min-w-3xl  max-w-5xl flex flex-col gap-10">
+        <Card>
           <CardHeader>
-            <CardTitle>Job Action</CardTitle>
-            <CardDescription>take action for this Job</CardDescription>
+            <CardTitle>Device Details</CardTitle>
+            <CardDescription>device details for this job</CardDescription>
           </CardHeader>
           <CardContent>
-            <TaskCardProvider
-              jobId={jobDetails.id}
-              actionType={jobDetails.status.actionType}
-            />
+            <PreviewDataBody>
+              <PreviewDataCell
+                label={"Device Name"}
+                value={deviceDetails.name}
+              />
+              <PreviewDataCell
+                label={"Height"}
+                value={`${deviceDetails.height} ${deviceDetails.heightUnit}`}
+              />
+              <PreviewDataCell
+                label={"Weight"}
+                value={`${deviceDetails.weight} ${deviceDetails.weightUnit}`}
+              />
+              <PreviewDataCell
+                label={"Length"}
+                value={`${deviceDetails.length} ${deviceDetails.lengthUnit}`}
+              />
+              <PreviewDataCell
+                label={"Quantity"}
+                value={deviceDetails.quantity}
+              />
+              <PreviewDataCell
+                label={"Activities"}
+                value={
+                  <div className="flex gap-1.5 flex-wrap">
+                    {deviceDetails.activities?.map((a) => (
+                      <Badge key={a.id}>{a.name}</Badge>
+                    ))}
+                  </div>
+                }
+              />
+              <PreviewDataCell
+                label={"Specifications"}
+                value={
+                  <div className="flex gap-1.5 flex-wrap">
+                    {deviceDetails.specifications?.map((s) => (
+                      <Badge key={s.id}>{s.name}</Badge>
+                    ))}
+                  </div>
+                }
+              />
+            </PreviewDataBody>
           </CardContent>
+          <CardFooter></CardFooter>
         </Card>
-      )}
+
+        <TaskViewComponent
+          jobId={id}
+          type={"JOB"}
+          role={defaultRole}
+          status={jobDetails?.status?.name}
+        />
+
+        {jobDetails.assignee?.id === assignerId && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Job Action</CardTitle>
+              <CardDescription>take action for this Job</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <TaskCardProvider
+                jobId={jobDetails.id}
+                actionType={jobDetails.status.actionType}
+              />
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
